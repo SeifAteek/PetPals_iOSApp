@@ -1,0 +1,52 @@
+# Xcode and macOS Git Ignore
+# Build results
+build/
+DerivedData/
+
+# Signatures and certificates
+*.keystore
+*.signingkey
+
+# User settings
+xcuserdata/
+
+# Xcode State
+*.xcuserstate
+*.xcworkspace/xcuserdata/
+*.xcodeproj/xcuserdata/
+*.xcodeproj/project.xcworkspace/xcuserdata/
+
+# Personal settings
+*.moved-aside
+*.pbxuser
+!default.pbxuser
+*.mode1v3
+!default.mode1v3
+*.mode2v3
+!default.mode2v3
+*.perspectivev3
+!default.perspectivev3
+
+# Swift Package Manager
+.build/
+Packages/
+Package.pins
+Package.resolved
+
+# CocoaPods
+Pods/
+
+# Carthage
+Carthage/Build/
+
+# macOS files
+.DS_Store
+.AppleDouble
+.LSOverride
+Icon
+
+# App-specific exclusions
+PetPals/PetPals/keys/
+keys/
+**/keys/
+*.log

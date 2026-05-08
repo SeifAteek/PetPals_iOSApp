@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>CFBundleURLTypes</key>
+	<array>
+		<dict>
+			<key>CFBundleTypeRole</key>
+			<string>Editor</string>
+			<key>CFBundleURLName</key>
+			<string>petpals</string>
+			<key>CFBundleURLSchemes</key>
+			<array>
+				<string>petpals</string>
+			</array>
+		</dict>
+	</array>
+	<key>GEMINI_API_KEY</key>
+	<string>AIzaSyBk_LHjISdww-jIjhj27Kwbxr33vdZgU8g</string>
+	<key>SUPABASE_URL</key>
+	<string>https://wersbtloqzbpxuxxhafe.supabase.co</string>
+	<key>SUPABASE_ANON_KEY</key>
+	<string>sb_publishable_mqV0JakwJ_RyedRZtvb1Tg_Ne7Q8-zu</string>
+	<key>CFBundleLocalizations</key>
+	<array>
+		<string>en</string>
+		<string>ar</string>
+	</array>
+	<key>NSLocationAlwaysAndWhenInUseUsageDescription</key>
+	<string>Background tracking is required to fuel the community pet-finding network and securely locate lost pets.</string>
+	<key>NSLocationWhenInUseUsageDescription</key>
+	<string>Location tracking is required to fuel the community pet-finding network and securely locate lost pets.</string>
+	<key>NSBluetoothAlwaysUsageDescription</key>
+	<string>Bluetooth is required to detect PetPals smart collars in the background for the crowdsourced tracking network.</string>
+	<key>NSBluetoothPeripheralUsageDescription</key>
+	<string>Bluetooth is required to detect PetPals smart collars nearby.</string>
+	<key>UIBackgroundModes</key>
+	<array>
+		<string>bluetooth-central</string>
+		<string>location</string>
+	</array>
+</dict>
+</plist>
