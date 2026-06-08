@@ -4,6 +4,8 @@ import UIKit
 /// Owner-facing receipt sheet styled like web `PrintBillModal` (emerald header, EGP totals).
 struct ReceiptSheetView: View {
     @Environment(\.dismiss) private var dismiss
+    @State private var showShareSheet = false
+    @State private var shareText = ""
 
     let shopName: String
     let shopLogoURL: String?
@@ -37,6 +39,11 @@ struct ReceiptSheetView: View {
             actionBar
         }
         .background(Color.white)
+        .sheet(isPresented: $showShareSheet) {
+            ShareSheet(items: [shareText]) {
+                showShareSheet = false
+            }
+        }
     }
 
     private var headerBar: some View {
@@ -252,7 +259,7 @@ struct ReceiptSheetView: View {
     private var shopLogo: some View {
         Group {
             if let s = shopLogoURL, let url = URL(string: s) {
-                AsyncImage(url: url) { phase in
+                CachedAsyncImage(url: url) { phase in
                     switch phase {
                     case .success(let image):
                         image
@@ -327,7 +334,8 @@ struct ReceiptSheetView: View {
     private var actionBar: some View {
         HStack(spacing: 10) {
             Button {
-                sharePlainTextSummary()
+                shareText = buildPlainTextSummary()
+                showShareSheet = true
             } label: {
                 Label(L10n.shareReceipt, systemImage: "square.and.arrow.up")
                     .font(.system(size: 14, weight: .bold))
@@ -352,12 +360,12 @@ struct ReceiptSheetView: View {
         .overlay(alignment: .top) { Divider() }
     }
 
-    private func sharePlainTextSummary() {
+    private func buildPlainTextSummary() -> String {
         var lines: [String] = []
         if let num = receipt.receipt_number {
             lines.append("Receipt \(num)")
         }
-        lines.append("\(shopName)")
+        lines.append(shopName)
         if let d = receipt.issued_at {
             lines.append(d.formatted(date: .abbreviated, time: .shortened))
         }
@@ -371,10 +379,6 @@ struct ReceiptSheetView: View {
         }
         lines.append("\(L10n.totalPaid): \(CurrencyFormatting.egp(receipt.totalValue))")
         lines.append("\(L10n.payment): \(receipt.payment_method ?? "—")")
-        let text = lines.joined(separator: "\n")
-        let av = UIActivityViewController(activityItems: [text], applicationActivities: nil)
-        guard let scene = UIApplication.shared.connectedScenes.first as? UIWindowScene,
-              let root = scene.windows.first(where: { $0.isKeyWindow })?.rootViewController else { return }
-        root.present(av, animated: true)
+        return lines.joined(separator: "\n")
     }
 }

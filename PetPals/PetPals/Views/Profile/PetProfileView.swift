@@ -20,42 +20,10 @@ struct PetProfileView: View {
             } else if let pet = pet {
                 VStack(alignment: .leading, spacing: 0) {
                     
-                    // MARK: - Header Image Area
+                    // MARK: - Header (standardized crop)
                     ZStack(alignment: .bottom) {
-                            if let url = ImageURL.from(pet.avatarUrl) {
-                                AsyncImage(url: url) { phase in
-                                    if let image = phase.image {
-                                        image
-                                            .resizable()
-                                            .scaledToFill()
-                                    } else {
-                                        ZStack {
-                                            Rectangle()
-                                                .fill(Theme.primary.opacity(0.1))
-                                            Image(systemName: "pawprint.fill")
-                                                .resizable()
-                                                .scaledToFit()
-                                                .frame(width: 80)
-                                                .foregroundColor(Theme.primary.opacity(0.4))
-                                        }
-                                    }
-                                }
-                                .frame(height: 300)
-                                .frame(maxWidth: .infinity)
-                                .clipped()
-                                .id(pet.avatarUrl ?? "")
-                            } else {
-                                ZStack {
-                                    Rectangle()
-                                        .fill(Theme.primary.opacity(0.1))
-                                        .frame(height: 300)
-                                    Image(systemName: "pawprint.fill")
-                                        .resizable()
-                                        .scaledToFit()
-                                        .frame(width: 80)
-                                        .foregroundColor(Theme.primary.opacity(0.4))
-                                }
-                            }
+                        StandardPetPhoto(pet: pet, style: .profileHero)
+                            .id(pet.avatarUrl ?? "")
                         
                         VStack(alignment: .leading, spacing: 8) {
                             HStack {
@@ -176,7 +144,7 @@ struct PetProfileView: View {
                 }
             }
         }
-        .background(Theme.background.ignoresSafeArea())
+        .clawsyScreenBackground()
         .ignoresSafeArea(edges: .top)
         .task { await loadPet() }
         .onAppear {
@@ -406,7 +374,7 @@ struct TestCollarTelemetryView: View {
             
             // NFC Program Button
             Button(action: {
-                let code = "petpals://pet?id=\(pet.petId.uuidString)"
+                let code = "https://petpals-kappa.vercel.app/pet?id=\(pet.petId.uuidString)"
                 UIPasteboard.general.string = code
                 showCopiedAlert = true
             }) {
@@ -425,7 +393,7 @@ struct TestCollarTelemetryView: View {
             .alert("Copied!", isPresented: $showCopiedAlert) {
                 Button("OK", role: .cancel) { }
             } message: {
-                Text("NFC URL Scheme has been copied to your clipboard. Paste it into your NFC Tools app to write to the tag.")
+                Text("Your pet's public profile URL has been copied. Paste it into NFC Tools (or any NFC writer app) to program the tag.")
             }
         }
         .padding(20)

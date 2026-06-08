@@ -15,6 +15,13 @@ struct Profile: Codable, Identifiable {
     let phoneNumber: String?
     let userType: UserType?
     let avatarUrl: String?
+
+    var isProfileComplete: Bool {
+        !userName.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty &&
+        !(email?.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty ?? true) &&
+        !(phoneNumber?.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty ?? true) &&
+        userType != nil
+    }
     
     enum CodingKeys: String, CodingKey {
         case userId = "user_id"
@@ -36,7 +43,8 @@ struct ShelterProfile: Codable, Identifiable {
     let licenseNumber: String?
     let isVerified: Bool?
     let logoUrl: String?
-    
+    let rating: Double?
+
     enum CodingKeys: String, CodingKey {
         case shelterId = "shelter_id"
         case userId = "user_id"
@@ -44,5 +52,6 @@ struct ShelterProfile: Codable, Identifiable {
         case licenseNumber = "license_number"
         case isVerified = "is_verified"
         case logoUrl = "logo_url"
+        case rating
     }
 }

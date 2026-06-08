@@ -33,31 +33,9 @@ struct GlobalMapView: View {
                 Map(coordinateRegion: $region, annotationItems: sighting != nil ? [sighting!] : []) { location in
                     MapAnnotation(coordinate: location.coordinate) {
                         VStack(spacing: 4) {
-                            if let url = ImageURL.from(resolvedPet.avatarUrl) {
-                                AsyncImage(url: url) { phase in
-                                    if let image = phase.image {
-                                        image
-                                            .resizable()
-                                            .scaledToFill()
-                                    } else {
-                                        ZStack {
-                                            Circle().fill(Color.gray)
-                                            Image(systemName: "pawprint.fill")
-                                                .foregroundColor(.white)
-                                        }
-                                    }
-                                }
-                                .frame(width: 50, height: 50)
-                                .clipShape(Circle())
+                            StandardPetPhoto(pet: resolvedPet, style: .smallCircle)
                                 .overlay(Circle().stroke(Color.blue, lineWidth: 3))
                                 .shadow(radius: 5)
-                            } else {
-                                Circle()
-                                    .fill(Color.blue)
-                                    .frame(width: 50, height: 50)
-                                    .overlay(Image(systemName: "pawprint.fill").foregroundColor(.white))
-                                    .shadow(radius: 5)
-                            }
                             
                             Text("Seen \(timeAgo(from: location.timestamp))")
                                 .font(.caption)

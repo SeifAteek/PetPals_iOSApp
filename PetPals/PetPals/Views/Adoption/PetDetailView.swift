@@ -16,42 +16,9 @@ struct PetDetailView: View {
             } else if let pet = pet {
                 VStack(alignment: .leading, spacing: 0) {
                     
-                    // MARK: - Hero Image (fixed height, crop — never grows with intrinsic image size)
+                    // MARK: - Hero (standardized 4:3 crop — fixed height)
                     ZStack(alignment: .bottom) {
-                        ZStack {
-                            Rectangle()
-                                .fill(Theme.primary.opacity(0.2))
-                            
-                            if let url = ImageURL.from(pet.avatarUrl) {
-                                AsyncImage(url: url) { phase in
-                                    switch phase {
-                                    case .empty:
-                                        ProgressView()
-                                    case .success(let image):
-                                        image
-                                            .resizable()
-                                            .scaledToFill()
-                                    case .failure:
-                                        Image(systemName: "pawprint.fill")
-                                            .resizable()
-                                            .scaledToFit()
-                                            .frame(width: 100)
-                                            .foregroundColor(Theme.primary.opacity(0.6))
-                                    @unknown default:
-                                        EmptyView()
-                                    }
-                                }
-                            } else {
-                                Image(systemName: "pawprint.fill")
-                                    .resizable()
-                                    .scaledToFit()
-                                    .frame(width: 100)
-                                    .foregroundColor(Theme.primary.opacity(0.6))
-                            }
-                        }
-                        .frame(height: 320)
-                        .frame(maxWidth: .infinity)
-                        .clipped()
+                        StandardPetPhoto(pet: pet, style: .detailHero)
                         
                         // Name overlay card
                         VStack(alignment: .leading, spacing: 8) {
@@ -139,7 +106,7 @@ struct PetDetailView: View {
                 }
             }
         }
-        .background(Theme.background.ignoresSafeArea())
+        .clawsyScreenBackground()
         .ignoresSafeArea(edges: .top)
         .task { await loadPet() }
     }

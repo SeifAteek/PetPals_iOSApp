@@ -44,7 +44,7 @@ struct DonationHistoryView: View {
             }
             .padding()
         }
-        .background(Theme.background.ignoresSafeArea())
+        .clawsyScreenBackground()
         .navigationTitle("Donation History")
         .navigationBarTitleDisplayMode(.inline)
         .onAppear {

@@ -6,52 +6,55 @@ struct CustomTextField: View {
     var iconName: String? = nil
     var isSecure: Bool = false
     var keyboardType: UIKeyboardType = .default
-    
-    @State private var isPasswordVisible: Bool = false
-    
+
+    @State private var isPasswordVisible = false
+    @FocusState private var isFocused: Bool
+
     var body: some View {
-        HStack {
-            if let iconName = iconName {
+        HStack(spacing: Spacing.xs) {
+            if let iconName {
                 Image(systemName: iconName)
-                    .foregroundColor(.gray)
+                    .foregroundStyle(Theme.textSecondary)
+                    .frame(width: 20)
             }
-            
-            if isSecure && !isPasswordVisible {
-                SecureField(placeholder, text: $text)
-                    .keyboardType(keyboardType)
-                    .autocapitalization(.none)
-                    .foregroundColor(Theme.textPrimary)
-            } else {
-                TextField(placeholder, text: $text)
-                    .keyboardType(keyboardType)
-                    .autocapitalization(isSecure ? .none : .sentences)
-                    .foregroundColor(Theme.textPrimary)
+
+            Group {
+                if isSecure && !isPasswordVisible {
+                    SecureField(placeholder, text: $text)
+                } else {
+                    TextField(placeholder, text: $text)
+                }
             }
-            
+            .keyboardType(keyboardType)
+            .textInputAutocapitalization(isSecure ? .never : .sentences)
+            .autocorrectionDisabled(isSecure)
+            .font(Theme.Fonts.body(Typography.callout))
+            .foregroundStyle(Theme.textPrimary)
+            .focused($isFocused)
+
             if isSecure {
-                Button(action: {
-                    isPasswordVisible.toggle()
-                }) {
+                Button { isPasswordVisible.toggle() } label: {
                     Image(systemName: isPasswordVisible ? "eye.slash.fill" : "eye.fill")
-                        .foregroundColor(.gray)
+                        .foregroundStyle(Theme.textSecondary)
                 }
             }
         }
-        .padding()
-        .background(Theme.cardBackground)
-        .cornerRadius(12)
-        .overlay(
-            RoundedRectangle(cornerRadius: 12)
-                .stroke(Color.gray.opacity(0.3), lineWidth: 1)
-        )
+        .padding(.horizontal, Spacing.sm)
+        .padding(.vertical, 14)
+        .glassCard(cornerRadius: Radius.md, elevation: .resting)
+        .overlay {
+            RoundedRectangle(cornerRadius: Radius.md, style: .continuous)
+                .stroke(isFocused ? Theme.primary.opacity(0.5) : Color.clear, lineWidth: 1.5)
+        }
+        .animation(Motion.quick, value: isFocused)
     }
 }
 
 #Preview {
-    VStack {
+    VStack(spacing: 12) {
         CustomTextField(placeholder: "Email address", text: .constant(""), iconName: "envelope.fill")
         CustomTextField(placeholder: "Password", text: .constant(""), iconName: "lock.fill", isSecure: true)
     }
     .padding()
-    .background(Color.gray.opacity(0.1))
+    .petPalsScreenBackground()
 }

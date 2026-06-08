@@ -63,7 +63,7 @@ struct AdoptionRulesView: View {
             .padding(.horizontal, 24)
             .padding(.top, 16)
         }
-        .background(Theme.background.ignoresSafeArea())
+        .clawsyScreenBackground()
         .navigationTitle("Adoption Rules")
         .navigationBarTitleDisplayMode(.inline)
     }

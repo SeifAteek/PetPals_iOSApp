@@ -41,11 +41,16 @@ struct VetDetailView: View {
                             Text("Specialist Veterinarian")
                                 .font(Theme.Fonts.primaryFont(size: 16))
                                 .foregroundColor(Theme.textSecondary)
+                            if let rating = clinic.rating, rating > 0 {
+                                Label(String(format: "%.1f", rating), systemImage: "star.fill")
+                                    .font(Theme.Fonts.primaryFont(size: 14, weight: .semibold))
+                                    .foregroundStyle(Theme.almondCream)
+                            }
                         }
                     }
                     .frame(maxWidth: .infinity)
                     .padding(.top)
-                    
+
                     // MARK: - Procedures & Pricing
                     VStack(alignment: .leading, spacing: 16) {
                         Text(L10n.servicesPricing)
@@ -140,13 +145,15 @@ struct VetDetailView: View {
                         }
                     }
                     .padding(.horizontal)
-                    .padding(.bottom, 40)
+
+                    EntityReviewsSection(entityType: .clinic, entityId: clinicId)
+                        .padding(.bottom, 40)
                 }
             } else {
                 Text("Clinic details not found").padding()
             }
         }
-        .background(Theme.background.ignoresSafeArea())
+        .clawsyScreenBackground()
         .navigationTitle("Vet Profile")
         .navigationBarTitleDisplayMode(.inline)
         .task { await loadData() }

@@ -49,7 +49,7 @@ struct OrderDetailView: View {
             }
             .padding(20)
         }
-        .background(Theme.background.ignoresSafeArea())
+        .clawsyScreenBackground()
         .navigationTitle(L10n.orderDetails)
         .navigationBarTitleDisplayMode(.inline)
         .task { await load() }

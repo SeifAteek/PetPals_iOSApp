@@ -117,6 +117,7 @@
 				3DEA35242F9AE72000F341D7 /* Sources */,
 				3DEA35252F9AE72000F341D7 /* Frameworks */,
 				3DEA35262F9AE72000F341D7 /* Resources */,
+				3DEAA0012F9AE72000F341D7 /* Strip xattr for CodeSign */,
 			);
 			buildRules = (
 			);
@@ -214,6 +215,7 @@
 				en,
 				Base,
 				ar,
+				fr,
 			);
 			mainGroup = 3DEA351F2F9AE72000F341D7;
 			minimizedProjectReferenceProxies = 1;
@@ -255,6 +257,25 @@
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXResourcesBuildPhase section */
+
+/* Begin PBXShellScriptBuildPhase section */
+		3DEAA0012F9AE72000F341D7 /* Strip xattr for CodeSign */ = {
+			isa = PBXShellScriptBuildPhase;
+			alwaysOutOfDate = 1;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+				"${TARGET_BUILD_DIR}/${WRAPPER_NAME}",
+			);
+			name = "Strip xattr for CodeSign";
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "if [ -d \"${TARGET_BUILD_DIR}/${WRAPPER_NAME}\" ]; then xattr -cr \"${TARGET_BUILD_DIR}/${WRAPPER_NAME}\" || true; fi\n";
+		};
+/* End PBXShellScriptBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
 		3DEA35242F9AE72000F341D7 /* Sources */ = {
@@ -332,7 +353,7 @@
 				DEVELOPMENT_TEAM = 6F3VN8R2K5;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				ENABLE_TESTABILITY = YES;
-				ENABLE_USER_SCRIPT_SANDBOXING = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = NO;
 				GCC_C_LANGUAGE_STANDARD = gnu17;
 				GCC_DYNAMIC_NO_PIC = NO;
 				GCC_NO_COMMON_BLOCKS = YES;
@@ -396,7 +417,7 @@
 				DEVELOPMENT_TEAM = 6F3VN8R2K5;
 				ENABLE_NS_ASSERTIONS = NO;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
-				ENABLE_USER_SCRIPT_SANDBOXING = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = NO;
 				GCC_C_LANGUAGE_STANDARD = gnu17;
 				GCC_NO_COMMON_BLOCKS = YES;
 				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
@@ -420,6 +441,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_ENTITLEMENTS = PetPals/PetPals.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = 6F3VN8R2K5;
@@ -428,9 +450,10 @@
 				INFOPLIST_FILE = Info.plist;
 				INFOPLIST_KEY_GEMINI_API_KEY = "AIzaSyBk_LHjISdww-jIjhj27Kwbxr33vdZgU8g";
 				INFOPLIST_KEY_NFCReaderUsageDescription = "PetPals needs NFC access to program your pet's smart collar.";
-				INFOPLIST_KEY_NSBluetoothAlwaysUsageDescription = "PetPals requires Bluetooth access to connect to your pet's smart collar and track live biometric data.";
-				INFOPLIST_KEY_NSLocationAlwaysAndWhenInUseUsageDescription = "We need your location to show nearby veterinarians, groomers, and pet shops.";
-				INFOPLIST_KEY_NSLocationWhenInUseUsageDescription = "We need your location to show nearby veterinarians, groomers, and pet shops.";
+				INFOPLIST_KEY_NSBluetoothAlwaysUsageDescription = "Bluetooth is required to detect PetPals smart collars in the background for the crowdsourced tracking network.";
+				INFOPLIST_KEY_NSBluetoothPeripheralUsageDescription = "Bluetooth is required to detect PetPals smart collars nearby.";
+				INFOPLIST_KEY_NSLocationAlwaysAndWhenInUseUsageDescription = "Background tracking is required to fuel the community pet-finding network and securely locate lost pets.";
+				INFOPLIST_KEY_NSLocationWhenInUseUsageDescription = "Location tracking is required to fuel the community pet-finding network and securely locate lost pets.";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
@@ -458,6 +481,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_ENTITLEMENTS = PetPals/PetPals.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = 6F3VN8R2K5;
@@ -465,9 +489,10 @@
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = Info.plist;
 				INFOPLIST_KEY_NFCReaderUsageDescription = "PetPals needs NFC access to program your pet's smart collar.";
-				INFOPLIST_KEY_NSBluetoothAlwaysUsageDescription = "PetPals requires Bluetooth access to connect to your pet's smart collar and track live biometric data.";
-				INFOPLIST_KEY_NSLocationAlwaysAndWhenInUseUsageDescription = "We need your location to show nearby veterinarians, groomers, and pet shops.";
-				INFOPLIST_KEY_NSLocationWhenInUseUsageDescription = "We need your location to show nearby veterinarians, groomers, and pet shops.";
+				INFOPLIST_KEY_NSBluetoothAlwaysUsageDescription = "Bluetooth is required to detect PetPals smart collars in the background for the crowdsourced tracking network.";
+				INFOPLIST_KEY_NSBluetoothPeripheralUsageDescription = "Bluetooth is required to detect PetPals smart collars nearby.";
+				INFOPLIST_KEY_NSLocationAlwaysAndWhenInUseUsageDescription = "Background tracking is required to fuel the community pet-finding network and securely locate lost pets.";
+				INFOPLIST_KEY_NSLocationWhenInUseUsageDescription = "Location tracking is required to fuel the community pet-finding network and securely locate lost pets.";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;

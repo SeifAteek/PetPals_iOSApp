@@ -76,18 +76,22 @@ struct CharityDetailView: View {
                                 .foregroundColor(Theme.textSecondary)
                         }
                     }
-                    
+
                     PrimaryButton(title: "Donate Now") {
                         coordinator.push(.donation(campaign: campaign))
                     }
-                    .padding(.bottom, 40)
+
+                    if let shelterId = campaign.shelterId {
+                        EntityReviewsSection(entityType: .shelter, entityId: shelterId)
+                    }
                 }
+                .padding(.bottom, 40)
             } else {
                 Text("Campaign not found").padding()
             }
         }
         .padding(24)
-        .background(Theme.background.ignoresSafeArea())
+        .clawsyScreenBackground()
         .navigationTitle("Campaign Details")
         .navigationBarTitleDisplayMode(.inline)
         .task { await loadData() }

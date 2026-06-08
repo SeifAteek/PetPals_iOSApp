@@ -20,7 +20,7 @@ final class AdoptionViewModel: ObservableObject {
     @Published var formAddress = ""
     @Published var formCity = ""
     @Published var formZip = ""
-    @Published var formHousingType = ""
+    @Published var formHousingType = "House"
     @Published var formHasOtherPets = false
     @Published var preferredDate: Date = Date().addingTimeInterval(86400)
     @Published var preferredTime = "Morning"
@@ -64,7 +64,63 @@ final class AdoptionViewModel: ObservableObject {
         filteredPets = result
     }
     
-    func submitAdoptionApplication(for petId: UUID) async throws {
+    /// Returns a user-facing message when the adoption form is incomplete or invalid.
+    func validateForm() -> String? {
+        let first = formFirstName.trimmingCharacters(in: .whitespacesAndNewlines)
+        let last = formLastName.trimmingCharacters(in: .whitespacesAndNewlines)
+        let email = formEmail.trimmingCharacters(in: .whitespacesAndNewlines)
+        let phone = formPhone.trimmingCharacters(in: .whitespacesAndNewlines)
+        let address = formAddress.trimmingCharacters(in: .whitespacesAndNewlines)
+        let city = formCity.trimmingCharacters(in: .whitespacesAndNewlines)
+        let zip = formZip.trimmingCharacters(in: .whitespacesAndNewlines)
+
+        if first.isEmpty { return "First name is required." }
+        if last.isEmpty { return "Last name is required." }
+        if email.isEmpty { return "Email is required." }
+        if !email.contains("@") || !email.contains(".") { return "Please enter a valid email address." }
+        if phone.isEmpty { return "Phone number is required." }
+        if address.isEmpty { return "Home address is required." }
+        if city.isEmpty { return "City is required." }
+        if zip.isEmpty { return "ZIP / postal code is required." }
+        if formHousingType.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty {
+            return "Please select a housing type."
+        }
+        return nil
+    }
+
+    func makeFormDraft(petId: UUID) -> AdoptionFormDraft {
+        AdoptionFormDraft(
+            petId: petId,
+            firstName: formFirstName.trimmingCharacters(in: .whitespacesAndNewlines),
+            lastName: formLastName.trimmingCharacters(in: .whitespacesAndNewlines),
+            email: formEmail.trimmingCharacters(in: .whitespacesAndNewlines),
+            phone: formPhone.trimmingCharacters(in: .whitespacesAndNewlines),
+            address: formAddress.trimmingCharacters(in: .whitespacesAndNewlines),
+            city: formCity.trimmingCharacters(in: .whitespacesAndNewlines),
+            zip: formZip.trimmingCharacters(in: .whitespacesAndNewlines),
+            housingType: formHousingType,
+            hasOtherPets: formHasOtherPets,
+            preferredDate: preferredDate,
+            preferredTime: preferredTime
+        )
+    }
+
+    func applyFormDraft(_ draft: AdoptionFormDraft) {
+        formFirstName = draft.firstName
+        formLastName = draft.lastName
+        formEmail = draft.email
+        formPhone = draft.phone
+        formAddress = draft.address
+        formCity = draft.city
+        formZip = draft.zip
+        formHousingType = draft.housingType
+        formHasOtherPets = draft.hasOtherPets
+        preferredDate = draft.preferredDate
+        preferredTime = draft.preferredTime
+    }
+
+    func submitAdoptionApplication(for petId: UUID, draft: AdoptionFormDraft) async throws {
+        applyFormDraft(draft)
         isLoading = true
         defer { isLoading = false }
         
@@ -117,5 +173,13 @@ final class AdoptionViewModel: ObservableObject {
             .from("applications")
             .insert(application)
             .execute()
+    }
+
+    func submitAdoptionApplication(for petId: UUID) async throws {
+        guard let error = validateForm() else {
+            try await submitAdoptionApplication(for: petId, draft: makeFormDraft(petId: petId))
+            return
+        }
+        throw NSError(domain: "Adoption", code: 400, userInfo: [NSLocalizedDescriptionKey: error])
     }
 }

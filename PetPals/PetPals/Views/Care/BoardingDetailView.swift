@@ -90,7 +90,7 @@ struct BoardingDetailView: View {
                 .offset(y: -30)
             }
         }
-        .background(Theme.background.ignoresSafeArea())
+        .clawsyScreenBackground()
         .ignoresSafeArea(edges: .top)
         .navigationBarTitleDisplayMode(.inline)
     }

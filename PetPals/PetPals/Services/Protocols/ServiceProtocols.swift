@@ -15,3 +15,14 @@ protocol CharityServiceProtocol {
     func createDonation(_ donation: Donation) async throws
     func fetchUserDonations(userId: UUID) async throws -> [Donation]
 }
+
+protocol ReviewServiceProtocol {
+    func fetchReviews(entityType: ReviewEntityType, entityId: UUID) async throws -> [EntityReview]
+    func submitReview(
+        userId: UUID,
+        entityType: ReviewEntityType,
+        entityId: UUID,
+        rating: Int,
+        comment: String
+    ) async throws
+}

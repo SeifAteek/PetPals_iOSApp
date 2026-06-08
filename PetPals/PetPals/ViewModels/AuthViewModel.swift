@@ -90,17 +90,8 @@ final class AuthViewModel: ObservableObject {
     
     private func handlePostAuthRouting(profile: Profile, coordinator: AppCoordinator) {
         coordinator.lastFetchedProfile = profile
-        
-        // Check if any fields are NULL (nil in Swift)
-        let isMissingData = profile.email == nil || 
-                           profile.phoneNumber == nil || 
-                           profile.userType == nil || 
-                           profile.userName.isEmpty
-        
-        if isMissingData {
-            coordinator.switchRoot(to: .profileSetup)
-        } else {
-            coordinator.switchRoot(to: .mainTabs)
+        Task {
+            await coordinator.routeSignedInUser()
         }
     }
 }

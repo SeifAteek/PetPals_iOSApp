@@ -12,32 +12,30 @@ struct PetPalsApp: App {
     @StateObject private var coordinator = AppCoordinator()
     @StateObject private var dependencies = DependencyContainer()
     @AppStorage("app_preferred_language") private var appPreferredLanguage = "system"
-    
-    private var appLocale: Locale {
-        switch appPreferredLanguage {
-        case "en": return Locale(identifier: "en_US_POSIX")
-        case "ar": return Locale(identifier: "ar_EG")
-        default: return Locale.current
-        }
+
+    init() {
+        ImageCacheManager.configure()
+        ScrollKeyboardConfig.applyGlobalInteractiveDismiss()
     }
     
+    private var appLocale: Locale {
+        AppLanguage.locale
+    }
+
+    private var layoutDirection: LayoutDirection {
+        AppLanguage.layoutDirection
+    }
+
     var body: some Scene {
         WindowGroup {
-            Group {
-                switch appPreferredLanguage {
-                case "ar":
-                    coordinatorRoot.environment(\.layoutDirection, .rightToLeft)
-                case "en":
-                    coordinatorRoot.environment(\.layoutDirection, .leftToRight)
-                default:
-                    coordinatorRoot
-                }
-            }
+            coordinatorRoot
+                .environment(\.layoutDirection, layoutDirection)
+                .id(appPreferredLanguage)
         }
     }
     
     private var coordinatorRoot: some View {
-        CoordinatorView()
+        ContentView()
             .environmentObject(coordinator)
             .environmentObject(dependencies)
             .environment(\.locale, appLocale)
@@ -47,18 +45,35 @@ struct PetPalsApp: App {
     }
     
     private func handleIncomingURL(_ url: URL) {
-        guard url.scheme == "petpals" else { return }
+        guard let petId = Self.petId(from: url) else { return }
         
-        if url.host == "pet" {
-            let components = URLComponents(url: url, resolvingAgainstBaseURL: false)
-            if let idString = components?.queryItems?.first(where: { $0.name == "id" })?.value,
-               let petId = UUID(uuidString: idString) {
-                
-                // Allow a brief moment for the app state to settle before pushing
-                DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
-                    coordinator.push(.petProfile(petId: petId))
-                }
-            }
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
+            coordinator.push(.petProfile(petId: petId))
         }
+    }
+    
+    /// Supports `petpals://pet?id=` and Universal Links `https://petpals-kappa.vercel.app/pet?id=`
+    private static func petId(from url: URL) -> UUID? {
+        let components = URLComponents(url: url, resolvingAgainstBaseURL: false)
+        
+        if url.scheme == "petpals", url.host == "pet" {
+            return uuid(from: components)
+        }
+        
+        if url.scheme == "https",
+           url.host == "petpals-kappa.vercel.app",
+           url.path == "/pet" || url.path.hasPrefix("/pet/") {
+            if let pathId = url.path.split(separator: "/").last.flatMap({ UUID(uuidString: String($0)) }) {
+                return pathId
+            }
+            return uuid(from: components)
+        }
+        
+        return nil
+    }
+    
+    private static func uuid(from components: URLComponents?) -> UUID? {
+        guard let idString = components?.queryItems?.first(where: { $0.name == "id" })?.value else { return nil }
+        return UUID(uuidString: idString)
     }
 }

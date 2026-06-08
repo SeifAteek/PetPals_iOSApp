@@ -113,7 +113,11 @@ final class SettingsViewModel: ObservableObject {
         Task {
             do {
                 try await authService.logout()
-                coordinator.popToRoot()
+                currentUser = nil
+                editUserName = ""
+                editEmail = ""
+                editPhone = ""
+                coordinator.signOut()
             } catch {
                 self.errorMessage = error.localizedDescription
             }

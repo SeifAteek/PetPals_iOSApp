@@ -92,7 +92,8 @@ struct DonationView: View {
                 }
             }
         }
-        .background(Theme.background.ignoresSafeArea())
+        .dismissKeyboardOnSwipe()
+        .clawsyScreenBackground()
         .navigationTitle("Donate")
         .navigationBarTitleDisplayMode(.inline)
     }

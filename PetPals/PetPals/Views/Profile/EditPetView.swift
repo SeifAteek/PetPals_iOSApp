@@ -22,22 +22,21 @@ struct EditPetView: View {
                 PhotosPicker(selection: $viewModel.selectedItem, matching: .images) {
                     VStack(spacing: 12) {
                         if let data = viewModel.selectedImageData, let uiImage = UIImage(data: data) {
-                            Image(uiImage: uiImage)
-                                .resizable()
-                                .scaledToFill()
+                            Color.clear
                                 .frame(width: 100, height: 100)
+                                .overlay {
+                                    Image(uiImage: uiImage)
+                                        .resizable()
+                                        .scaledToFill()
+                                        .frame(minWidth: 0, maxWidth: .infinity, minHeight: 0, maxHeight: .infinity)
+                                }
                                 .clipShape(Circle())
                                 .overlay(Circle().stroke(Theme.primary, lineWidth: 2))
-                        } else if let avatarUrl = pet.avatarUrl, let url = ImageURL.from(avatarUrl) {
-                            AsyncImage(url: url) { image in
-                                image.resizable().scaledToFill()
-                            } placeholder: {
-                                Color.gray.opacity(0.1)
-                            }
-                            .id(avatarUrl ?? "")
-                            .frame(width: 100, height: 100)
-                            .clipShape(Circle())
-                            .overlay(Circle().stroke(Theme.primary, lineWidth: 2))
+                        } else if pet.avatarUrl != nil {
+                            StandardPetPhoto(avatarUrl: pet.avatarUrl, style: .smallCircle)
+                                .frame(width: 100, height: 100)
+                                .id(pet.avatarUrl ?? "")
+                                .overlay(Circle().stroke(Theme.primary, lineWidth: 2))
                         } else {
                             ZStack {
                                 Circle()
@@ -86,7 +85,9 @@ struct EditPetView: View {
             }
             .padding(24)
         }
-        .background(Theme.background.ignoresSafeArea())
+        .dismissKeyboardOnSwipe()
+        .keyboardDoneToolbar()
+        .clawsyScreenBackground()
         .onAppear {
             setupFields()
         }

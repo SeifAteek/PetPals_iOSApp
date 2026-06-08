@@ -15,6 +15,8 @@ struct CoordinatorView: View {
                     AuthMainView()
                 case .profileSetup:
                     ProfileSetupView(initialProfile: coordinator.lastFetchedProfile)
+                case .personalitySetup:
+                    PersonalitySetupView()
                 case .mainTabs:
                     MainTabView()
                         .navigationBarHidden(true)
@@ -54,6 +56,12 @@ struct CoordinatorView: View {
                     BoardingDetailView(clinicId: clinicId)
                 case .charityDetail(let campaignId):
                     CharityDetailView(campaignId: campaignId)
+                case .myPets:
+                    MyPetsView()
+                case .messages:
+                    MessagesListView()
+                case .charity:
+                    CharityView()
                 case .settings:
                     SettingsView()
                 case .activity:
@@ -82,11 +90,16 @@ struct CoordinatorView: View {
                     AIChatView(initialPrompt: prompt)
                 case .groomingVets:
                     VeterinarianListView(groomingOnly: true)
+                case .communityPostDetail(let postId):
+                    CommunityPostDetailView(postId: postId)
+                case .createCommunityPost(let subredditId):
+                    CreateCommunityPostView(preselectedSubredditId: subredditId)
                 default:
                     EmptyView()
                 }
             }
         }
+        .dismissKeyboardOnSwipe()
         .environmentObject(cartViewModel)
     }
 }

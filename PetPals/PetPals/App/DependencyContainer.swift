@@ -13,6 +13,9 @@ final class DependencyContainer: ObservableObject {
     let charityService: CharityServiceProtocol
     let shopService: ShopServiceProtocol
     let chatService: ChatServiceProtocol
+    let reviewService: ReviewServiceProtocol
+    let communityService: CommunityServiceProtocol
+    let personalityService: PersonalityServiceProtocol
     let hardwareNFCService: NFCServiceProtocol
     let locationTrackingService: LocationTrackingServiceProtocol
     
@@ -24,6 +27,9 @@ final class DependencyContainer: ObservableObject {
         charityService: CharityServiceProtocol = SupabaseCharityService(),
         shopService: ShopServiceProtocol = SupabaseShopService(),
         chatService: ChatServiceProtocol = SupabaseChatService(),
+        reviewService: ReviewServiceProtocol = SupabaseReviewService(),
+        communityService: CommunityServiceProtocol = SupabaseCommunityService(),
+        personalityService: PersonalityServiceProtocol = SupabasePersonalityService(),
         hardwareNFCService: NFCServiceProtocol = RealNFCService(),
         locationTrackingService: LocationTrackingServiceProtocol = CoreLocationTrackingService()
     ) {
@@ -33,6 +39,9 @@ final class DependencyContainer: ObservableObject {
         self.charityService = charityService
         self.shopService = shopService
         self.chatService = chatService
+        self.reviewService = reviewService
+        self.communityService = communityService
+        self.personalityService = personalityService
         self.hardwareNFCService = hardwareNFCService
         self.locationTrackingService = locationTrackingService
     }

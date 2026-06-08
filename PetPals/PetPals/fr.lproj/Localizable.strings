@@ -1,0 +1,258 @@
+/* Tabs */
+"tab_home" = "Accueil";
+"tab_discover" = "Découvrir";
+"tab_society" = "Société";
+"tab_community" = "Société";
+"tab_care" = "Soins";
+"tab_you" = "Vous";
+
+/* You hub */
+"your_space" = "Votre espace";
+"pet_parent_default" = "Parent d’animal";
+"your_subtitle_short" = "Animaux, messages et impact";
+"my_pets" = "Mes animaux";
+"messages" = "Messages";
+"clinics_shelters" = "Cliniques et refuges";
+"give_back" = "Donner";
+"campaigns_donations" = "Campagnes et dons";
+"profile_settings_subtitle" = "Profil, langue et préférences";
+"member_since" = "Membre depuis 2026";
+"manage_pet_family" = "Gérez votre famille d’animaux";
+"add_first_companion" = "Ajoutez votre premier compagnon";
+"companions_count_fmt" = "%d compagnons";
+"companion_count_fmt" = "%d compagnon";
+
+/* Settings */
+"edit_profile" = "Modifier le profil";
+"display_name" = "Nom affiché";
+"email" = "E-mail";
+"phone" = "Téléphone";
+"save_changes" = "Enregistrer";
+"account" = "Compte";
+"my_activity" = "Mon activité";
+"donation_history" = "Historique des dons";
+"preferences" = "Préférences";
+"dark_mode" = "Mode sombre";
+"log_out" = "Se déconnecter";
+"settings" = "Réglages";
+"language" = "Langue";
+"language_system" = "Système";
+"language_english" = "English";
+"language_arabic" = "العربية";
+"language_french" = "Français";
+
+/* Onboarding */
+"onboarding_skip" = "Passer";
+"onboarding_continue" = "Continuer";
+"onboarding_get_started" = "Commencer l’aventure";
+"onboarding_welcome_eyebrow" = "Bienvenue";
+"onboarding_welcome_title" = "Élevez votre rôle de parent d’animal";
+"onboarding_welcome_desc" = "PetPals réunit adoption, soins et communauté dans une expérience premium.";
+"onboarding_discover_eyebrow" = "Découvrir";
+"onboarding_discover_title" = "Trouvez votre prochain compagnon";
+"onboarding_discover_desc" = "Parcourez des animaux à adopter avec des histoires touchantes de refuges de confiance.";
+"onboarding_care_eyebrow" = "Soins";
+"onboarding_care_title" = "Réservez des soins en quelques secondes";
+"onboarding_care_desc" = "Vétérinaires, toilettage, pension — planifiés avec clarté et sérénité.";
+"onboarding_nearby_eyebrow" = "À proximité";
+"onboarding_nearby_title" = "Des cliniques de confiance";
+"onboarding_nearby_desc" = "Trouvez les soins vétérinaires et services autour de vous, magnifiquement cartographiés.";
+"onboarding_wellness_eyebrow" = "Bien-être";
+"onboarding_wellness_title" = "Suivez chaque étape";
+"onboarding_wellness_desc" = "Dossiers de santé, insights du collier intelligent — toujours à portée de main.";
+
+/* Auth */
+"premium_care_tagline" = "Des soins premium pour chaque compagnon";
+"log_in" = "Connexion";
+"sign_up" = "Inscription";
+"create_account" = "Créer un compte";
+"or_continue_with" = "ou continuer avec";
+"first_name" = "Prénom";
+"last_name" = "Nom";
+"password" = "Mot de passe";
+"confirm_password" = "Confirmer le mot de passe";
+
+/* Home */
+"good_morning" = "Bonjour";
+"good_afternoon" = "Bon après-midi";
+"good_evening" = "Bonsoir";
+"hello" = "Bonjour";
+"pet_lover" = "Ami des animaux";
+"home_hero_title" = "Des soins qui ressemblent\nà la famille";
+"home_hero_desc" = "Adoptez, réservez un vétérinaire, achetez premium — une expérience luxueuse et douce.";
+"find_a_pet" = "Trouver un animal";
+"pet_care" = "Soins";
+"search_placeholder_home" = "Rechercher animaux, cliniques, boutiques…";
+"recommended_adoption" = "Adoption recommandée";
+"match_score_fmt" = "%d%% compatibilité";
+"pet_age_years_fmt" = "%d ans";
+"no_recommended_listings" = "Aucun animal recommandé";
+"no_recommended_listings_desc" = "Complétez le test de personnalité pour voir vos matchs.";
+"profile_setup_eyebrow" = "Presque fini";
+"profile_setup_title" = "Complétez votre profil";
+"profile_setup_subtitle" = "Indiquez comment vous joindre — chaque nouveau compte est enregistré comme adoptant.";
+"profile_setup_continue" = "Continuer";
+"profile_setup_required_fields" = "Veuillez remplir le nom, l'e-mail et le téléphone.";
+"profile_name_placeholder" = "Nom complet";
+"profile_email_placeholder" = "Adresse e-mail";
+"profile_phone_placeholder" = "Numéro de téléphone";
+"session_expired" = "Session expirée. Veuillez vous reconnecter.";
+"personality_setup_eyebrow" = "Dernière étape";
+"personality_setup_title" = "Test de personnalité";
+"personality_setup_subtitle" = "Répondez à quelques questions pour des recommandations adaptées.";
+"personality_test_title" = "Test de personnalité";
+"personality_finish" = "Terminer";
+"personality_question_progress_fmt" = "Question %d sur %d";
+"cancel" = "Annuler";
+"back" = "Retour";
+"see_all" = "Tout voir";
+"services" = "Services";
+"nearby_vets" = "Vétérinaires proches";
+"view_all" = "Tout afficher";
+"veterinary" = "Vétérinaire";
+"grooming" = "Toilettage";
+"pet_shop" = "Animalerie";
+"boarding" = "Pension";
+"ready_for_love" = "Prêt pour l’amour";
+"years_short" = "ans";
+
+/* Discover */
+"discover_eyebrow" = "Découvrir";
+"adopt_with_heart" = "Adoptez avec le cœur";
+"discover_subtitle" = "Chaque animal mérite un foyer aimant. Commencez votre histoire ici.";
+"search_pets_placeholder" = "Rechercher par nom ou race…";
+"no_pets_found" = "Aucun animal trouvé";
+"no_pets_found_desc" = "Essayez une autre recherche ou catégorie.";
+"finding_companions" = "Recherche de compagnons…";
+
+/* Care */
+"wellness" = "Bien-être";
+"pet_care_title" = "Soins";
+"care_subtitle" = "Vétérinaires, toilettage, pension — tout ce dont ils ont besoin.";
+"daily_pet_tips" = "Conseils du jour";
+"top_veterinarians" = "Meilleurs vétérinaires";
+
+/* Charity */
+"impact" = "Impact";
+"give_back_title" = "Donner";
+"give_back_subtitle" = "Soutenez les refuges et campagnes qui font la différence.";
+"your_impact" = "Votre impact";
+"donated_across_fmt" = "Sur %d campagnes";
+"donation_history_title" = "Historique des dons";
+"no_donations_yet" = "Vos dons apparaîtront ici.";
+"donate_now" = "Faire un don";
+"no_active_campaigns" = "Aucune campagne active";
+"no_active_campaigns_desc" = "Les nouvelles campagnes des refuges partenaires apparaîtront ici.";
+
+/* Messages */
+"inbox_quiet" = "Boîte de réception vide";
+"inbox_quiet_desc" = "Lorsque vous contactez une clinique ou un refuge, les conversations apparaissent ici.";
+
+/* My pets */
+"add" = "Ajouter";
+"no_pets_yet" = "Aucun animal";
+"no_pets_yet_desc" = "Ajoutez vos compagnons pour suivre soins et santé au même endroit.";
+"add_your_pet" = "Ajouter votre animal";
+
+/* Reviews */
+"reviews_ratings" = "Avis et notes";
+"loading_reviews" = "Chargement des avis…";
+"your_rating" = "Votre note";
+"review_placeholder" = "Partagez votre expérience (facultatif)";
+"submit_review" = "Envoyer l’avis";
+"reviews_count_fmt" = "(%d avis)";
+"review_count_fmt" = "(%d avis)";
+"no_reviews_yet" = "Pas encore d’avis — soyez le premier !";
+"reviewer_default" = "Parent d’animal";
+
+/* Society */
+"society_eyebrow" = "Société";
+"community_eyebrow" = "Société";
+"community_title" = "Discussions";
+"community_subtitle" = "Partagez des histoires, posez des questions et connectez-vous.";
+"community_no_posts" = "Aucune publication";
+"community_no_posts_desc" = "Soyez le premier à lancer une conversation ici.";
+"community_discussion" = "Discussion";
+"community_new_post" = "Nouvelle publication";
+"community_new_post_subtitle" = "Choisissez un sujet et partagez avec la communauté.";
+"community_post_title" = "Titre";
+"community_post_body" = "Qu'avez-vous à dire ?";
+"community_publish" = "Publier";
+"community_comments_title" = "Commentaires";
+"community_no_comments" = "Pas encore de commentaires — lancez le fil.";
+"community_comment_placeholder" = "Ajouter un commentaire…";
+"community_sign_in_vote" = "Connectez-vous pour voter.";
+"community_sign_in_comment" = "Connectez-vous pour commenter.";
+"community_sign_in_post" = "Connectez-vous pour publier.";
+"community_post_fields_required" = "Ajoutez du texte ou une photo.";
+"community_post_title_required" = "Ajoutez un titre.";
+"community_pick_discussion" = "Choisissez une discussion.";
+"community_add_photo" = "Photo";
+"community_attach_photo" = "Joindre une photo";
+"community_change_photo" = "Changer la photo";
+"community_comments_count_fmt" = "%d commentaires";
+
+/* Categories */
+"all" = "Tous";
+"dogs" = "Chiens";
+"cats" = "Chats";
+"birds" = "Oiseaux";
+"rabbits" = "Lapins";
+
+/* Common */
+"done" = "Terminé";
+"close" = "Fermer";
+"loading" = "Chargement…";
+
+/* Shop / orders */
+"my_orders" = "Mes commandes";
+"no_orders_yet" = "Aucune commande";
+"past_orders_appear_here" = "Vos commandes passées apparaîtront ici.";
+"loading_orders" = "Chargement des commandes…";
+"shopping_cart" = "Panier";
+"cart_empty" = "Votre panier est vide";
+"total" = "Total";
+"checkout" = "Paiement";
+"cart_mixed_shops_error" = "Votre panier ne peut contenir que des produits d’une seule boutique à la fois.";
+"cart_missing_shop_error" = "Certains produits n’ont pas de boutique. Retirez-les et réessayez.";
+"checkout_nav_title" = "Paiement";
+"select_payment_method" = "Choisir le mode de paiement";
+"booking_summary" = "Récapitulatif";
+"pay_prefix" = "Payer";
+"payment_successful" = "Paiement réussi";
+"payment_success_message" = "Votre paiement a été traité avec succès. Merci d’utiliser PetPals !";
+"card_holder" = "TITULAIRE";
+"expires" = "EXPIRE";
+"receipt_generated" = "Reçu généré";
+"bill_receipt" = "Facture / Reçu";
+"saved_to_database" = "Enregistré en base";
+"official_receipt" = "Reçu officiel";
+"sales_bill" = "Facture";
+"receipt_no" = "N° de reçu";
+"channel" = "Canal";
+"billed_to" = "Facturé à";
+"payment" = "Paiement";
+"item" = "Article";
+"qty" = "Qté";
+"unit" = "Unité";
+"amount" = "Montant";
+"subtotal" = "Sous-total";
+"discount" = "Remise";
+"total_paid" = "Total payé";
+"generated_petpals" = "Généré · PetPals";
+"share_receipt" = "Partager";
+"view_receipt" = "Voir le reçu";
+"order_details" = "Détails de la commande";
+"no_receipt_yet" = "Aucun reçu disponible. Il apparaît après livraison et émission par la boutique.";
+"channel_online" = "En ligne";
+"channel_in_store" = "En magasin";
+"book_appointment" = "Prendre rendez-vous";
+"book_now" = "Réserver";
+"services_pricing" = "Services et tarifs";
+"per_day" = "par jour";
+"starting_from_per_day" = "À partir de 25 EGP/jour";
+"boarding_sample_price" = "25,00 EGP";
+"checkout_missing_context" = "Détails de réservation manquants. Revenez en arrière et ouvrez le paiement depuis une clinique ou pension.";
+"user_not_authenticated" = "Vous devez être connecté.";
+"boarding_booking_summary" = "Acompte pension (1 jour)";
+"thank_you_shopping_fmt" = "Merci d’avoir acheté chez %@.";

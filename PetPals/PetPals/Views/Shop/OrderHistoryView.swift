@@ -38,10 +38,10 @@ struct OrderHistoryView: View {
                     }
                 }
                 .listStyle(.plain)
-                .background(Theme.background)
+                .clawsyScreenBackground()
             }
         }
-        .background(Theme.background.ignoresSafeArea())
+        .clawsyScreenBackground()
         .navigationTitle(L10n.myOrders)
         .navigationBarTitleDisplayMode(.inline)
         .onAppear { viewModel.fetchOrders() }

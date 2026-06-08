@@ -96,10 +96,13 @@ struct ShopDetailView: View {
                     }
                     .padding(.horizontal)
                 }
+
+                EntityReviewsSection(entityType: .shop, entityId: shop.shopId)
+                    .padding(.horizontal)
             }
             .padding(.vertical)
         }
-        .background(Theme.background.ignoresSafeArea())
+        .clawsyScreenBackground()
         .navigationTitle(shop.name)
         .navigationBarTitleDisplayMode(.inline)
         .toolbar {
@@ -139,7 +142,7 @@ struct ShopProductCard: View {
                         .fill(Theme.primary.opacity(0.08))
                         .frame(height: 110)
                     if let imageUrl = product.imageUrl, let url = URL(string: imageUrl) {
-                        AsyncImage(url: url) { phase in
+                        CachedAsyncImage(url: url) { phase in
                             if let img = phase.image { img.resizable().scaledToFit().padding(8) }
                             else { Image(systemName: "bag.fill").font(.largeTitle).foregroundColor(Theme.primary.opacity(0.3)) }
                         }

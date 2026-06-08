@@ -4,67 +4,21 @@ struct AuthMainView: View {
     @EnvironmentObject var coordinator: AppCoordinator
     @StateObject private var viewModel = AuthViewModel()
     @State private var isLoginMode = true
-    
+
     var body: some View {
-        ScrollView {
-            VStack(spacing: 24) {
-                Spacer(minLength: 40)
-                
-                // MARK: - Logo & Title
-                VStack(spacing: 12) {
-                    Image(systemName: "pawprint.fill")
-                        .resizable()
-                        .scaledToFit()
-                        .frame(width: 60, height: 60)
-                        .foregroundColor(Theme.primary)
-                    
-                    Text("PetPals")
-                        .font(Theme.Fonts.primaryFont(size: 32, weight: .bold))
-                        .foregroundColor(Theme.textPrimary)
-                }
-                
-                // MARK: - Mode Switcher
-                HStack(spacing: 0) {
-                    modeButton(title: "Log In", isSelected: isLoginMode) {
-                        withAnimation { isLoginMode = true }
-                    }
-                    modeButton(title: "Sign Up", isSelected: !isLoginMode) {
-                        withAnimation { isLoginMode = false }
-                    }
-                }
-                .background(Color.gray.opacity(0.1))
-                .cornerRadius(12)
-                .padding(.horizontal, 24)
-                
-                // MARK: - Error Message
+        ScrollView(showsIndicators: false) {
+            VStack(spacing: Spacing.lg) {
+                brandHeader
+                modeSwitcher
                 if let errorMessage = viewModel.errorMessage {
                     Text(errorMessage)
-                        .foregroundColor(.red)
-                        .font(Theme.Fonts.primaryFont(size: 14))
-                        .padding(.horizontal, 24)
+                        .font(Theme.Fonts.body(Typography.caption))
+                        .foregroundStyle(.red.opacity(0.9))
+                        .padding(.horizontal, ScreenLayout.horizontalPadding)
                 }
-                
-                // MARK: - Form Fields
-                VStack(spacing: 16) {
-                    if !isLoginMode {
-                        HStack(spacing: 12) {
-                            CustomTextField(placeholder: "First Name", text: $viewModel.firstName)
-                            CustomTextField(placeholder: "Last Name", text: $viewModel.lastName)
-                        }
-                    }
-                    
-                    CustomTextField(placeholder: "Email Address", text: $viewModel.email, keyboardType: .emailAddress)
-                    CustomTextField(placeholder: "Password", text: $viewModel.password, isSecure: true)
-                    
-                    if !isLoginMode {
-                        CustomTextField(placeholder: "Confirm Password", text: $viewModel.confirmPassword, isSecure: true)
-                    }
-                }
-                .padding(.horizontal, 24)
-                
-                // MARK: - Action Button
+                formFields
                 PrimaryButton(
-                    title: isLoginMode ? "Log In" : "Create Account",
+                    title: isLoginMode ? L10n.logIn : L10n.createAccount,
                     isLoading: viewModel.isLoading
                 ) {
                     if isLoginMode {
@@ -73,39 +27,92 @@ struct AuthMainView: View {
                         viewModel.register(coordinator: coordinator)
                     }
                 }
-                .padding(.horizontal, 24)
-                
-                // MARK: - Social Divider
-                HStack {
-                    Rectangle().frame(height: 1).foregroundColor(Color.gray.opacity(0.2))
-                    Text("OR").font(.caption).foregroundColor(.gray)
-                    Rectangle().frame(height: 1).foregroundColor(Color.gray.opacity(0.2))
-                }
-                .padding(.horizontal, 24)
-                
-                // MARK: - Social Login
+                .padding(.horizontal, ScreenLayout.horizontalPadding)
+
+                divider
                 SocialLoginButton(platform: .google) {
                     viewModel.signInWithGoogle(coordinator: coordinator)
                 }
-                .padding(.horizontal, 24)
-                
-                Spacer()
+                .padding(.horizontal, ScreenLayout.horizontalPadding)
             }
+            .padding(.top, Spacing.xxl)
+            .padding(.bottom, Spacing.xl)
         }
-        .background(Theme.background.ignoresSafeArea())
+        .dismissKeyboardOnSwipe()
+        .keyboardDoneToolbar()
+        .petPalsScreenBackground()
         .navigationBarHidden(true)
     }
-    
+
+    private var brandHeader: some View {
+        VStack(spacing: Spacing.sm) {
+            PetPalsLogoView(height: 72)
+            Text(L10n.premiumCareTagline)
+                .font(Theme.Fonts.body(Typography.callout))
+                .foregroundStyle(Theme.textSecondary)
+        }
+    }
+
+    private var modeSwitcher: some View {
+        HStack(spacing: 4) {
+            modeButton(title: L10n.logIn, isSelected: isLoginMode) {
+                withAnimation(Motion.spring) { isLoginMode = true }
+            }
+            modeButton(title: L10n.signUp, isSelected: !isLoginMode) {
+                withAnimation(Motion.spring) { isLoginMode = false }
+            }
+        }
+        .padding(4)
+        .glassCard(cornerRadius: Radius.md, elevation: .resting)
+        .padding(.horizontal, ScreenLayout.horizontalPadding)
+    }
+
+    private var formFields: some View {
+        VStack(spacing: Spacing.sm) {
+            if !isLoginMode {
+                HStack(spacing: Spacing.sm) {
+                    CustomTextField(placeholder: L10n.firstName, text: $viewModel.firstName, iconName: "person.fill")
+                    CustomTextField(placeholder: L10n.lastName, text: $viewModel.lastName, iconName: "person.fill")
+                }
+            }
+            CustomTextField(placeholder: L10n.email, text: $viewModel.email, iconName: "envelope.fill", keyboardType: .emailAddress)
+            CustomTextField(placeholder: L10n.password, text: $viewModel.password, iconName: "lock.fill", isSecure: true)
+            if !isLoginMode {
+                CustomTextField(placeholder: L10n.confirmPassword, text: $viewModel.confirmPassword, iconName: "lock.fill", isSecure: true)
+            }
+        }
+        .padding(.horizontal, ScreenLayout.horizontalPadding)
+    }
+
+    private var divider: some View {
+        HStack {
+            Rectangle().fill(Theme.textSecondary.opacity(0.2)).frame(height: 1)
+            Text(L10n.orContinueWith)
+                .font(Theme.Fonts.label(Typography.caption))
+                .foregroundStyle(Theme.textSecondary)
+            Rectangle().fill(Theme.textSecondary.opacity(0.2)).frame(height: 1)
+        }
+        .padding(.horizontal, ScreenLayout.horizontalPadding)
+    }
+
     private func modeButton(title: String, isSelected: Bool, action: @escaping () -> Void) -> some View {
-        Button(action: action) {
+        Button(action: {
+            Haptic.selection()
+            action()
+        }) {
             Text(title)
-                .font(Theme.Fonts.primaryFont(size: 16, weight: .bold))
+                .font(Theme.Fonts.headline(Typography.callout, weight: .bold))
                 .frame(maxWidth: .infinity)
                 .padding(.vertical, 12)
-                .background(isSelected ? Theme.primary : Color.clear)
-                .foregroundColor(isSelected ? .black : .gray)
-                .cornerRadius(10)
+                .foregroundStyle(isSelected ? Theme.textOnBrand : Theme.textSecondary)
+                .background {
+                    if isSelected {
+                        RoundedRectangle(cornerRadius: Radius.sm, style: .continuous)
+                            .fill(Theme.brandGradient)
+                    }
+                }
         }
+        .buttonStyle(.plain)
     }
 }
 

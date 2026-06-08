@@ -47,7 +47,8 @@ struct VeterinarianListView: View {
             }
             .padding(.vertical)
         }
-        .background(Theme.background.ignoresSafeArea())
+        .dismissKeyboardOnSwipe()
+        .clawsyScreenBackground()
         .navigationTitle(groomingOnly ? "Grooming" : "Veterinarians")
         .navigationBarTitleDisplayMode(.inline)
         .onAppear { viewModel.loadData(groomingOnly: groomingOnly) }

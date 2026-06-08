@@ -13,10 +13,14 @@ struct AddPetView: View {
                 PhotosPicker(selection: $viewModel.selectedItem, matching: .images) {
                     VStack(spacing: 12) {
                         if let data = viewModel.selectedImageData, let uiImage = UIImage(data: data) {
-                            Image(uiImage: uiImage)
-                                .resizable()
-                                .scaledToFill()
+                            Color.clear
                                 .frame(width: 100, height: 100)
+                                .overlay {
+                                    Image(uiImage: uiImage)
+                                        .resizable()
+                                        .scaledToFill()
+                                        .frame(minWidth: 0, maxWidth: .infinity, minHeight: 0, maxHeight: .infinity)
+                                }
                                 .clipShape(Circle())
                                 .overlay(Circle().stroke(Theme.primary, lineWidth: 2))
                         } else {
@@ -104,7 +108,9 @@ struct AddPetView: View {
             .padding(.horizontal, 24)
             .padding(.top, 16)
         }
-        .background(Theme.background.ignoresSafeArea())
+        .dismissKeyboardOnSwipe()
+        .keyboardDoneToolbar()
+        .clawsyScreenBackground()
         .navigationTitle("Add a Pet")
         .navigationBarTitleDisplayMode(.inline)
     }

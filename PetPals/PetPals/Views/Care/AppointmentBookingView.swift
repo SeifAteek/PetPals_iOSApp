@@ -71,7 +71,8 @@ struct AppointmentBookingView: View {
             }
             .padding()
         }
-        .background(Theme.background.ignoresSafeArea())
+        .dismissKeyboardOnSwipe()
+        .clawsyScreenBackground()
         .navigationTitle("Book visit")
         .navigationBarTitleDisplayMode(.inline)
         .task { await loadClinicAndSchedule() }

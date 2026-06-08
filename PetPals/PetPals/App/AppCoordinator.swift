@@ -25,6 +25,7 @@ enum AppRoute: Hashable {
     case onboarding
     case auth
     case profileSetup
+    case personalitySetup
     // Core
     case mainTabs
     // Adoption
@@ -49,7 +50,10 @@ enum AppRoute: Hashable {
     // Charity
     case charityDetail(campaignId: UUID)
     case donation(campaign: Campaign)
-    // Settings & Profile
+    // Settings & Profile (You hub destinations)
+    case myPets
+    case messages
+    case charity
     case settings
     case activity
     case donationHistory
@@ -65,6 +69,9 @@ enum AppRoute: Hashable {
     case aiAssistant
     case aiChat(prompt: String)
     case groomingVets
+    // Community
+    case communityPostDetail(postId: UUID)
+    case createCommunityPost(subredditId: UUID?)
 }
 final class AppCoordinator: ObservableObject {
     @Published var path = NavigationPath()
@@ -72,21 +79,28 @@ final class AppCoordinator: ObservableObject {
     @Published var lastFetchedProfile: Profile?
     /// When non-nil, `AppointmentBookingView` shows this booking context (vet / boarding).
     @Published var checkoutDraft: CheckoutDraft?
+    /// Adoption form data shared across form → scheduler steps.
+    @Published var adoptionFormDraft: AdoptionFormDraft?
     
     init() {
-        let hasCompletedOnboarding = UserDefaults.standard.bool(forKey: "hasCompletedOnboarding")
-        self.currentRoot = hasCompletedOnboarding ? .auth : .onboarding
-        
+        // Always show onboarding on launch; routing happens in `finishOnboardingAfterLaunch()`.
+        self.currentRoot = .onboarding
+    }
+
+    /// Called when the user finishes onboarding — signed-in users go to the app, others to auth.
+    func finishOnboardingAfterLaunch() {
         Task {
             do {
                 let _ = try await SupabaseClientManager.shared.client.auth.session
                 let profile = try await DependencyContainer.shared.authService.getCurrentUser()
                 await MainActor.run {
                     self.lastFetchedProfile = profile
-                    self.currentRoot = .mainTabs
                 }
+                await self.routeSignedInUser()
             } catch {
-                // Not logged in, keep current root
+                await MainActor.run {
+                    self.switchRoot(to: .auth)
+                }
             }
         }
     }
@@ -103,6 +117,10 @@ final class AppCoordinator: ObservableObject {
     func clearCheckoutDraft() {
         checkoutDraft = nil
     }
+
+    func clearAdoptionFormDraft() {
+        adoptionFormDraft = nil
+    }
     
     func pop() {
         if !path.isEmpty {
@@ -117,5 +135,35 @@ final class AppCoordinator: ObservableObject {
     func switchRoot(to route: AppRoute) {
         path.removeLast(path.count)
         currentRoot = route
+    }
+
+    /// Clears session-scoped state and returns to the auth screen.
+    @MainActor
+    func signOut() {
+        lastFetchedProfile = nil
+        checkoutDraft = nil
+        adoptionFormDraft = nil
+        switchRoot(to: .auth)
+    }
+
+    /// Profile → personality test → main tabs.
+    @MainActor
+    func routeSignedInUser(
+        personalityService: PersonalityServiceProtocol = DependencyContainer.shared.personalityService
+    ) async {
+        guard let profile = lastFetchedProfile else {
+            switchRoot(to: .auth)
+            return
+        }
+        if !profile.isProfileComplete {
+            switchRoot(to: .profileSetup)
+            return
+        }
+        let personality = try? await personalityService.fetchProfile(userId: profile.userId)
+        if personality?.isComplete == true {
+            switchRoot(to: .mainTabs)
+        } else {
+            switchRoot(to: .personalitySetup)
+        }
     }
 }

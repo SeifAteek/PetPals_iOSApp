@@ -59,7 +59,7 @@ struct BoardingListView: View {
             }
             .padding(.vertical)
         }
-        .background(Theme.background.ignoresSafeArea())
+        .clawsyScreenBackground()
         .navigationTitle("Pet Boarding")
         .navigationBarTitleDisplayMode(.inline)
         .onAppear { viewModel.loadData() }

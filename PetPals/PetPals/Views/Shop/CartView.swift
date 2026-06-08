@@ -53,7 +53,7 @@ struct CartView: View {
                 .shadow(color: .black.opacity(0.05), radius: 10, x: 0, y: -5)
             }
         }
-        .background(Theme.background.ignoresSafeArea())
+        .petPalsScreenBackground()
         .navigationTitle(L10n.shoppingCart)
         .navigationBarTitleDisplayMode(.inline)
         .onChange(of: cartViewModel.checkoutSuccess) { _, success in

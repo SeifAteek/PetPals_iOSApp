@@ -35,7 +35,8 @@ struct Campaign: Codable, Identifiable, Hashable {
     let endDate: Date?
     let createdAt: Date?
     let description: String?
-    
+    let isDeleted: Bool?
+
     enum CodingKeys: String, CodingKey {
         case campaignId = "campaign_id"
         case shelterId = "shelter_id"
@@ -45,6 +46,7 @@ struct Campaign: Codable, Identifiable, Hashable {
         case endDate = "end_date"
         case createdAt = "created_at"
         case description
+        case isDeleted = "is_deleted"
     }
 }
 
@@ -115,6 +117,22 @@ struct AdopterProfile: Codable, Hashable {
         case housingType = "housing_type"
         case hasOtherPets = "has_other_pets"
     }
+}
+
+/// In-progress adoption application passed from the form step to scheduling.
+struct AdoptionFormDraft: Equatable {
+    let petId: UUID
+    let firstName: String
+    let lastName: String
+    let email: String
+    let phone: String
+    let address: String
+    let city: String
+    let zip: String
+    let housingType: String
+    let hasOtherPets: Bool
+    let preferredDate: Date
+    let preferredTime: String
 }
 
 struct PetApplication: Codable, Hashable, Identifiable {

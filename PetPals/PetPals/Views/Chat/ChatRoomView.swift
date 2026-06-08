@@ -8,64 +8,34 @@ struct ChatRoomView: View {
     @StateObject private var viewModel = ChatViewModel()
     
     var body: some View {
-        VStack(spacing: 0) {
-            ScrollViewReader { proxy in
-                ScrollView {
-                    LazyVStack(spacing: 12) {
-                        if viewModel.isLoading {
-                            ProgressView()
-                                .padding()
-                        }
-                        
-                        ForEach(viewModel.messages) { message in
-                            MessageBubble(message: message)
-                                .id(message.messageId)
-                        }
+        ScrollViewReader { proxy in
+            ScrollView {
+                LazyVStack(spacing: 12) {
+                    if viewModel.isLoading {
+                        ProgressView()
+                            .padding()
                     }
-                    .padding()
-                }
-                .onChange(of: viewModel.messages.count) { _ in
-                    if let lastMessage = viewModel.messages.last {
-                        withAnimation {
-                            proxy.scrollTo(lastMessage.messageId, anchor: .bottom)
-                        }
-                    }
-                }
-            }
-            
-            VStack {
-                if let error = viewModel.errorMessage {
-                    Text(error)
-                        .font(.caption)
-                        .foregroundColor(.red)
-                        .padding(.top, 4)
-                }
-                
-                HStack(spacing: 12) {
-                    TextField("Type a message...", text: $viewModel.inputText)
-                        .padding(12)
-                        .background(Theme.cardBackground)
-                        .cornerRadius(20)
-                        .shadow(color: .black.opacity(0.05), radius: 5, x: 0, y: 2)
                     
-                    Button(action: {
-                        viewModel.sendMessage()
-                    }) {
-                        ZStack {
-                            Circle()
-                                .fill(viewModel.inputText.isEmpty ? Theme.textSecondary.opacity(0.3) : Theme.primary)
-                                .frame(width: 44, height: 44)
-                            Image(systemName: "paperplane.fill")
-                                .foregroundColor(.white)
-                        }
+                    ForEach(viewModel.messages) { message in
+                        MessageBubble(message: message)
+                            .id(message.messageId)
                     }
-                    .disabled(viewModel.inputText.isEmpty)
                 }
                 .padding()
             }
-            .background(Theme.background)
+            .dismissKeyboardOnSwipe()
+            .onChange(of: viewModel.messages.count) { _ in
+                if let lastMessage = viewModel.messages.last {
+                    withAnimation {
+                        proxy.scrollTo(lastMessage.messageId, anchor: .bottom)
+                    }
+                }
+            }
         }
-        .background(Theme.background.ignoresSafeArea())
+        .safeAreaInset(edge: .bottom, spacing: 0) {
+            chatInputBar
+        }
+        .clawsyScreenBackground()
         .navigationTitle(displayName)
         .navigationBarTitleDisplayMode(.inline)
         .onAppear {
@@ -74,6 +44,42 @@ struct ChatRoomView: View {
         .onDisappear {
             viewModel.stopLiveUpdates()
         }
+    }
+
+    private var chatInputBar: some View {
+        VStack(spacing: 0) {
+            if let error = viewModel.errorMessage {
+                Text(error)
+                    .font(.caption)
+                    .foregroundColor(.red)
+                    .padding(.top, 4)
+            }
+            
+            HStack(spacing: 12) {
+                TextField("Type a message...", text: $viewModel.inputText)
+                    .padding(12)
+                    .background(Theme.cardBackground)
+                    .cornerRadius(20)
+                    .shadow(color: .black.opacity(0.05), radius: 5, x: 0, y: 2)
+                
+                Button(action: {
+                    viewModel.sendMessage()
+                    Keyboard.dismiss()
+                }) {
+                    ZStack {
+                        Circle()
+                            .fill(viewModel.inputText.isEmpty ? Theme.textSecondary.opacity(0.3) : Theme.primary)
+                            .frame(width: 44, height: 44)
+                        Image(systemName: "paperplane.fill")
+                            .foregroundColor(.white)
+                    }
+                }
+                .disabled(viewModel.inputText.isEmpty)
+            }
+            .padding(.horizontal, Spacing.md)
+            .padding(.vertical, Spacing.xs)
+        }
+        .background(.ultraThinMaterial)
     }
 }
 

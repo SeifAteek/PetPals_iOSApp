@@ -1,3 +1,210 @@
+/* Tabs */
+"tab_home" = "Home";
+"tab_discover" = "Discover";
+"tab_society" = "Society";
+"tab_community" = "Society";
+"tab_care" = "Care";
+"tab_you" = "You";
+
+/* You hub */
+"your_space" = "Your space";
+"pet_parent_default" = "Pet Parent";
+"your_subtitle_short" = "Pets, messages & impact";
+"my_pets" = "My Pets";
+"messages" = "Messages";
+"clinics_shelters" = "Clinics & shelters";
+"give_back" = "Give Back";
+"campaigns_donations" = "Campaigns & donations";
+"profile_settings_subtitle" = "Profile, language & preferences";
+"member_since" = "Member since 2026";
+"manage_pet_family" = "Manage your pet family";
+"add_first_companion" = "Add your first companion";
+"companions_count_fmt" = "%d companions";
+"companion_count_fmt" = "%d companion";
+
+/* Settings */
+"edit_profile" = "Edit profile";
+"display_name" = "Display name";
+"email" = "Email";
+"phone" = "Phone";
+"save_changes" = "Save changes";
+"account" = "Account";
+"my_activity" = "My Activity";
+"donation_history" = "Donation History";
+"preferences" = "Preferences";
+"dark_mode" = "Dark Mode";
+"log_out" = "Log Out";
+"settings" = "Settings";
+"language" = "Language";
+"language_system" = "System";
+"language_english" = "English";
+"language_arabic" = "العربية";
+"language_french" = "Français";
+
+/* Onboarding */
+"onboarding_skip" = "Skip";
+"onboarding_continue" = "Continue";
+"onboarding_get_started" = "Begin your journey";
+"onboarding_welcome_eyebrow" = "Welcome";
+"onboarding_welcome_title" = "Level up your pet parenting";
+"onboarding_welcome_desc" = "PetPals brings adoption, care, and community into one premium experience.";
+"onboarding_discover_eyebrow" = "Discover";
+"onboarding_discover_title" = "Find your next companion";
+"onboarding_discover_desc" = "Browse adoptable pets with heartwarming stories from trusted shelters.";
+"onboarding_care_eyebrow" = "Care";
+"onboarding_care_title" = "Book care in seconds";
+"onboarding_care_desc" = "Vets, grooming, boarding — scheduled with clarity and calm.";
+"onboarding_nearby_eyebrow" = "Nearby";
+"onboarding_nearby_title" = "Clinics you can trust";
+"onboarding_nearby_desc" = "Locate veterinary care and services around you, beautifully mapped.";
+"onboarding_wellness_eyebrow" = "Wellness";
+"onboarding_wellness_title" = "Track every milestone";
+"onboarding_wellness_desc" = "Health records, smart collar insights — always at your fingertips.";
+
+/* Auth */
+"premium_care_tagline" = "Premium care for every companion";
+"log_in" = "Log in";
+"sign_up" = "Sign up";
+"create_account" = "Create account";
+"or_continue_with" = "or continue with";
+"first_name" = "First name";
+"last_name" = "Last name";
+"password" = "Password";
+"confirm_password" = "Confirm password";
+
+/* Home */
+"good_morning" = "Good morning";
+"good_afternoon" = "Good afternoon";
+"good_evening" = "Good evening";
+"hello" = "Hello";
+"pet_lover" = "Pet Lover";
+"home_hero_title" = "Care that feels\nlike family";
+"home_hero_desc" = "Adopt, book vets, shop premium — all in one soft luxury experience.";
+"find_a_pet" = "Find a pet";
+"pet_care" = "Pet care";
+"search_placeholder_home" = "Search pets, clinics, shops…";
+"recommended_adoption" = "Recommended adoption";
+"match_score_fmt" = "%d%% match";
+"pet_age_years_fmt" = "%d yrs";
+"no_recommended_listings" = "No recommended pets yet";
+"no_recommended_listings_desc" = "Complete your personality test to see matches tailored for you.";
+"profile_setup_eyebrow" = "Almost there";
+"profile_setup_title" = "Complete your profile";
+"profile_setup_subtitle" = "Tell us how to reach you — every new account is set up as an adopter.";
+"profile_setup_continue" = "Continue";
+"profile_setup_required_fields" = "Please fill in your name, email, and phone.";
+"profile_name_placeholder" = "Full name";
+"profile_email_placeholder" = "Email address";
+"profile_phone_placeholder" = "Phone number";
+"session_expired" = "Your session expired. Please sign in again.";
+"personality_setup_eyebrow" = "One more step";
+"personality_setup_title" = "Personality test";
+"personality_setup_subtitle" = "Answer a few questions so we can recommend pets that fit your lifestyle.";
+"personality_test_title" = "Personality test";
+"personality_finish" = "Finish";
+"personality_question_progress_fmt" = "Question %d of %d";
+"cancel" = "Cancel";
+"back" = "Back";
+"see_all" = "See all";
+"services" = "Services";
+"nearby_vets" = "Nearby vets";
+"view_all" = "View all";
+"veterinary" = "Veterinary";
+"grooming" = "Grooming";
+"pet_shop" = "Pet Shop";
+"boarding" = "Boarding";
+"ready_for_love" = "Ready for love";
+"years_short" = "yrs";
+
+/* Discover */
+"discover_eyebrow" = "Discover";
+"adopt_with_heart" = "Adopt with heart";
+"discover_subtitle" = "Every pet deserves a loving home. Start your story here.";
+"search_pets_placeholder" = "Search by name or breed…";
+"no_pets_found" = "No pets found";
+"no_pets_found_desc" = "Try another search or category.";
+"finding_companions" = "Finding companions…";
+
+/* Care */
+"wellness" = "Wellness";
+"pet_care_title" = "Pet care";
+"care_subtitle" = "Vets, grooming, boarding — everything they need.";
+"daily_pet_tips" = "Daily pet tips";
+"top_veterinarians" = "Top veterinarians";
+
+/* Charity */
+"impact" = "Impact";
+"give_back_title" = "Give back";
+"give_back_subtitle" = "Support shelters and campaigns making a difference.";
+"your_impact" = "Your impact";
+"donated_across_fmt" = "Across %d campaigns";
+"donation_history_title" = "Donation history";
+"no_donations_yet" = "Your donations will appear here.";
+"donate_now" = "Donate Now";
+"no_active_campaigns" = "No active campaigns";
+"no_active_campaigns_desc" = "New campaigns from partner shelters will show up here.";
+
+/* Messages */
+"inbox_quiet" = "Inbox is quiet";
+"inbox_quiet_desc" = "When you message a clinic or shelter, conversations appear here.";
+
+/* My pets */
+"add" = "Add";
+"no_pets_yet" = "No pets yet";
+"no_pets_yet_desc" = "Add your companions to track care and health in one place.";
+"add_your_pet" = "Add Your Pet";
+
+/* Reviews */
+"reviews_ratings" = "Reviews & ratings";
+"loading_reviews" = "Loading reviews…";
+"your_rating" = "Your rating";
+"review_placeholder" = "Share your experience (optional)";
+"submit_review" = "Submit review";
+"reviews_count_fmt" = "(%d reviews)";
+"review_count_fmt" = "(%d review)";
+"no_reviews_yet" = "No reviews yet — be the first!";
+"reviewer_default" = "Pet parent";
+
+/* Society */
+"society_eyebrow" = "Society";
+"community_eyebrow" = "Society";
+"community_title" = "Discussions";
+"community_subtitle" = "Share stories, ask questions, and connect with pet parents.";
+"community_no_posts" = "No posts yet";
+"community_no_posts_desc" = "Be the first to start a conversation in this discussion.";
+"community_discussion" = "Discussion";
+"community_new_post" = "New post";
+"community_new_post_subtitle" = "Pick a topic and share with the community.";
+"community_post_title" = "Title";
+"community_post_body" = "What's on your mind?";
+"community_publish" = "Publish";
+"community_comments_title" = "Comments";
+"community_no_comments" = "No comments yet — start the thread.";
+"community_comment_placeholder" = "Add a comment…";
+"community_sign_in_vote" = "Sign in to vote.";
+"community_sign_in_comment" = "Sign in to comment.";
+"community_sign_in_post" = "Sign in to create a post.";
+"community_post_fields_required" = "Add some text or attach a photo.";
+"community_post_title_required" = "Please add a title.";
+"community_pick_discussion" = "Please choose a discussion.";
+"community_add_photo" = "Photo";
+"community_attach_photo" = "Attach photo";
+"community_change_photo" = "Change photo";
+"community_comments_count_fmt" = "%d comments";
+
+/* Categories */
+"all" = "All";
+"dogs" = "Dogs";
+"cats" = "Cats";
+"birds" = "Birds";
+"rabbits" = "Rabbits";
+
+/* Common */
+"done" = "Done";
+"close" = "Close";
+"loading" = "Loading…";
+
+/* Shop / orders */
 "my_orders" = "My Orders";
 "no_orders_yet" = "No Orders Yet";
 "past_orders_appear_here" = "Your past orders will appear here.";
@@ -14,7 +221,6 @@
 "pay_prefix" = "Pay";
 "payment_successful" = "Payment Successful";
 "payment_success_message" = "Your payment has been processed successfully. Thank you for using PetPals!";
-"done" = "Done";
 "card_holder" = "CARD HOLDER";
 "expires" = "EXPIRES";
 "receipt_generated" = "Receipt Generated";
@@ -34,18 +240,12 @@
 "discount" = "Discount";
 "total_paid" = "Total Paid";
 "generated_petpals" = "Generated · PetPals";
-"close" = "Close";
 "share_receipt" = "Share";
 "view_receipt" = "View receipt";
 "order_details" = "Order details";
 "no_receipt_yet" = "No receipt is available yet. It appears after the shop completes delivery and issues the receipt.";
 "channel_online" = "Online";
 "channel_in_store" = "In-store";
-"settings" = "Settings";
-"language" = "Language";
-"language_system" = "System";
-"language_english" = "English";
-"language_arabic" = "العربية";
 "book_appointment" = "Book Appointment";
 "book_now" = "Book Now";
 "services_pricing" = "Services & Pricing";

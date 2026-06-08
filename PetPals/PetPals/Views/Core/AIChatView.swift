@@ -25,72 +25,86 @@ struct AIChatView: View {
     @State private var inputText: String = ""
     @State private var isTyping: Bool = false
     @State private var useGrounding: Bool = false
-    @State private var detectedClinicId: UUID? = nil
-    @State private var detectedPetId: UUID? = nil
     @State private var nearbyClinics: [Clinic] = []
     @State private var availablePets: [Pet] = []
     
     @StateObject private var locationManager = LocationManager()
     
     var body: some View {
-        VStack {
-            ScrollViewReader { proxy in
-                ScrollView {
-                    VStack(spacing: 16) {
-                        ForEach(messages) { message in
-                            MessageBubbleView(
-                                message: message,
-                                nearbyClinics: nearbyClinics,
-                                availablePets: availablePets
-                            )
-                        }
-                        
-                        if isTyping {
-                            HStack {
-                                ZStack {
-                                    Circle()
-                                        .fill(LinearGradient(
-                                            gradient: Gradient(colors: [Theme.primary, Theme.primary.opacity(0.7)]),
-                                            startPoint: .topLeading,
-                                            endPoint: .bottomTrailing
-                                        ))
-                                        .frame(width: 32, height: 32)
-                                    Image(systemName: "sparkles")
-                                        .font(.system(size: 14, weight: .bold))
-                                        .foregroundColor(.white)
-                                }
-                                
-                                HStack(spacing: 4) {
-                                    Circle().fill(Theme.textSecondary).frame(width: 6, height: 6)
-                                    Circle().fill(Theme.textSecondary).frame(width: 6, height: 6)
-                                    Circle().fill(Theme.textSecondary).frame(width: 6, height: 6)
-                                }
-                                .padding()
-                                .background(Theme.cardBackground)
-                                .cornerRadius(16)
-                                
-                                Spacer()
+        ScrollViewReader { proxy in
+            ScrollView {
+                VStack(spacing: 16) {
+                    ForEach(messages) { message in
+                        MessageBubbleView(
+                            message: message,
+                            nearbyClinics: nearbyClinics,
+                            availablePets: availablePets
+                        )
+                    }
+                    
+                    if isTyping {
+                        HStack {
+                            ZStack {
+                                Circle()
+                                    .fill(LinearGradient(
+                                        gradient: Gradient(colors: [Theme.primary, Theme.primary.opacity(0.7)]),
+                                        startPoint: .topLeading,
+                                        endPoint: .bottomTrailing
+                                    ))
+                                    .frame(width: 32, height: 32)
+                                Image(systemName: "sparkles")
+                                    .font(.system(size: 14, weight: .bold))
+                                    .foregroundColor(.white)
                             }
-                            .id("TypingIndicator")
+                            
+                            HStack(spacing: 4) {
+                                Circle().fill(Theme.textSecondary).frame(width: 6, height: 6)
+                                Circle().fill(Theme.textSecondary).frame(width: 6, height: 6)
+                                Circle().fill(Theme.textSecondary).frame(width: 6, height: 6)
+                            }
+                            .padding()
+                            .background(Theme.cardBackground)
+                            .cornerRadius(16)
+                            
+                            Spacer()
                         }
+                        .id("TypingIndicator")
                     }
-                    .padding()
                 }
-                .onChange(of: messages.count) { _ in
+                .padding()
+            }
+            .dismissKeyboardOnSwipe()
+            .onChange(of: messages.count) { _ in
+                withAnimation {
+                    proxy.scrollTo(messages.last?.id, anchor: .bottom)
+                }
+            }
+            .onChange(of: isTyping) { typing in
+                if typing {
                     withAnimation {
-                        proxy.scrollTo(messages.last?.id, anchor: .bottom)
-                    }
-                }
-                .onChange(of: isTyping) { typing in
-                    if typing {
-                        withAnimation {
-                            proxy.scrollTo("TypingIndicator", anchor: .bottom)
-                        }
+                        proxy.scrollTo("TypingIndicator", anchor: .bottom)
                     }
                 }
             }
-            
-            // Grounding Toggle
+        }
+        .safeAreaInset(edge: .bottom, spacing: 0) {
+            chatInputBar
+        }
+        .clawsyScreenBackground()
+        .navigationTitle("PetPals AI")
+        .navigationBarTitleDisplayMode(.inline)
+        .onAppear {
+            locationManager.requestPermission()
+            locationManager.startUpdatingLocation()
+            loadChatHistory()
+            if messages.isEmpty {
+                simulateConversation(prompt: initialPrompt)
+            }
+        }
+    }
+
+    private var chatInputBar: some View {
+        VStack(spacing: 0) {
             HStack {
                 Toggle(isOn: $useGrounding) {
                     Label("Search Grounding", systemImage: "globe")
@@ -106,12 +120,10 @@ struct AIChatView: View {
                 Text("RPD: 20")
                     .font(.caption2)
                     .foregroundColor(Theme.textSecondary.opacity(0.6))
-                    .padding(.trailing, 8)
             }
-            .padding(.horizontal, 20)
-            .padding(.top, 4)
-            
-            // Input Area
+            .padding(.horizontal, Spacing.md)
+            .padding(.top, Spacing.xs)
+
             HStack(spacing: 12) {
                 TextField("Message PetPals AI...", text: $inputText)
                     .padding(12)
@@ -135,20 +147,10 @@ struct AIChatView: View {
                 .disabled(inputText.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty)
                 .opacity(inputText.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty ? 0.5 : 1)
             }
-            .padding()
-            .background(Theme.background)
+            .padding(.horizontal, Spacing.md)
+            .padding(.vertical, Spacing.xs)
         }
-        .background(Theme.background.ignoresSafeArea())
-        .navigationTitle("PetPals AI")
-        .navigationBarTitleDisplayMode(.inline)
-        .onAppear {
-            locationManager.requestPermission()
-            locationManager.startUpdatingLocation()
-            loadChatHistory()
-            if messages.isEmpty {
-                simulateConversation(prompt: initialPrompt)
-            }
-        }
+        .background(.ultraThinMaterial)
     }
     
     private func saveChatHistory() {
@@ -170,6 +172,7 @@ struct AIChatView: View {
         
         messages.append(AIChatMessage(text: text, isUser: true))
         inputText = ""
+        Keyboard.dismiss()
         saveChatHistory()
         simulateAIResponse()
     }
@@ -177,7 +180,6 @@ struct AIChatView: View {
     private func simulateConversation(prompt: String) {
         messages.append(AIChatMessage(text: prompt, isUser: true))
         
-        // If this is a breed-match prompt, enrich it with live pet data first
         if prompt.lowercased().contains("breed") || prompt.lowercased().contains("match") {
             enrichWithPetDataAndRespond(prompt: prompt)
         } else {
@@ -191,7 +193,6 @@ struct AIChatView: View {
         let currentLocation = locationManager.location?.coordinate
         let locText = currentLocation != nil ? "(Lat: \(currentLocation!.latitude), Long: \(currentLocation!.longitude))" : "Unknown location"
         
-        // Detect if we should enrich with clinic data
         let isMedical = userPrompt.lowercased().contains("symptom") || 
                         userPrompt.lowercased().contains("pain") || 
                         userPrompt.lowercased().contains("hurt") ||
@@ -236,19 +237,16 @@ struct AIChatView: View {
                     
                     var clinicId: UUID? = nil
                     
-                    // 1. Try to parse with technical tag [RECO_CLINIC_ID: <UUID>]
                     if let range = response.range(of: #"(?i)\[RECO_CLINIC_ID: ([a-f0-9-]{36})\]"#, options: .regularExpression) {
                         let idString = String(response[range].split(separator: " ").last?.dropLast() ?? "")
                         clinicId = UUID(uuidString: idString)
                     } 
-                    // 2. Fallback: Catch raw UUIDs or "ID: <UUID>" patterns
                     else if let range = response.range(of: #"(?i)(?:ID: )?([a-f0-9-]{36})"#, options: .regularExpression) {
                         let idString = String(response[range].split(separator: " ").last ?? "")
                         let cleanedId = idString.trimmingCharacters(in: CharacterSet.alphanumerics.inverted)
                         clinicId = UUID(uuidString: cleanedId)
                     }
                     
-                    // Clean response from technical tags and raw IDs
                     var cleanResponse = response.replacingOccurrences(of: #"\[RECO_CLINIC_ID: [a-fA-Z0-9-]{36}\]"#, with: "", options: .regularExpression)
                     cleanResponse = cleanResponse.replacingOccurrences(of: #"(?i)\(ID: [a-fA-Z0-9-]{36}\)"#, with: "", options: .regularExpression)
                     
@@ -286,7 +284,6 @@ struct AIChatView: View {
         return clinics
     }
     
-    // Fetches available pets from Supabase and injects them into the prompt before calling Gemini
     private func enrichWithPetDataAndRespond(prompt: String) {
         isTyping = true
         Task {
@@ -333,19 +330,16 @@ struct AIChatView: View {
                     
                     var petId: UUID? = nil
                     
-                    // 1. Try to parse with technical tag [RECO_PET_ID: <UUID>]
                     if let range = response.range(of: #"(?i)\[RECO_PET_ID: ([a-f0-9-]{36})\]"#, options: .regularExpression) {
                         let idString = String(response[range].split(separator: " ").last?.dropLast() ?? "")
                         petId = UUID(uuidString: idString)
                     }
-                    // 2. Fallback: Catch raw UUIDs or "ID: <UUID>" patterns
                     else if let range = response.range(of: #"(?i)(?:ID: )?([a-f0-9-]{36})"#, options: .regularExpression) {
                         let idString = String(response[range].split(separator: " ").last ?? "")
                         let cleanedId = idString.trimmingCharacters(in: CharacterSet.alphanumerics.inverted)
                         petId = UUID(uuidString: cleanedId)
                     }
                     
-                    // Clean response from technical tags and raw IDs
                     var cleanResponse = response.replacingOccurrences(of: #"\[RECO_PET_ID: [a-fA-Z0-9-]{36}\]"#, with: "", options: .regularExpression)
                     cleanResponse = cleanResponse.replacingOccurrences(of: #"(?i)\(ID: [a-fA-Z0-9-]{36}\)"#, with: "", options: .regularExpression)
                     
@@ -412,7 +406,6 @@ struct MessageBubbleView: View {
                 }
             }
             
-            // message specific clinic button
             if let clinicId = message.detectedClinicId, !message.isUser {
                 if let clinic = nearbyClinics.first(where: { $0.id == clinicId }) {
                     Button(action: { coordinator.push(.vetDetail(clinicId: clinicId)) }) {
@@ -432,7 +425,6 @@ struct MessageBubbleView: View {
                 }
             }
             
-            // message specific pet button
             if let petId = message.detectedPetId, !message.isUser {
                 if let pet = availablePets.first(where: { $0.id == petId }) {
                     Button(action: { coordinator.push(.petDetail(petId: petId)) }) {

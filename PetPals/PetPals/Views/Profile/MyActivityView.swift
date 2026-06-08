@@ -55,7 +55,7 @@ struct MyActivityView: View {
             }
             .padding(.vertical)
         }
-        .background(Theme.background.ignoresSafeArea())
+        .clawsyScreenBackground()
         .navigationTitle("My Activity")
         .navigationBarTitleDisplayMode(.inline)
         .onAppear {

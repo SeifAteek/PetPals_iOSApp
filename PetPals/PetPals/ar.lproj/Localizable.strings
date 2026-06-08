@@ -1,3 +1,210 @@
+/* Tabs */
+"tab_home" = "الرئيسية";
+"tab_discover" = "استكشف";
+"tab_society" = "المجتمع";
+"tab_community" = "المجتمع";
+"tab_care" = "الرعاية";
+"tab_you" = "أنت";
+
+/* You hub */
+"your_space" = "مساحتك";
+"pet_parent_default" = "صاحب حيوان";
+"your_subtitle_short" = "الحيوانات والرسائل والتأثير";
+"my_pets" = "حيواناتي";
+"messages" = "الرسائل";
+"clinics_shelters" = "العيادات والملاجئ";
+"give_back" = "ساهم";
+"campaigns_donations" = "الحملات والتبرعات";
+"profile_settings_subtitle" = "الملف واللغة والتفضيلات";
+"member_since" = "عضو منذ ٢٠٢٦";
+"manage_pet_family" = "أدر عائلة حيواناتك";
+"add_first_companion" = "أضف أول رفيق لك";
+"companions_count_fmt" = "%d رفقاء";
+"companion_count_fmt" = "%d رفيق";
+
+/* Settings */
+"edit_profile" = "تعديل الملف";
+"display_name" = "اسم العرض";
+"email" = "البريد الإلكتروني";
+"phone" = "الهاتف";
+"save_changes" = "حفظ التغييرات";
+"account" = "الحساب";
+"my_activity" = "نشاطي";
+"donation_history" = "سجل التبرعات";
+"preferences" = "التفضيلات";
+"dark_mode" = "الوضع الداكن";
+"log_out" = "تسجيل الخروج";
+"settings" = "الإعدادات";
+"language" = "اللغة";
+"language_system" = "النظام";
+"language_english" = "English";
+"language_arabic" = "العربية";
+"language_french" = "Français";
+
+/* Onboarding */
+"onboarding_skip" = "تخطي";
+"onboarding_continue" = "متابعة";
+"onboarding_get_started" = "ابدأ رحلتك";
+"onboarding_welcome_eyebrow" = "مرحبًا";
+"onboarding_welcome_title" = "ارتقِ برعاية حيوانك";
+"onboarding_welcome_desc" = "بيت بالز يجمع التبني والرعاية والمجتمع في تجربة مميزة واحدة.";
+"onboarding_discover_eyebrow" = "استكشف";
+"onboarding_discover_title" = "اعثر على رفيقك القادم";
+"onboarding_discover_desc" = "تصفّح حيوانات قابلة للتبني بقصص مؤثرة من ملاجئ موثوقة.";
+"onboarding_care_eyebrow" = "الرعاية";
+"onboarding_care_title" = "احجز الرعاية في ثوانٍ";
+"onboarding_care_desc" = "أطباء بيطريون، تجميل، إقامة — بجدولة واضحة وهادئة.";
+"onboarding_nearby_eyebrow" = "بالقرب منك";
+"onboarding_nearby_title" = "عيادات تثق بها";
+"onboarding_nearby_desc" = "اعثر على الرعاية البيطرية والخدمات حولك على خريطة جميلة.";
+"onboarding_wellness_eyebrow" = "العافية";
+"onboarding_wellness_title" = "تابع كل محطة";
+"onboarding_wellness_desc" = "سجلات صحية ورؤى من الطوق الذكي — دائمًا في متناول يدك.";
+
+/* Auth */
+"premium_care_tagline" = "رعاية مميزة لكل رفيق";
+"log_in" = "تسجيل الدخول";
+"sign_up" = "إنشاء حساب";
+"create_account" = "إنشاء حساب";
+"or_continue_with" = "أو تابع باستخدام";
+"first_name" = "الاسم الأول";
+"last_name" = "اسم العائلة";
+"password" = "كلمة المرور";
+"confirm_password" = "تأكيد كلمة المرور";
+
+/* Home */
+"good_morning" = "صباح الخير";
+"good_afternoon" = "مساء الخير";
+"good_evening" = "مساء الخير";
+"hello" = "مرحبًا";
+"pet_lover" = "محب الحيوانات";
+"home_hero_title" = "رعاية تشعرك\nكالعائلة";
+"home_hero_desc" = "تبنِّ، احجز أطباء، تسوّق بفخامة — كل ذلك في تجربة واحدة ناعمة.";
+"find_a_pet" = "اعثر على حيوان";
+"pet_care" = "رعاية الحيوان";
+"search_placeholder_home" = "ابحث عن حيوانات، عيادات، متاجر…";
+"recommended_adoption" = "تبنٍ موصى به";
+"match_score_fmt" = "تطابق %d%%";
+"pet_age_years_fmt" = "%d سنة";
+"no_recommended_listings" = "لا حيوانات موصى بها بعد";
+"no_recommended_listings_desc" = "أكمل اختبار الشخصية لرؤية الحيوانات المناسبة لك.";
+"profile_setup_eyebrow" = "اقتربنا";
+"profile_setup_title" = "أكمل ملفك";
+"profile_setup_subtitle" = "أخبرنا كيف نتواصل معك — كل حساب جديد يُسجَّل كمتبنٍ.";
+"profile_setup_continue" = "متابعة";
+"profile_setup_required_fields" = "يرجى إدخال الاسم والبريد والهاتف.";
+"profile_name_placeholder" = "الاسم الكامل";
+"profile_email_placeholder" = "البريد الإلكتروني";
+"profile_phone_placeholder" = "رقم الهاتف";
+"session_expired" = "انتهت الجلسة. يرجى تسجيل الدخول مجددًا.";
+"personality_setup_eyebrow" = "خطوة أخيرة";
+"personality_setup_title" = "اختبار الشخصية";
+"personality_setup_subtitle" = "أجب عن بعض الأسئلة لنوصي بحيوانات تناسب أسلوب حياتك.";
+"personality_test_title" = "اختبار الشخصية";
+"personality_finish" = "إنهاء";
+"personality_question_progress_fmt" = "السؤال %d من %d";
+"cancel" = "إلغاء";
+"back" = "رجوع";
+"see_all" = "عرض الكل";
+"services" = "الخدمات";
+"nearby_vets" = "أطباء قريبون";
+"view_all" = "عرض الكل";
+"veterinary" = "بيطري";
+"grooming" = "تجميل";
+"pet_shop" = "متجر حيوانات";
+"boarding" = "إقامة";
+"ready_for_love" = "جاهز للحب";
+"years_short" = "سنة";
+
+/* Discover */
+"discover_eyebrow" = "استكشف";
+"adopt_with_heart" = "تبنَّ بقلب";
+"discover_subtitle" = "كل حيوان يستحق منزلًا محبًا. ابدأ قصتك هنا.";
+"search_pets_placeholder" = "ابحث بالاسم أو السلالة…";
+"no_pets_found" = "لم يُعثر على حيوانات";
+"no_pets_found_desc" = "جرّب بحثًا أو فئة أخرى.";
+"finding_companions" = "جاري البحث عن رفقاء…";
+
+/* Care */
+"wellness" = "العافية";
+"pet_care_title" = "رعاية الحيوان";
+"care_subtitle" = "أطباء، تجميل، إقامة — كل ما يحتاجونه.";
+"daily_pet_tips" = "نصائح يومية";
+"top_veterinarians" = "أفضل الأطباء";
+
+/* Charity */
+"impact" = "التأثير";
+"give_back_title" = "ساهم";
+"give_back_subtitle" = "ادعم الملاجئ والحملات التي تصنع الفرق.";
+"your_impact" = "تأثيرك";
+"donated_across_fmt" = "عبر %d حملات";
+"donation_history_title" = "سجل التبرعات";
+"no_donations_yet" = "ستظهر تبرعاتك هنا.";
+"donate_now" = "تبرع الآن";
+"no_active_campaigns" = "لا حملات نشطة";
+"no_active_campaigns_desc" = "ستظهر حملات جديدة من الملاجئ الشريكة هنا.";
+
+/* Messages */
+"inbox_quiet" = "صندوق الوارد هادئ";
+"inbox_quiet_desc" = "عند مراسلة عيادة أو ملجأ، ستظهر المحادثات هنا.";
+
+/* My pets */
+"add" = "إضافة";
+"no_pets_yet" = "لا حيوانات بعد";
+"no_pets_yet_desc" = "أضف رفقاءك لتتبع الرعاية والصحة في مكان واحد.";
+"add_your_pet" = "أضف حيوانك";
+
+/* Reviews */
+"reviews_ratings" = "التقييمات والمراجعات";
+"loading_reviews" = "جاري تحميل المراجعات…";
+"your_rating" = "تقييمك";
+"review_placeholder" = "شارك تجربتك (اختياري)";
+"submit_review" = "إرسال المراجعة";
+"reviews_count_fmt" = "(%d مراجعات)";
+"review_count_fmt" = "(%d مراجعة)";
+"no_reviews_yet" = "لا مراجعات بعد — كن الأول!";
+"reviewer_default" = "صاحب حيوان";
+
+/* Society */
+"society_eyebrow" = "المجتمع";
+"community_eyebrow" = "المجتمع";
+"community_title" = "النقاشات";
+"community_subtitle" = "شارك القصص واطرح الأسئلة وتواصل مع محبي الحيوانات.";
+"community_no_posts" = "لا منشورات بعد";
+"community_no_posts_desc" = "كن أول من يبدأ محادثة في هذا النقاش.";
+"community_discussion" = "النقاش";
+"community_new_post" = "منشور جديد";
+"community_new_post_subtitle" = "اختر موضوعًا وشارك مع المجتمع.";
+"community_post_title" = "العنوان";
+"community_post_body" = "ما الذي تريد مشاركته؟";
+"community_publish" = "نشر";
+"community_comments_title" = "التعليقات";
+"community_no_comments" = "لا تعليقات بعد — ابدأ النقاش.";
+"community_comment_placeholder" = "أضف تعليقًا…";
+"community_sign_in_vote" = "سجّل الدخول للتصويت.";
+"community_sign_in_comment" = "سجّل الدخول للتعليق.";
+"community_sign_in_post" = "سجّل الدخول لإنشاء منشور.";
+"community_post_fields_required" = "أضف نصًا أو أرفق صورة.";
+"community_post_title_required" = "يرجى إضافة عنوان.";
+"community_pick_discussion" = "يرجى اختيار نقاش.";
+"community_add_photo" = "صورة";
+"community_attach_photo" = "إرفاق صورة";
+"community_change_photo" = "تغيير الصورة";
+"community_comments_count_fmt" = "%d تعليقات";
+
+/* Categories */
+"all" = "الكل";
+"dogs" = "كلاب";
+"cats" = "قطط";
+"birds" = "طيور";
+"rabbits" = "أرانب";
+
+/* Common */
+"done" = "تم";
+"close" = "إغلاق";
+"loading" = "جاري التحميل…";
+
+/* Shop / orders */
 "my_orders" = "طلباتي";
 "no_orders_yet" = "لا توجد طلبات بعد";
 "past_orders_appear_here" = "ستظهر طلباتك السابقة هنا.";
@@ -14,7 +221,6 @@
 "pay_prefix" = "ادفع";
 "payment_successful" = "تم الدفع بنجاح";
 "payment_success_message" = "تمت معالجة الدفع بنجاح. شكرًا لاستخدامك بيت بالز!";
-"done" = "تم";
 "card_holder" = "اسم حامل البطاقة";
 "expires" = "تاريخ الانتهاء";
 "receipt_generated" = "تم إنشاء الإيصال";
@@ -34,18 +240,12 @@
 "discount" = "الخصم";
 "total_paid" = "إجمالي المدفوع";
 "generated_petpals" = "تم الإنشاء · بيت بالز";
-"close" = "إغلاق";
 "share_receipt" = "مشاركة";
 "view_receipt" = "عرض الإيصال";
 "order_details" = "تفاصيل الطلب";
 "no_receipt_yet" = "لا يوجد إيصال بعد. يظهر بعد أن يكمل المتجر التسليم ويصدر الإيصال.";
 "channel_online" = "عبر الإنترنت";
 "channel_in_store" = "داخل المتجر";
-"settings" = "الإعدادات";
-"language" = "اللغة";
-"language_system" = "النظام";
-"language_english" = "English";
-"language_arabic" = "العربية";
 "book_appointment" = "احجز موعدًا";
 "book_now" = "احجز الآن";
 "services_pricing" = "الخدمات والأسعار";

@@ -24,10 +24,15 @@ struct SettingsView: View {
                                         .background(Color.gray.opacity(0.1))
                                         .clipShape(Circle())
                                 } else if let avatarUrl = user.avatarUrl, let url = ImageURL.from(avatarUrl) {
-                                    AsyncImage(url: url) { image in
-                                        image.resizable().scaledToFill()
+                                    CachedAsyncImage(url: url) { image in
+                                        image
+                                            .resizable()
+                                            .scaledToFill()
+                                            .frame(width: 100, height: 100)
+                                            .clipped()
                                     } placeholder: {
                                         Color.gray.opacity(0.1)
+                                            .frame(width: 100, height: 100)
                                     }
                                     .id(avatarUrl)
                                     .frame(width: 100, height: 100)
@@ -67,13 +72,13 @@ struct SettingsView: View {
                     .frame(maxWidth: .infinity)
                     
                     VStack(alignment: .leading, spacing: 12) {
-                        Text("Edit profile")
+                        Text(L10n.editProfile)
                             .font(Theme.Fonts.primaryFont(size: 18, weight: .bold))
                             .foregroundColor(Theme.textPrimary)
-                        CustomTextField(placeholder: "Display name", text: $viewModel.editUserName)
-                        CustomTextField(placeholder: "Email", text: $viewModel.editEmail, keyboardType: .emailAddress)
-                        CustomTextField(placeholder: "Phone", text: $viewModel.editPhone, keyboardType: .phonePad)
-                        PrimaryButton(title: "Save changes", isLoading: viewModel.isSavingProfile) {
+                        CustomTextField(placeholder: L10n.displayName, text: $viewModel.editUserName)
+                        CustomTextField(placeholder: L10n.email, text: $viewModel.editEmail, keyboardType: .emailAddress)
+                        CustomTextField(placeholder: L10n.phone, text: $viewModel.editPhone, keyboardType: .phonePad)
+                        PrimaryButton(title: L10n.saveChanges, isLoading: viewModel.isSavingProfile) {
                             viewModel.saveProfileEdits { updated in
                                 coordinator.lastFetchedProfile = updated
                             }
@@ -83,7 +88,7 @@ struct SettingsView: View {
                 }
                 
                 // MARK: - Preferences
-                    Text("Account")
+                    Text(L10n.account)
                         .font(Theme.Fonts.primaryFont(size: 18, weight: .bold))
                         .foregroundColor(Theme.textPrimary)
                     
@@ -94,7 +99,7 @@ struct SettingsView: View {
                             Image(systemName: "list.bullet.clipboard.fill")
                                 .foregroundColor(Theme.primary)
                                 .frame(width: 24)
-                            Text("My Activity")
+                            Text(L10n.myActivity)
                                 .font(Theme.Fonts.primaryFont(size: 16))
                                 .foregroundColor(Theme.textPrimary)
                             Spacer()
@@ -114,7 +119,7 @@ struct SettingsView: View {
                             Image(systemName: "heart.text.square.fill")
                                 .foregroundColor(Theme.primary)
                                 .frame(width: 24)
-                            Text("Donation History")
+                            Text(L10n.donationHistory)
                                 .font(Theme.Fonts.primaryFont(size: 16))
                                 .foregroundColor(Theme.textPrimary)
                             Spacer()
@@ -127,7 +132,7 @@ struct SettingsView: View {
                         .shadow(color: .black.opacity(0.04), radius: 8, x: 0, y: 3)
                     }
                     
-                    Text("Preferences")
+                    Text(L10n.preferences)
                         .font(Theme.Fonts.primaryFont(size: 18, weight: .bold))
                         .foregroundColor(Theme.textPrimary)
                         .padding(.top, 8)
@@ -137,7 +142,7 @@ struct SettingsView: View {
                             HStack(spacing: 12) {
                                 Image(systemName: isDarkMode ? "moon.fill" : "sun.max.fill")
                                     .foregroundColor(isDarkMode ? .indigo : .orange)
-                                Text("Dark Mode")
+                                Text(L10n.darkMode)
                                     .font(Theme.Fonts.primaryFont(size: 16))
                                     .foregroundColor(Theme.textPrimary)
                             }
@@ -157,6 +162,7 @@ struct SettingsView: View {
                             Text(L10n.languageSystem).tag("system")
                             Text(L10n.languageEnglish).tag("en")
                             Text(L10n.languageArabic).tag("ar")
+                            Text(L10n.languageFrench).tag("fr")
                         }
                         .pickerStyle(.segmented)
                     }
@@ -173,7 +179,7 @@ struct SettingsView: View {
                 Button(action: {
                     viewModel.logout(coordinator: coordinator)
                 }) {
-                    Text("Log Out")
+                    Text(L10n.logOut)
                         .font(Theme.Fonts.primaryFont(size: 16, weight: .bold))
                         .foregroundColor(.red)
                         .frame(maxWidth: .infinity)
@@ -184,11 +190,16 @@ struct SettingsView: View {
             }
             .padding(24)
         }
-        .background(Theme.background.ignoresSafeArea())
+        .dismissKeyboardOnSwipe()
+        .keyboardDoneToolbar()
+        .petPalsScreenBackground()
         .navigationTitle(L10n.settings)
         .navigationBarTitleDisplayMode(.inline)
         .onAppear {
             viewModel.loadCurrentUser()
+        }
+        .onChange(of: viewModel.currentUser?.avatarUrl) { _, _ in
+            coordinator.lastFetchedProfile = viewModel.currentUser
         }
     }
 }

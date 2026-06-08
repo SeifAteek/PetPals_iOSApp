@@ -46,7 +46,7 @@ struct PetProductDetailView: View {
                         // Swipeable TabView carousel
                         TabView(selection: $selectedImageIndex) {
                             ForEach(allImageUrls.indices, id: \.self) { i in
-                                AsyncImage(url: URL(string: allImageUrls[i])) { phase in
+                                CachedAsyncImage(url: URL(string: allImageUrls[i])) { phase in
                                     switch phase {
                                     case .success(let img):
                                         img.resizable().scaledToFit()
@@ -85,7 +85,7 @@ struct PetProductDetailView: View {
                     ScrollView(.horizontal, showsIndicators: false) {
                         HStack(spacing: 10) {
                             ForEach(allImageUrls.indices, id: \.self) { i in
-                                AsyncImage(url: URL(string: allImageUrls[i])) { phase in
+                                CachedAsyncImage(url: URL(string: allImageUrls[i])) { phase in
                                     if let img = phase.image {
                                         img.resizable().scaledToFill()
                                     } else {
@@ -221,7 +221,7 @@ struct PetProductDetailView: View {
                 .padding(24)
             }
         }
-        .background(Theme.background.ignoresSafeArea())
+        .clawsyScreenBackground()
         .navigationBarTitleDisplayMode(.inline)
         .onAppear { loadImages() }
     }

@@ -8,6 +8,7 @@ struct Clinic: Codable, Identifiable {
     let phone: String?
     let ownerId: UUID?
     let logoUrl: String?
+    let rating: Double?
     var latitude: Double?
     var longitude: Double?
     /// ISO calendar dates (`yyyy-MM-dd`) when the clinic is closed (vacation); optional DB column.
@@ -20,6 +21,7 @@ struct Clinic: Codable, Identifiable {
         case phone
         case ownerId = "owner_id"
         case logoUrl = "logo_url"
+        case rating
         case latitude
         case longitude
         case vacationDates = "vacation_dates"

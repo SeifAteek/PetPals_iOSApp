@@ -39,9 +39,11 @@ struct MyPetsView: View {
                 }
             }
             .padding(.vertical)
+            .padding(.bottom, ScreenLayout.tabBarScrollInset)
         }
-        .background(Theme.background.ignoresSafeArea())
-        .navigationTitle("My Pets")
+        .dismissKeyboardOnSwipe()
+        .petPalsScreenBackground()
+        .navigationTitle(L10n.myPets)
         .navigationBarTitleDisplayMode(.large)
         .onAppear { viewModel.loadMyPets() }
         .toolbar {
@@ -120,23 +122,7 @@ struct MyPetRowCard: View {
     var body: some View {
         Button(action: onTap) {
             HStack(spacing: 16) {
-                if let avatarUrl = pet.avatarUrl, let url = URL(string: avatarUrl) {
-                    AsyncImage(url: url) { image in
-                        image.resizable().scaledToFill()
-                    } placeholder: {
-                        Color.gray.opacity(0.1)
-                    }
-                    .frame(width: 64, height: 64)
-                    .clipShape(RoundedRectangle(cornerRadius: 12))
-                } else {
-                    ZStack {
-                        RoundedRectangle(cornerRadius: 12)
-                            .fill(Theme.primary.opacity(0.2))
-                            .frame(width: 64, height: 64)
-                        Image(systemName: "pawprint.fill")
-                            .foregroundColor(Theme.primary)
-                    }
-                }
+                StandardPetPhoto(pet: pet, style: .listThumb)
                 
                 VStack(alignment: .leading, spacing: 4) {
                     Text(pet.name)
@@ -152,10 +138,8 @@ struct MyPetRowCard: View {
                 Image(systemName: "chevron.right")
                     .foregroundColor(.gray)
             }
-            .padding()
-            .background(Theme.cardBackground)
-            .cornerRadius(16)
-            .shadow(color: .black.opacity(0.05), radius: 8, x: 0, y: 3)
+            .padding(Spacing.sm)
+            .glassCard(cornerRadius: Radius.md, elevation: .resting)
         }
     }
 }

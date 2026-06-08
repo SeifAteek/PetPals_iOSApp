@@ -73,6 +73,7 @@ final class SupabaseCharityService: CharityServiceProtocol {
         let campaigns: [Campaign] = try await client.database
             .from("campaigns")
             .select()
+            .eq("is_deleted", value: false)
             .execute()
             .value
         return campaigns
@@ -83,6 +84,7 @@ final class SupabaseCharityService: CharityServiceProtocol {
             .from("campaigns")
             .select()
             .eq("campaign_id", value: id.uuidString.lowercased())
+            .eq("is_deleted", value: false)
             .single()
             .execute()
             .value
@@ -118,5 +120,85 @@ final class SupabaseCharityService: CharityServiceProtocol {
             .execute()
             .value
         return donations
+    }
+}
+
+// MARK: - Reviews
+
+final class SupabaseReviewService: ReviewServiceProtocol {
+    private let client = SupabaseClientManager.shared.client
+
+    private struct ReviewRow: Decodable {
+        let reviewId: UUID
+        let userId: UUID?
+        let entityType: ReviewEntityType
+        let entityId: UUID
+        let rating: Int
+        let comment: String?
+        let createdAt: Date?
+        let profiles: ReviewerProfile?
+
+        enum CodingKeys: String, CodingKey {
+            case reviewId = "review_id"
+            case userId = "user_id"
+            case entityType = "entity_type"
+            case entityId = "entity_id"
+            case rating
+            case comment
+            case createdAt = "created_at"
+            case profiles
+        }
+    }
+
+    private struct ReviewerProfile: Decodable {
+        let userName: String?
+
+        enum CodingKeys: String, CodingKey {
+            case userName = "user_name"
+        }
+    }
+
+    func fetchReviews(entityType: ReviewEntityType, entityId: UUID) async throws -> [EntityReview] {
+        let rows: [ReviewRow] = try await client.database
+            .from("entity_reviews")
+            .select("review_id, user_id, entity_type, entity_id, rating, comment, created_at, profiles(user_name)")
+            .eq("entity_type", value: entityType.rawValue)
+            .eq("entity_id", value: entityId.uuidString.lowercased())
+            .order("created_at", ascending: false)
+            .execute()
+            .value
+
+        return rows.map { row in
+            EntityReview(
+                reviewId: row.reviewId,
+                userId: row.userId,
+                entityType: row.entityType,
+                entityId: row.entityId,
+                rating: row.rating,
+                comment: row.comment,
+                createdAt: row.createdAt,
+                reviewerName: row.profiles?.userName
+            )
+        }
+    }
+
+    func submitReview(
+        userId: UUID,
+        entityType: ReviewEntityType,
+        entityId: UUID,
+        rating: Int,
+        comment: String
+    ) async throws {
+        let payload = EntityReviewInsert(
+            userId: userId,
+            entityType: entityType.rawValue,
+            entityId: entityId,
+            rating: rating,
+            comment: comment.isEmpty ? nil : comment
+        )
+        try await client.database
+            .from("entity_reviews")
+            .upsert(payload, onConflict: "user_id,entity_type,entity_id")
+            .execute()
     }
 }

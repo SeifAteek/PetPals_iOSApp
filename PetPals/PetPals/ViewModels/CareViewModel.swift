@@ -11,12 +11,16 @@ final class CareViewModel: ObservableObject {
     @Published var isLoading = false
     @Published var errorMessage: String?
     
-    @Published var categories: [CareCategory] = [
-        CareCategory(title: "Veterinary", icon: "cross.case.fill", color: .blue),
-        CareCategory(title: "Grooming", icon: "scissors", color: .purple),
-        CareCategory(title: "Boarding", icon: "house.fill", color: .orange),
-        CareCategory(title: "Pet Shop", icon: "bag.fill", color: .green)
-    ]
+    @Published var categories: [CareCategory] = []
+
+    func refreshLocalizedCategories() {
+        categories = [
+            CareCategory(kind: .veterinary, title: L10n.veterinary, icon: "cross.case.fill", color: .blue),
+            CareCategory(kind: .grooming, title: L10n.grooming, icon: "scissors", color: .purple),
+            CareCategory(kind: .boarding, title: L10n.boarding, icon: "house.fill", color: .orange),
+            CareCategory(kind: .petShop, title: L10n.petShop, icon: "bag.fill", color: .green)
+        ]
+    }
     
     private let locationManager = LocationManager()
     private var cancellables = Set<AnyCancellable>()
@@ -86,8 +90,13 @@ final class CareViewModel: ObservableObject {
     }
 }
 
+enum CareCategoryKind {
+    case veterinary, grooming, boarding, petShop
+}
+
 struct CareCategory: Identifiable {
     let id = UUID()
+    let kind: CareCategoryKind
     let title: String
     let icon: String
     let color: Color

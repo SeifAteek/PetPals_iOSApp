@@ -8,72 +8,30 @@ struct ShopMainView: View {
     @StateObject private var viewModel = ShopListViewModel()
 
     var body: some View {
-        ScrollView {
-            VStack(alignment: .leading, spacing: 20) {
+        ScrollView(showsIndicators: false) {
+            VStack(alignment: .leading, spacing: Spacing.md) {
+                PremiumScreenHeader(
+                    eyebrow: "Curated",
+                    title: "Pet shop",
+                    subtitle: "Premium essentials from trusted partners",
+                    trailing: AnyView(shopToolbar)
+                )
 
-                // Header row
-                HStack {
-                    Text("Pet Shop")
-                        .font(Theme.Fonts.primaryFont(size: 28, weight: .bold))
-                        .foregroundColor(Theme.textPrimary)
-                    Spacer()
-                    // Orders history
-                    Button(action: { coordinator.push(.orderHistory) }) {
-                        Image(systemName: "clock.arrow.circlepath")
-                            .font(.title2)
-                            .foregroundColor(Theme.primary)
-                    }
-                    // Cart badge
-                    Button(action: { coordinator.push(.cart) }) {
-                        ZStack(alignment: .topTrailing) {
-                            Image(systemName: "cart.fill")
-                                .font(.title2)
-                                .foregroundColor(Theme.primary)
-                                .padding(8)
-                            if cartViewModel.totalItems > 0 {
-                                Text("\(cartViewModel.totalItems)")
-                                    .font(.system(size: 10, weight: .bold))
-                                    .foregroundColor(.white)
-                                    .padding(5)
-                                    .background(Color.red)
-                                    .clipShape(Circle())
-                                    .offset(x: 5, y: -5)
-                            }
-                        }
-                    }
-                }
-                .padding(.horizontal)
+                PremiumSearchField(placeholder: "Search shops…", text: $viewModel.searchText)
+                    .padding(.horizontal, ScreenLayout.horizontalPadding)
 
-                // Search bar
-                HStack {
-                    Image(systemName: "magnifyingglass").foregroundColor(.gray)
-                    TextField("Search shops...", text: $viewModel.searchText)
-                        .font(Theme.Fonts.primaryFont(size: 15))
-                }
-                .padding(12)
-                .background(Theme.cardBackground)
-                .cornerRadius(14)
-                .shadow(color: .black.opacity(0.05), radius: 6, x: 0, y: 2)
-                .padding(.horizontal)
-
-                // Category filter pills
                 ScrollView(.horizontal, showsIndicators: false) {
-                    HStack(spacing: 10) {
+                    HStack(spacing: Spacing.xs) {
                         ForEach(viewModel.categories, id: \.self) { cat in
-                            let selected = viewModel.selectedCategory == cat
-                            Button(action: { viewModel.selectedCategory = cat }) {
-                                Text(cat)
-                                    .font(Theme.Fonts.primaryFont(size: 13, weight: selected ? .bold : .regular))
-                                    .padding(.horizontal, 16)
-                                    .padding(.vertical, 8)
-                                    .background(selected ? Theme.primary : Theme.cardBackground)
-                                    .foregroundColor(selected ? .black : Theme.textSecondary)
-                                    .cornerRadius(20)
-                                    .shadow(color: .black.opacity(0.04), radius: 4, x: 0, y: 2)
+                            PremiumChip(
+                                title: cat,
+                                isSelected: viewModel.selectedCategory == cat
+                            ) {
+                                viewModel.selectedCategory = cat
                             }
                         }
                     }
-                    .padding(.horizontal)
+                    .padding(.horizontal, ScreenLayout.horizontalPadding)
                 }
 
                 if viewModel.isLoading {
@@ -97,8 +55,38 @@ struct ShopMainView: View {
             }
             .padding(.vertical)
         }
-        .background(Theme.background.ignoresSafeArea())
+        .dismissKeyboardOnSwipe()
+        .petPalsScreenBackground()
         .onAppear { viewModel.fetchShops() }
+    }
+
+    private var shopToolbar: some View {
+        HStack(spacing: Spacing.xs) {
+            Button(action: { coordinator.push(.orderHistory) }) {
+                Image(systemName: "clock.arrow.circlepath")
+                    .font(.system(size: 20, weight: .medium))
+                    .foregroundStyle(Theme.primary)
+                    .frame(width: 40, height: 40)
+                    .glassCard(cornerRadius: Radius.sm, elevation: .resting)
+            }
+            Button(action: { coordinator.push(.cart) }) {
+                ZStack(alignment: .topTrailing) {
+                    Image(systemName: "bag.fill")
+                        .font(.system(size: 18, weight: .semibold))
+                        .foregroundStyle(Theme.primary)
+                        .frame(width: 40, height: 40)
+                        .glassCard(cornerRadius: Radius.sm, elevation: .resting)
+                    if cartViewModel.totalItems > 0 {
+                        Text("\(cartViewModel.totalItems)")
+                            .font(.system(size: 10, weight: .bold))
+                            .foregroundStyle(.white)
+                            .padding(5)
+                            .background(Circle().fill(Theme.primary))
+                            .offset(x: 6, y: -6)
+                    }
+                }
+            }
+        }
     }
 }
 
@@ -116,7 +104,7 @@ struct ShopRowCard: View {
                         .fill(Theme.primary.opacity(0.1))
                         .frame(width: 70, height: 70)
                     if let logoUrl = shop.logoUrl, let url = URL(string: logoUrl) {
-                        AsyncImage(url: url) { phase in
+                        CachedAsyncImage(url: url) { phase in
                             if let img = phase.image {
                                 img.resizable().scaledToFill()
                             } else {
@@ -168,11 +156,10 @@ struct ShopRowCard: View {
                 Spacer()
                 Image(systemName: "chevron.right").foregroundColor(.gray).font(.caption)
             }
-            .padding(16)
-            .background(Theme.cardBackground)
-            .cornerRadius(18)
-            .shadow(color: .black.opacity(0.05), radius: 8, x: 0, y: 3)
+            .padding(Spacing.sm)
+            .glassCard(cornerRadius: Radius.lg, elevation: .raised)
         }
+        .buttonStyle(MagneticPressStyle())
     }
 }
 

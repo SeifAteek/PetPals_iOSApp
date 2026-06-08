@@ -3,140 +3,177 @@ import SwiftUI
 struct PetCard: View {
     let pet: Pet
     let onTap: () -> Void
-    
+
     var body: some View {
         Button(action: onTap) {
-            VStack(alignment: .leading, spacing: 8) {
-                ZStack {
-                    RoundedRectangle(cornerRadius: 16)
-                        .fill(Color.gray.opacity(0.15))
-                        .frame(width: 160, height: 140)
-                    
-                    if let avatarUrl = pet.avatarUrl, let url = URL(string: avatarUrl) {
-                        AsyncImage(url: url) { phase in
-                            switch phase {
-                            case .empty:
-                                ProgressView()
-                            case .success(let image):
-                                image
-                                    .resizable()
-                                    .scaledToFill()
-                                    .frame(width: 160, height: 140)
-                                    .clipShape(RoundedRectangle(cornerRadius: 16))
-                            case .failure:
-                                Image(systemName: "pawprint.fill")
-                                    .resizable()
-                                    .scaledToFit()
-                                    .frame(width: 50)
-                                    .foregroundColor(Theme.primary.opacity(0.7))
-                            @unknown default:
-                                EmptyView()
-                            }
-                        }
-                    } else {
-                        Image(systemName: "pawprint.fill")
-                            .resizable()
-                            .scaledToFit()
-                            .frame(width: 50)
-                            .foregroundColor(Theme.primary.opacity(0.7))
-                    }
-                }
-                
+            VStack(alignment: .leading, spacing: Spacing.xs) {
+                StandardPetPhoto(pet: pet, style: .gridCard)
+
                 Text(pet.name)
-                    .font(Theme.Fonts.primaryFont(size: 15, weight: .bold))
-                    .foregroundColor(Theme.textPrimary)
-                
+                    .font(Theme.Fonts.headline(Typography.callout, weight: .bold))
+                    .foregroundStyle(Theme.textPrimary)
+                    .lineLimit(1)
+
                 if let breed = pet.breed {
                     Text(breed)
-                        .font(Theme.Fonts.primaryFont(size: 12, weight: .regular))
-                        .foregroundColor(Theme.textSecondary)
+                        .font(Theme.Fonts.body(Typography.caption))
+                        .foregroundStyle(Theme.textSecondary)
+                        .lineLimit(1)
                 }
-                
+
                 if let age = pet.age {
                     PetCategoryTag(
-                        text: "\(age) yr\(age == 1 ? "" : "s") old",
-                        backgroundColor: Theme.primary.opacity(0.15),
-                        textColor: .black
+                        text: "\(age) yr\(age == 1 ? "" : "s")",
+                        backgroundColor: Theme.primary.opacity(0.14),
+                        textColor: Theme.brandDeep
                     )
                 }
             }
-            .frame(width: 160)
-            .padding(12)
-            .background(Theme.cardBackground)
-            .cornerRadius(20)
-            .shadow(color: Color.black.opacity(0.07), radius: 10, x: 0, y: 4)
+            .padding(Spacing.sm)
+            .glassCard(cornerRadius: Radius.lg, elevation: .raised)
         }
+        .buttonStyle(MagneticPressStyle())
     }
 }
 
 struct ClinicRowCard: View {
     let clinic: Clinic
     let onTap: () -> Void
-    
+
     var body: some View {
         Button(action: onTap) {
-            HStack(spacing: 14) {
+            HStack(spacing: Spacing.sm) {
                 ZStack {
-                    Circle()
-                        .fill(Theme.primary.opacity(0.2))
+                    RoundedRectangle(cornerRadius: Radius.sm, style: .continuous)
+                        .fill(Theme.primary.opacity(0.14))
                         .frame(width: 52, height: 52)
                     Image(systemName: "cross.case.fill")
-                        .foregroundColor(Theme.primary)
+                        .foregroundStyle(Theme.primary)
                 }
-                
+
                 VStack(alignment: .leading, spacing: 4) {
                     Text(clinic.name)
-                        .font(Theme.Fonts.primaryFont(size: 15, weight: .semibold))
-                        .foregroundColor(Theme.textPrimary)
+                        .font(Theme.Fonts.headline(Typography.callout, weight: .semibold))
+                        .foregroundStyle(Theme.textPrimary)
                     if let location = clinic.location {
                         Text(location)
-                            .font(Theme.Fonts.primaryFont(size: 13))
-                            .foregroundColor(Theme.textSecondary)
+                            .font(Theme.Fonts.body(Typography.caption))
+                            .foregroundStyle(Theme.textSecondary)
+                            .lineLimit(1)
                     }
                 }
                 Spacer()
                 Image(systemName: "chevron.right")
-                    .foregroundColor(.gray)
+                    .font(.system(size: 12, weight: .semibold))
+                    .foregroundStyle(Theme.textSecondary.opacity(0.5))
             }
-            .padding(14)
-            .background(Theme.cardBackground)
-            .cornerRadius(16)
-            .shadow(color: Color.black.opacity(0.06), radius: 8, x: 0, y: 3)
+            .padding(Spacing.sm)
+            .glassCard(cornerRadius: Radius.md, elevation: .resting)
         }
+        .buttonStyle(MagneticPressStyle())
     }
 }
 
 struct CampaignBannerCard: View {
     let campaign: Campaign
     let onDonate: () -> Void
-    
+
     var body: some View {
-        VStack(alignment: .leading, spacing: 12) {
+        VStack(alignment: .leading, spacing: Spacing.sm) {
             Text(campaign.title)
-                .font(Theme.Fonts.primaryFont(size: 16, weight: .bold))
-                .foregroundColor(.black)
-            
+                .font(Theme.Fonts.headline(Typography.body, weight: .bold))
+                .foregroundStyle(Theme.textPrimary)
+                .lineLimit(2)
+
             if let current = campaign.currentAmount {
-                let progress = Double(truncating: current as NSDecimalNumber) / Double(truncating: campaign.goalAmount as NSDecimalNumber)
-                ProgressView(value: min(progress, 1.0))
-                    .tint(Theme.primary)
-                    .scaleEffect(x: 1, y: 2, anchor: .center)
-                    .cornerRadius(4)
-                
+                let progress = min(
+                    Double(truncating: current as NSDecimalNumber) / Double(truncating: campaign.goalAmount as NSDecimalNumber),
+                    1
+                )
+                GeometryReader { geo in
+                    ZStack(alignment: .leading) {
+                        Capsule().fill(Theme.brandDark.opacity(0.08))
+                        Capsule()
+                            .fill(Theme.brandGradient)
+                            .frame(width: geo.size.width * progress)
+                    }
+                }
+                .frame(height: 6)
+
                 HStack {
                     Text("\(CurrencyFormatting.egp(current)) raised")
-                        .font(Theme.Fonts.primaryFont(size: 13))
                     Spacer()
-                    Text("Goal: \(CurrencyFormatting.egp(campaign.goalAmount))")
-                        .font(Theme.Fonts.primaryFont(size: 13))
-                        .foregroundColor(.gray)
+                    Text("Goal \(CurrencyFormatting.egp(campaign.goalAmount))")
+                        .foregroundStyle(Theme.textSecondary)
                 }
+                .font(Theme.Fonts.body(Typography.caption))
             }
-            
+
             PrimaryButton(title: "Donate Now", action: onDonate)
         }
-        .padding(18)
-        .background(Theme.primary.opacity(0.15))
-        .cornerRadius(20)
+        .padding(Spacing.md)
+        .background {
+            RoundedRectangle(cornerRadius: Radius.lg, style: .continuous)
+                .fill(Theme.heroGradient)
+                .overlay(
+                    RoundedRectangle(cornerRadius: Radius.lg, style: .continuous)
+                        .stroke(Theme.glassStroke, lineWidth: 1)
+                )
+        }
+    }
+}
+
+struct FeaturedPetCard: View {
+    let pet: Pet
+    var matchScore: Int = 0
+    let onTap: () -> Void
+
+    var body: some View {
+        Button(action: onTap) {
+            VStack(alignment: .leading, spacing: 0) {
+                ZStack(alignment: .topTrailing) {
+                    StandardPetPhoto(pet: pet, style: .featured)
+                    if matchScore > 0 {
+                        Text(L10n.matchScorePercent(matchScore))
+                            .font(Theme.Fonts.label(Typography.caption, weight: .bold))
+                            .foregroundStyle(Theme.textOnBrand)
+                            .padding(.horizontal, 8)
+                            .padding(.vertical, 4)
+                            .background {
+                                Capsule().fill(Theme.brandGradient)
+                            }
+                            .padding(8)
+                    }
+                }
+
+                VStack(alignment: .leading, spacing: 4) {
+                    HStack {
+                        Text(pet.name)
+                            .font(Theme.Fonts.headline(Typography.body, weight: .bold))
+                            .foregroundStyle(Theme.textPrimary)
+                        Spacer()
+                        if let age = pet.age {
+                            Text(L10n.petAgeYears(age))
+                                .font(Theme.Fonts.label(Typography.caption))
+                                .foregroundStyle(Theme.textSecondary)
+                        }
+                    }
+                    Text(pet.breed ?? L10n.readyForLove)
+                        .font(Theme.Fonts.body(Typography.caption))
+                        .foregroundStyle(Theme.textSecondary)
+                }
+                .padding(Spacing.sm)
+            }
+            .frame(width: PetImageMetrics.featuredSize.width)
+            .background {
+                RoundedRectangle(cornerRadius: Radius.lg, style: .continuous)
+                    .fill(Theme.cardBackground)
+                    .overlay(
+                        RoundedRectangle(cornerRadius: Radius.lg, style: .continuous)
+                            .stroke(Theme.glassStroke, lineWidth: 1)
+                    )
+            }
+        }
+        .buttonStyle(MagneticPressStyle())
     }
 }

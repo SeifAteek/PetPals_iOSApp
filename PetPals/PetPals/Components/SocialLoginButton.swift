@@ -4,12 +4,20 @@ enum SocialPlatform: String {
     case apple = "Apple"
     case google = "Google"
     case facebook = "Facebook"
-    
+
     var iconName: String {
         switch self {
         case .apple: return "applelogo"
-        case .google: return "g.circle.fill" // Standard SF symbol placeholder for Google
-        case .facebook: return "f.circle.fill" // Standard SF symbol placeholder for Facebook
+        case .google: return "g.circle.fill"
+        case .facebook: return "f.circle.fill"
+        }
+    }
+
+    var tint: Color {
+        switch self {
+        case .apple: return Theme.textPrimary
+        case .google: return Theme.powderBlush
+        case .facebook: return Theme.navy
         }
     }
 }
@@ -17,37 +25,24 @@ enum SocialPlatform: String {
 struct SocialLoginButton: View {
     let platform: SocialPlatform
     let action: () -> Void
-    
+
     var body: some View {
-        Button(action: action) {
-            HStack {
+        Button(action: {
+            Haptic.light()
+            action()
+        }) {
+            HStack(spacing: Spacing.xs) {
                 Image(systemName: platform.iconName)
-                    .resizable()
-                    .scaledToFit()
-                    .frame(width: 20, height: 20)
-                    .foregroundColor(platform == .apple ? .black : (platform == .google ? .red : .blue))
-                
+                    .font(.system(size: 20, weight: .medium))
+                    .foregroundStyle(platform.tint)
                 Text("Continue with \(platform.rawValue)")
-                    .font(Theme.Fonts.primaryFont(size: 16, weight: .medium))
-                    .foregroundColor(.black)
+                    .font(Theme.Fonts.headline(Typography.callout, weight: .semibold))
+                    .foregroundStyle(Theme.textPrimary)
             }
             .frame(maxWidth: .infinity)
             .padding(.vertical, 14)
-            .background(Theme.cardBackground)
-            .cornerRadius(25)
-            .overlay(
-                RoundedRectangle(cornerRadius: 25)
-                    .stroke(Color.gray.opacity(0.3), lineWidth: 1)
-            )
+            .glassCard(cornerRadius: Radius.pill, elevation: .resting)
         }
+        .buttonStyle(MagneticPressStyle())
     }
-}
-
-#Preview {
-    VStack(spacing: 16) {
-        SocialLoginButton(platform: .apple, action: {})
-        SocialLoginButton(platform: .google, action: {})
-        SocialLoginButton(platform: .facebook, action: {})
-    }
-    .padding()
 }

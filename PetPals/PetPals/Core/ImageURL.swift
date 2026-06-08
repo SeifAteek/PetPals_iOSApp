@@ -1,6 +1,6 @@
 import Foundation
 
-/// Normalizes storage/public URLs so `AsyncImage` can load (encoding, https, spaces).
+/// Normalizes storage/public URLs so cached remote images can load (encoding, https, spaces).
 enum ImageURL {
     static func from(_ string: String?) -> URL? {
         guard var s = string?.trimmingCharacters(in: .whitespacesAndNewlines), !s.isEmpty else { return nil }

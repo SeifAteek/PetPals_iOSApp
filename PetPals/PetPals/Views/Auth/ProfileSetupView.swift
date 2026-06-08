@@ -4,66 +4,65 @@ struct ProfileSetupView: View {
     @EnvironmentObject var coordinator: AppCoordinator
     @StateObject private var viewModel = ProfileSetupViewModel()
     let initialProfile: Profile?
-    
+
     var body: some View {
         ScrollView {
-            VStack(alignment: .leading, spacing: 24) {
-                Text("Complete Your Profile")
-                    .font(Theme.Fonts.primaryFont(size: 28, weight: .bold))
-                
-                Text("Please fill in the missing details to personalize your PetPals experience.")
-                    .font(Theme.Fonts.primaryFont(size: 15))
-                    .foregroundColor(Theme.textSecondary)
-                
+            VStack(alignment: .leading, spacing: Spacing.md) {
+                PremiumScreenHeader(
+                    eyebrow: L10n.profileSetupEyebrow,
+                    title: L10n.profileSetupTitle,
+                    subtitle: L10n.profileSetupSubtitle
+                )
+
                 if let errorMessage = viewModel.errorMessage {
                     Text(errorMessage)
-                        .foregroundColor(.red)
-                        .font(Theme.Fonts.primaryFont(size: 14))
+                        .foregroundStyle(.red.opacity(0.9))
+                        .font(Theme.Fonts.body(Typography.caption))
                 }
-                
-                VStack(alignment: .leading, spacing: 16) {
-                    fieldLabel("Full Name")
-                    CustomTextField(placeholder: "e.g. Seif Ateek", text: $viewModel.userName)
-                    
-                    fieldLabel("Email Address")
-                    CustomTextField(placeholder: "e.g. seif@example.com", text: $viewModel.email, keyboardType: .emailAddress)
-                    
-                    fieldLabel("Phone Number")
-                    CustomTextField(placeholder: "e.g. +1 234 567 890", text: $viewModel.phoneNumber, keyboardType: .phonePad)
-                    
-                    fieldLabel("I am a...")
-                    Picker("User Type", selection: $viewModel.userType) {
-                        Text("Adopter").tag(UserType.adopter)
-                        Text("Clinic").tag(UserType.clinic)
-                        Text("Shelter").tag(UserType.shelter)
-                    }
-                    .pickerStyle(.segmented)
-                    .padding(.top, 4)
+
+                VStack(alignment: .leading, spacing: Spacing.sm) {
+                    fieldLabel(L10n.displayName)
+                    CustomTextField(placeholder: L10n.profileNamePlaceholder, text: $viewModel.userName)
+
+                    fieldLabel(L10n.email)
+                    CustomTextField(
+                        placeholder: L10n.profileEmailPlaceholder,
+                        text: $viewModel.email,
+                        keyboardType: .emailAddress
+                    )
+
+                    fieldLabel(L10n.phone)
+                    CustomTextField(
+                        placeholder: L10n.profilePhonePlaceholder,
+                        text: $viewModel.phoneNumber,
+                        keyboardType: .phonePad
+                    )
                 }
-                
+
                 PrimaryButton(
-                    title: "Complete Profile",
+                    title: L10n.profileSetupContinue,
                     isLoading: viewModel.isLoading
                 ) {
                     viewModel.saveProfile(coordinator: coordinator)
                 }
-                .padding(.top, 16)
+                .padding(.top, Spacing.xs)
             }
-            .padding(24)
+            .padding(Spacing.lg)
         }
-        .background(Theme.background.ignoresSafeArea())
+        .dismissKeyboardOnSwipe()
+        .petPalsScreenBackground()
         .onAppear {
             if let profile = initialProfile {
                 viewModel.loadInitialData(profile: profile)
             }
         }
     }
-    
+
     @ViewBuilder
     private func fieldLabel(_ text: String) -> some View {
         Text(text)
-            .font(Theme.Fonts.primaryFont(size: 13, weight: .semibold))
-            .foregroundColor(Theme.textSecondary)
+            .font(Theme.Fonts.label(Typography.caption, weight: .semibold))
+            .foregroundStyle(Theme.textSecondary)
     }
 }
 

@@ -10,12 +10,14 @@ import SwiftUI
 struct ContentView: View {
     @EnvironmentObject var coordinator: AppCoordinator
     @EnvironmentObject var dependencies: DependencyContainer
+    @StateObject private var keyboardObserver = KeyboardObserver()
     @AppStorage("isDarkMode") private var isDarkMode = false
     
     var body: some View {
         CoordinatorView()
             .environmentObject(coordinator)
             .environmentObject(dependencies)
+            .environmentObject(keyboardObserver)
             .preferredColorScheme(isDarkMode ? .dark : .light)
             .onAppear {
                 updateWindowStyle(isDark: isDarkMode)

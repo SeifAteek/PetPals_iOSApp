@@ -68,7 +68,7 @@ struct SmartCollarView: View {
             .padding(.bottom, 40)
         }
         .padding()
-        .background(Theme.background.ignoresSafeArea())
+        .clawsyScreenBackground()
         .navigationTitle("Smart Collar")
         .navigationBarTitleDisplayMode(.inline)
         .onAppear {
