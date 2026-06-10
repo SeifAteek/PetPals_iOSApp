@@ -46,7 +46,10 @@ struct MyActivityView: View {
                                 .padding(.horizontal)
                         } else {
                             ForEach(viewModel.appointments) { apt in
-                                AppointmentRow(appointment: apt)
+                                AppointmentRow(
+                                    appointment: apt,
+                                    petName: viewModel.petName(for: apt)
+                                )
                             }
                             .padding(.horizontal)
                         }
@@ -119,6 +122,7 @@ struct ApplicationRow: View {
 
 struct AppointmentRow: View {
     let appointment: Appointment
+    var petName: String? = nil
     
     var body: some View {
         HStack {
@@ -126,6 +130,16 @@ struct AppointmentRow: View {
                 Text(appointment.reason ?? "Appointment")
                     .font(Theme.Fonts.primaryFont(size: 16, weight: .bold))
                     .foregroundColor(Theme.textPrimary)
+                
+                if let petName {
+                    HStack(spacing: 4) {
+                        Image(systemName: "pawprint.fill")
+                            .font(.system(size: 11))
+                        Text(petName)
+                    }
+                    .font(Theme.Fonts.primaryFont(size: 13, weight: .medium))
+                    .foregroundColor(Theme.primary)
+                }
                 
                 Text(appointment.appointmentDate, style: .date)
                     .font(Theme.Fonts.primaryFont(size: 14))

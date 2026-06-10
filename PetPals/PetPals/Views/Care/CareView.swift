@@ -47,18 +47,14 @@ struct CareView: View {
                 PremiumSectionHeader(title: L10n.dailyPetTips)
 
                 VStack(spacing: Spacing.sm) {
-                    TipCard(
-                        title: "Hydration is key",
-                        desc: "Fresh water always — especially in warmer months.",
-                        icon: "drop.fill",
-                        color: Theme.powderBlush
-                    )
-                    TipCard(
-                        title: "Regular exercise",
-                        desc: "Thirty minutes of movement lifts mood and health.",
-                        icon: "figure.walk",
-                        color: Theme.navy
-                    )
+                    ForEach(viewModel.dailyTips) { tip in
+                        TipCard(
+                            title: tip.title,
+                            desc: tip.desc,
+                            icon: tip.icon,
+                            color: tip.color
+                        )
+                    }
                 }
                 .padding(.horizontal, ScreenLayout.horizontalPadding)
             }
@@ -76,8 +72,6 @@ struct CareView: View {
         switch kind {
         case .veterinary: coordinator.push(.vets)
         case .petShop: coordinator.push(.shop)
-        case .boarding: coordinator.push(.vets)
-        case .grooming: coordinator.push(.groomingVets)
         }
     }
 }

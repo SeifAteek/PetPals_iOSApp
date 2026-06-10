@@ -72,6 +72,9 @@ enum AppRoute: Hashable {
     // Community
     case communityPostDetail(postId: UUID)
     case createCommunityPost(subredditId: UUID?)
+    // Reminders
+    case reminders(petId: UUID, petName: String)
+    case addReminder(petId: UUID, petName: String)
 }
 final class AppCoordinator: ObservableObject {
     @Published var path = NavigationPath()

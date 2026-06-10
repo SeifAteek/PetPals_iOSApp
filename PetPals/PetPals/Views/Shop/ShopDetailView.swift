@@ -133,25 +133,44 @@ struct ShopProductCard: View {
     let onTap: () -> Void
     @EnvironmentObject var cartViewModel: CartViewModel
 
+    private var inCartCount: Int { cartViewModel.cartItems[product] ?? 0 }
+    private var maxQty: Int { min(product.stockLevel ?? 99, 99) }
+
     var body: some View {
-        Button(action: onTap) {
-            VStack(alignment: .leading, spacing: 10) {
-                // Image
-                ZStack {
-                    RoundedRectangle(cornerRadius: 12)
-                        .fill(Theme.primary.opacity(0.08))
-                        .frame(height: 110)
-                    if let imageUrl = product.imageUrl, let url = URL(string: imageUrl) {
-                        CachedAsyncImage(url: url) { phase in
-                            if let img = phase.image { img.resizable().scaledToFit().padding(8) }
-                            else { Image(systemName: "bag.fill").font(.largeTitle).foregroundColor(Theme.primary.opacity(0.3)) }
+        VStack(alignment: .leading, spacing: 10) {
+            // Image + In Cart badge
+            Button(action: onTap) {
+                ZStack(alignment: .topTrailing) {
+                    ZStack {
+                        RoundedRectangle(cornerRadius: 12)
+                            .fill(Theme.primary.opacity(0.08))
+                            .frame(height: 110)
+                        if let imageUrl = product.imageUrl, let url = URL(string: imageUrl) {
+                            CachedAsyncImage(url: url) { phase in
+                                if let img = phase.image { img.resizable().scaledToFit().padding(8) }
+                                else { Image(systemName: "bag.fill").font(.largeTitle).foregroundColor(Theme.primary.opacity(0.3)) }
+                            }
+                            .frame(height: 110)
+                        } else {
+                            Image(systemName: "bag.fill").font(.largeTitle).foregroundColor(Theme.primary.opacity(0.3))
                         }
-                        .frame(height: 110)
-                    } else {
-                        Image(systemName: "bag.fill").font(.largeTitle).foregroundColor(Theme.primary.opacity(0.3))
+                    }
+
+                    if inCartCount > 0 {
+                        Text("\(inCartCount)")
+                            .font(.system(size: 11, weight: .bold))
+                            .foregroundColor(.white)
+                            .frame(width: 24, height: 24)
+                            .background(Theme.primary)
+                            .clipShape(Circle())
+                            .padding(6)
+                            .transition(.scale.combined(with: .opacity))
                     }
                 }
+            }
+            .buttonStyle(.plain)
 
+            Button(action: onTap) {
                 VStack(alignment: .leading, spacing: 3) {
                     Text(product.name)
                         .font(Theme.Fonts.primaryFont(size: 13, weight: .bold))
@@ -160,29 +179,66 @@ struct ShopProductCard: View {
                     if let cat = product.category {
                         Text(cat).font(.caption).foregroundColor(Theme.textSecondary)
                     }
-                    // Stock badge
                     if let stock = product.stockLevel, stock <= 5 {
                         Text("Only \(stock) left!").font(.caption).foregroundColor(.orange).bold()
                     }
                 }
+            }
+            .buttonStyle(.plain)
 
-                HStack {
-                    Text(CurrencyFormatting.egp(product.price))
-                        .font(Theme.Fonts.primaryFont(size: 15, weight: .bold))
-                        .foregroundColor(Theme.accent)
-                    Spacer()
-                    Button(action: { cartViewModel.addToCart(product) }) {
+            // Price + Quantity Controls
+            HStack {
+                Text(CurrencyFormatting.egp(product.price))
+                    .font(Theme.Fonts.primaryFont(size: 15, weight: .bold))
+                    .foregroundColor(Theme.accent)
+                Spacer()
+                if inCartCount > 0 {
+                    // Inline stepper
+                    HStack(spacing: 8) {
+                        Button(action: {
+                            withAnimation(.spring(response: 0.3)) {
+                                cartViewModel.removeFromCart(product)
+                            }
+                        }) {
+                            Image(systemName: "minus.circle.fill")
+                                .font(.title3)
+                                .foregroundColor(Theme.textSecondary)
+                        }
+                        Text("\(inCartCount)")
+                            .font(Theme.Fonts.primaryFont(size: 14, weight: .bold))
+                            .foregroundColor(Theme.textPrimary)
+                            .frame(minWidth: 20)
+                        Button(action: {
+                            if inCartCount < maxQty {
+                                withAnimation(.spring(response: 0.3)) {
+                                    cartViewModel.addToCart(product)
+                                }
+                            }
+                        }) {
+                            Image(systemName: "plus.circle.fill")
+                                .font(.title3)
+                                .foregroundColor(inCartCount < maxQty ? Theme.primary : .gray.opacity(0.3))
+                        }
+                        .disabled(inCartCount >= maxQty)
+                    }
+                } else {
+                    Button(action: {
+                        withAnimation(.spring(response: 0.3)) {
+                            cartViewModel.addToCart(product)
+                        }
+                    }) {
                         Image(systemName: "plus.circle.fill")
                             .font(.title2)
                             .foregroundColor(Theme.primary)
                     }
                 }
             }
-            .padding(12)
-            .background(Theme.cardBackground)
-            .cornerRadius(16)
-            .shadow(color: .black.opacity(0.05), radius: 6, x: 0, y: 2)
         }
+        .padding(12)
+        .background(Theme.cardBackground)
+        .cornerRadius(16)
+        .shadow(color: .black.opacity(0.05), radius: 6, x: 0, y: 2)
+        .animation(.spring(response: 0.3), value: inCartCount)
     }
 }
 

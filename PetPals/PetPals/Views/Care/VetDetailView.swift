@@ -124,6 +124,54 @@ struct VetDetailView: View {
                     }
                     .padding(.horizontal)
                     
+                    // MARK: - Working Hours
+                    if let workingHours = clinic.workingHours, !workingHours.isEmpty {
+                        VStack(alignment: .leading, spacing: 12) {
+                            HStack {
+                                Text("Working Hours")
+                                    .font(Theme.Fonts.primaryFont(size: 18, weight: .bold))
+                                    .foregroundColor(Theme.textPrimary)
+                                Spacer()
+                                openNowBadge(workingHours: workingHours)
+                            }
+                            
+                            VStack(spacing: 6) {
+                                ForEach(orderedDays, id: \.self) { day in
+                                    let hours = workingHours[day] ?? nil
+                                    let isToday = currentDayName().lowercased() == day.lowercased()
+                                    
+                                    HStack {
+                                        Text(day.capitalized)
+                                            .font(Theme.Fonts.primaryFont(size: 14, weight: isToday ? .bold : .regular))
+                                            .foregroundColor(isToday ? Theme.primary : Theme.textPrimary)
+                                            .frame(width: 90, alignment: .leading)
+                                        
+                                        Spacer()
+                                        
+                                        if let hours {
+                                            Text("\(hours.open) - \(hours.close)")
+                                                .font(Theme.Fonts.primaryFont(size: 14, weight: isToday ? .semibold : .regular))
+                                                .foregroundColor(isToday ? Theme.primary : Theme.textSecondary)
+                                        } else {
+                                            Text("Closed")
+                                                .font(Theme.Fonts.primaryFont(size: 14, weight: .medium))
+                                                .foregroundColor(.red.opacity(0.7))
+                                        }
+                                    }
+                                    .padding(.vertical, 8)
+                                    .padding(.horizontal, 12)
+                                    .background(isToday ? Theme.primary.opacity(0.08) : Color.clear)
+                                    .cornerRadius(8)
+                                }
+                            }
+                        }
+                        .padding()
+                        .background(Theme.cardBackground)
+                        .cornerRadius(16)
+                        .shadow(color: .black.opacity(0.03), radius: 5, x: 0, y: 2)
+                        .padding(.horizontal)
+                    }
+                    
                     HStack(spacing: 16) {
                         Button(action: {
                             coordinator.push(.chatRoom(clinicId: clinicId, shelterId: nil, displayName: clinic.name))
@@ -283,6 +331,56 @@ struct VetDetailView: View {
         .background(Theme.cardBackground)
         .cornerRadius(12)
         .shadow(color: .black.opacity(0.03), radius: 5, x: 0, y: 2)
+    }
+    
+    // MARK: - Working Hours Helpers
+    
+    private var orderedDays: [String] {
+        ["monday", "tuesday", "wednesday", "thursday", "friday", "saturday", "sunday"]
+    }
+    
+    private func currentDayName() -> String {
+        let formatter = DateFormatter()
+        formatter.locale = Locale(identifier: "en_US_POSIX")
+        formatter.dateFormat = "EEEE"
+        return formatter.string(from: Date()).lowercased()
+    }
+    
+    private func isClinicOpenNow(workingHours: [String: DayHours?]) -> Bool {
+        let today = currentDayName()
+        guard let dayHoursOpt = workingHours[today], let hours = dayHoursOpt else { return false }
+        
+        let formatter = DateFormatter()
+        formatter.locale = Locale(identifier: "en_US_POSIX")
+        formatter.dateFormat = "HH:mm"
+        
+        guard let openTime = formatter.date(from: hours.open),
+              let closeTime = formatter.date(from: hours.close) else { return false }
+        
+        let now = Date()
+        let cal = Calendar.current
+        let nowMinutes = cal.component(.hour, from: now) * 60 + cal.component(.minute, from: now)
+        let openMinutes = cal.component(.hour, from: openTime) * 60 + cal.component(.minute, from: openTime)
+        let closeMinutes = cal.component(.hour, from: closeTime) * 60 + cal.component(.minute, from: closeTime)
+        
+        return nowMinutes >= openMinutes && nowMinutes < closeMinutes
+    }
+    
+    @ViewBuilder
+    private func openNowBadge(workingHours: [String: DayHours?]) -> some View {
+        let isOpen = isClinicOpenNow(workingHours: workingHours)
+        HStack(spacing: 4) {
+            Circle()
+                .fill(isOpen ? Color.green : Color.red)
+                .frame(width: 8, height: 8)
+            Text(isOpen ? "Open Now" : "Closed")
+                .font(Theme.Fonts.primaryFont(size: 12, weight: .bold))
+                .foregroundColor(isOpen ? .green : .red)
+        }
+        .padding(.horizontal, 10)
+        .padding(.vertical, 5)
+        .background((isOpen ? Color.green : Color.red).opacity(0.1))
+        .cornerRadius(8)
     }
 }
 

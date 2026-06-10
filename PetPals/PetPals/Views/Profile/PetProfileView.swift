@@ -9,7 +9,7 @@ struct PetProfileView: View {
     @StateObject private var bluetoothManager = BluetoothManager()
     @State private var isOwner: Bool = true
     @State private var ownerProfile: Profile? = nil
-    @State private var showRemindersAlert = false
+
     
     var body: some View {
         ScrollView {
@@ -62,8 +62,12 @@ struct PetProfileView: View {
                     // MARK: - Stats Row
                     HStack(spacing: 16) {
                         StatPill(title: "Age", value: "\(pet.age ?? 0) yrs")
-                        StatPill(title: "Weight", value: "12 kg")
-                        StatPill(title: "Gender", value: "Male")
+                        if let species = pet.species {
+                            StatPill(title: "Species", value: species)
+                        }
+                        if let breed = pet.breed {
+                            StatPill(title: "Breed", value: breed)
+                        }
                     }
                     .padding(.horizontal, 24)
                     .padding(.top, 50)
@@ -83,7 +87,7 @@ struct PetProfileView: View {
                                 Button(action: { coordinator.push(.activity) }) {
                                     ActionCard(icon: "calendar", title: "Appointments", color: .orange)
                                 }
-                                Button(action: { showRemindersAlert = true }) {
+                                Button(action: { coordinator.push(.reminders(petId: pet.petId, petName: pet.name)) }) {
                                     ActionCard(icon: "bell", title: "Reminders", color: .purple)
                                 }
                                 Button(action: { coordinator.push(.editPet(pet: pet)) }) {
@@ -153,11 +157,7 @@ struct PetProfileView: View {
         .onDisappear {
             bluetoothManager.cancelPeripheralConnection()
         }
-        .alert("Reminders", isPresented: $showRemindersAlert) {
-            Button("OK", role: .cancel) {}
-        } message: {
-            Text("Pet reminders are coming soon! You'll be able to set feeding times, medication schedules, and vet appointments.")
-        }
+
     }
     
     private func loadPet() async {

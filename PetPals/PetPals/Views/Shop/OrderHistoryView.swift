@@ -76,14 +76,28 @@ struct OrderRowCard: View {
                     }
                 }
                 Spacer()
-                // Status badge
-                Text(order.status?.rawValue ?? "Unknown")
-                    .font(.caption.bold())
-                    .padding(.horizontal, 10)
-                    .padding(.vertical, 5)
-                    .background(statusColor.opacity(0.15))
-                    .foregroundColor(statusColor)
-                    .cornerRadius(10)
+                VStack(alignment: .trailing, spacing: 4) {
+                    // Status badge
+                    Text(order.status?.rawValue ?? "Unknown")
+                        .font(.caption.bold())
+                        .padding(.horizontal, 10)
+                        .padding(.vertical, 5)
+                        .background(statusColor.opacity(0.15))
+                        .foregroundColor(statusColor)
+                        .cornerRadius(10)
+                    // Live tracking indicator
+                    if order.status == .processing || order.status == .shipped {
+                        HStack(spacing: 4) {
+                            Circle()
+                                .fill(Color.green)
+                                .frame(width: 6, height: 6)
+                                .modifier(PulsingDot())
+                            Text("Live Tracking")
+                                .font(.system(size: 10, weight: .semibold))
+                                .foregroundColor(.green)
+                        }
+                    }
+                }
             }
 
             Divider()
@@ -136,5 +150,16 @@ final class OrderHistoryViewModel: ObservableObject {
             }
             self.isLoading = false
         }
+    }
+}
+
+struct PulsingDot: ViewModifier {
+    @State private var isPulsing = false
+    func body(content: Content) -> some View {
+        content
+            .scaleEffect(isPulsing ? 1.5 : 1.0)
+            .opacity(isPulsing ? 0.5 : 1.0)
+            .animation(.easeInOut(duration: 1.0).repeatForever(autoreverses: true), value: isPulsing)
+            .onAppear { isPulsing = true }
     }
 }

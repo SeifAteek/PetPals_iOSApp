@@ -69,49 +69,81 @@ struct CartItemRow: View {
     let product: PetProduct
     let quantity: Int
     @EnvironmentObject var cartViewModel: CartViewModel
-    
+
+    private var maxQty: Int { min(product.stockLevel ?? 99, 99) }
+    private var subtotal: Decimal { product.price * Decimal(quantity) }
+
     var body: some View {
         HStack(spacing: 16) {
+            // Product image
             ZStack {
                 RoundedRectangle(cornerRadius: 12)
                     .fill(Theme.primary.opacity(0.1))
                     .frame(width: 80, height: 80)
-                Image(systemName: "bag.fill")
-                    .font(.title)
-                    .foregroundColor(Theme.primary.opacity(0.5))
+                if let imageUrl = product.imageUrl, let url = URL(string: imageUrl) {
+                    CachedAsyncImage(url: url) { phase in
+                        if let img = phase.image {
+                            img.resizable().scaledToFill()
+                        } else {
+                            Image(systemName: "bag.fill")
+                                .font(.title)
+                                .foregroundColor(Theme.primary.opacity(0.5))
+                        }
+                    }
+                    .frame(width: 80, height: 80)
+                    .clipShape(RoundedRectangle(cornerRadius: 12))
+                } else {
+                    Image(systemName: "bag.fill")
+                        .font(.title)
+                        .foregroundColor(Theme.primary.opacity(0.5))
+                }
             }
             
             VStack(alignment: .leading, spacing: 4) {
                 Text(product.name)
                     .font(Theme.Fonts.primaryFont(size: 16, weight: .bold))
                     .foregroundColor(Theme.textPrimary)
+                    .lineLimit(2)
                 
                 Text(CurrencyFormatting.egp(product.price))
                     .font(Theme.Fonts.primaryFont(size: 14))
                     .foregroundColor(Theme.textSecondary)
+
+                Text(CurrencyFormatting.egp(subtotal))
+                    .font(Theme.Fonts.primaryFont(size: 15, weight: .bold))
+                    .foregroundColor(Theme.accent)
             }
             
             Spacer()
             
             HStack(spacing: 12) {
                 Button(action: {
-                    cartViewModel.removeFromCart(product)
+                    withAnimation(.spring(response: 0.3)) {
+                        cartViewModel.removeFromCart(product)
+                    }
                 }) {
                     Image(systemName: "minus.circle.fill")
+                        .font(.title3)
                         .foregroundColor(Theme.textSecondary)
                 }
                 
                 Text("\(quantity)")
                     .font(Theme.Fonts.primaryFont(size: 16, weight: .bold))
                     .foregroundColor(Theme.textPrimary)
-                    .frame(width: 20)
+                    .frame(width: 24)
                 
                 Button(action: {
-                    cartViewModel.addToCart(product)
+                    if quantity < maxQty {
+                        withAnimation(.spring(response: 0.3)) {
+                            cartViewModel.addToCart(product)
+                        }
+                    }
                 }) {
                     Image(systemName: "plus.circle.fill")
-                        .foregroundColor(Theme.primary)
+                        .font(.title3)
+                        .foregroundColor(quantity < maxQty ? Theme.primary : .gray.opacity(0.3))
                 }
+                .disabled(quantity >= maxQty)
             }
         }
         .padding(12)

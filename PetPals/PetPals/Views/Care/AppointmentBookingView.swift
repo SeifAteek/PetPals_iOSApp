@@ -9,8 +9,26 @@ struct AppointmentBookingView: View {
     private let client = SupabaseClientManager.shared.client
     
     private let maxSlotsPerDay = 8
-    private let openingHour = 9
-    private let closingHour = 17
+    
+    /// Dynamic opening hour based on the clinic's working_hours for the selected day. Defaults to 9.
+    private var openingHour: Int {
+        guard let day = selectedDay, let clinic,
+              let wh = clinic.workingHours,
+              let dayHoursOpt = wh[dayKey(for: day)],
+              let hours = dayHoursOpt,
+              let h = Int(hours.open.prefix(2)) else { return 9 }
+        return h
+    }
+    
+    /// Dynamic closing hour based on the clinic's working_hours for the selected day. Defaults to 17.
+    private var closingHour: Int {
+        guard let day = selectedDay, let clinic,
+              let wh = clinic.workingHours,
+              let dayHoursOpt = wh[dayKey(for: day)],
+              let hours = dayHoursOpt,
+              let h = Int(hours.close.prefix(2)) else { return 17 }
+        return h
+    }
     
     @State private var clinic: Clinic?
     @State private var appointmentDates: [Date] = []
@@ -301,6 +319,7 @@ struct AppointmentBookingView: View {
                 appointmentId: UUID(),
                 userId: session.user.id,
                 clinicId: draft.clinicId,
+                petId: draft.petId,
                 appointmentDate: when,
                 reason: reasonParts.joined(separator: " · "),
                 status: .pending
@@ -344,6 +363,14 @@ struct AppointmentBookingView: View {
         f.locale = Locale(identifier: "en_US_POSIX")
         f.dateFormat = "yyyy-MM-dd"
         return f.string(from: date)
+    }
+    
+    /// Returns the lowercase English weekday name (e.g. "monday") for a date, used as key into workingHours.
+    private func dayKey(for date: Date) -> String {
+        let f = DateFormatter()
+        f.locale = Locale(identifier: "en_US_POSIX")
+        f.dateFormat = "EEEE"
+        return f.string(from: date).lowercased()
     }
     
     private func monthYearString(_ date: Date) -> String {

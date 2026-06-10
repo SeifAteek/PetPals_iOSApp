@@ -64,7 +64,6 @@ struct ChatRoomView: View {
                 
                 Button(action: {
                     viewModel.sendMessage()
-                    Keyboard.dismiss()
                 }) {
                     ZStack {
                         Circle()

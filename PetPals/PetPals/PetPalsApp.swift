@@ -16,6 +16,7 @@ struct PetPalsApp: App {
     init() {
         ImageCacheManager.configure()
         ScrollKeyboardConfig.applyGlobalInteractiveDismiss()
+        ReminderManager.shared.requestPermission()
     }
     
     private var appLocale: Locale {

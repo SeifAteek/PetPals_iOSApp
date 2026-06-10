@@ -94,6 +94,10 @@ struct CoordinatorView: View {
                     CommunityPostDetailView(postId: postId)
                 case .createCommunityPost(let subredditId):
                     CreateCommunityPostView(preselectedSubredditId: subredditId)
+                case .reminders(let petId, let petName):
+                    RemindersListView(petId: petId, petName: petName)
+                case .addReminder(let petId, let petName):
+                    AddReminderView(petId: petId, petName: petName)
                 default:
                     EmptyView()
                 }

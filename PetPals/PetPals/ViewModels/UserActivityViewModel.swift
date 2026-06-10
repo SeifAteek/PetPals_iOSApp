@@ -6,14 +6,20 @@ import Supabase
 final class UserActivityViewModel: ObservableObject {
     @Published var applications: [PetApplication] = []
     @Published var appointments: [Appointment] = []
+    @Published var petNames: [UUID: String] = [:]
     @Published var isLoading = false
     @Published var errorMessage: String?
     
     private let client = SupabaseClientManager.shared.client
     private let authService: AuthServiceProtocol
+    private let petService: PetServiceProtocol
     
-    init(authService: AuthServiceProtocol = DependencyContainer.shared.authService) {
+    init(
+        authService: AuthServiceProtocol = DependencyContainer.shared.authService,
+        petService: PetServiceProtocol = DependencyContainer.shared.petService
+    ) {
         self.authService = authService
+        self.petService = petService
     }
     
     func loadActivity() {
@@ -28,17 +34,24 @@ final class UserActivityViewModel: ObservableObject {
                 
                 async let fetchApplications = fetchUserApplications(userId: profile.userId)
                 async let fetchAppointments = fetchUserAppointments(userId: profile.userId)
+                async let fetchPets = petService.fetchUserPets(userId: profile.userId)
                 
-                let (apps, apts) = try await (fetchApplications, fetchAppointments)
+                let (apps, apts, pets) = try await (fetchApplications, fetchAppointments, fetchPets)
                 
                 self.applications = apps
                 self.appointments = apts
+                self.petNames = Dictionary(uniqueKeysWithValues: pets.map { ($0.id, $0.name) })
                 self.isLoading = false
             } catch {
                 self.errorMessage = error.localizedDescription
                 self.isLoading = false
             }
         }
+    }
+    
+    func petName(for appointment: Appointment) -> String? {
+        guard let petId = appointment.petId else { return nil }
+        return petNames[petId]
     }
     
     private func fetchUserApplications(userId: UUID) async throws -> [PetApplication] {
@@ -77,3 +90,4 @@ final class UserActivityViewModel: ObservableObject {
         return apts
     }
 }
+

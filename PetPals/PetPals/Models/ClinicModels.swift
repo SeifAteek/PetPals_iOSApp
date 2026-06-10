@@ -1,6 +1,11 @@
 import Foundation
 
-struct Clinic: Codable, Identifiable {
+struct DayHours: Codable, Equatable, Hashable {
+    let open: String
+    let close: String
+}
+
+struct Clinic: Codable, Identifiable, Hashable {
     var id: UUID { clinicId }
     let clinicId: UUID
     let name: String
@@ -13,6 +18,7 @@ struct Clinic: Codable, Identifiable {
     var longitude: Double?
     /// ISO calendar dates (`yyyy-MM-dd`) when the clinic is closed (vacation); optional DB column.
     let vacationDates: [String]?
+    let workingHours: [String: DayHours?]?
     
     enum CodingKeys: String, CodingKey {
         case clinicId = "clinic_id"
@@ -25,6 +31,7 @@ struct Clinic: Codable, Identifiable {
         case latitude
         case longitude
         case vacationDates = "vacation_dates"
+        case workingHours = "working_hours"
     }
 }
 
@@ -92,6 +99,7 @@ struct Appointment: Codable, Identifiable {
     let appointmentId: UUID
     let userId: UUID?
     let clinicId: UUID?
+    let petId: UUID?
     let appointmentDate: Date
     let reason: String?
     let status: AppointmentStatus?
@@ -100,6 +108,7 @@ struct Appointment: Codable, Identifiable {
         case appointmentId = "appointment_id"
         case userId = "user_id"
         case clinicId = "clinic_id"
+        case petId = "pet_id"
         case appointmentDate = "appointment_date"
         case reason
         case status

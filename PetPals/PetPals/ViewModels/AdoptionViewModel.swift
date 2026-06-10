@@ -154,10 +154,16 @@ final class AdoptionViewModel: ObservableObject {
                 .execute()
         }
         
-        // 2. Simulate AI Compatibility Score
-        let baseScore = Int.random(in: 75...90)
-        let bonus = formHasOtherPets ? 5 : 0 // Simple mock AI logic
-        let aiMatchScore = min(baseScore + bonus, 99)
+        // 2. Real AI Compatibility Score using personality matcher
+        let personalityService = DependencyContainer.shared.personalityService
+        let personality = try? await personalityService.fetchProfile(userId: userId)
+        let pet = try await DependencyContainer.shared.petService.fetchPetDetails(id: petId)
+        let aiMatchScore: Int
+        if let personality, personality.isComplete {
+            aiMatchScore = PetPersonalityMatcher.matchScore(pet: pet, profile: personality)
+        } else {
+            aiMatchScore = 50 // Default when no personality profile
+        }
         
         // 3. Insert Application
         let application = PetApplication(

@@ -48,7 +48,7 @@ struct MedicalRecordsListView: View {
             }
             .padding()
         }
-        .clawsyScreenBackground()
+        .petPalsScreenBackground()
         .navigationTitle("Medical Records")
         .navigationBarTitleDisplayMode(.inline)
         .onAppear {

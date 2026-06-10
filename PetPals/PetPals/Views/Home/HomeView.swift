@@ -4,6 +4,8 @@ struct HomeView: View {
     @EnvironmentObject var coordinator: AppCoordinator
     @EnvironmentObject private var dependencies: DependencyContainer
     @StateObject private var viewModel = HomeViewModel()
+    @State private var selectedMatchPet: RecommendedPet? = nil
+    @State private var showGlobalSearch = false
 
     private var greeting: String {
         let hour = Calendar.current.component(.hour, from: Date())
@@ -15,24 +17,13 @@ struct HomeView: View {
         }
     }
 
-    private var homeCategories: [(key: String, title: String, icon: String?)] {
-        [
-            ("All", L10n.all, nil),
-            ("Dogs", L10n.dogs, "dog.fill"),
-            ("Cats", L10n.cats, "cat.fill"),
-            ("Birds", L10n.birds, "bird.fill"),
-            ("Rabbits", L10n.rabbits, "hare.fill")
-        ]
-    }
-
     var body: some View {
         ScrollView(showsIndicators: false) {
             VStack(alignment: .leading, spacing: Spacing.lg) {
                 header
                 heroCard
                 searchField
-                categoryChips
-                recommendedSection
+                dynamicHeroSection
                 servicesGrid
                 nearbyVets
             }
@@ -40,6 +31,9 @@ struct HomeView: View {
         }
         .dismissKeyboardOnSwipe()
         .petPalsScreenBackground()
+        .fullScreenCover(isPresented: $showGlobalSearch) {
+            GlobalSearchView()
+        }
         .onAppear {
             viewModel.loadData()
             Task {
@@ -132,24 +126,45 @@ struct HomeView: View {
     }
 
     private var searchField: some View {
-        PremiumSearchField(placeholder: L10n.searchPlaceholderHome, text: $viewModel.searchText)
-            .padding(.horizontal, ScreenLayout.horizontalPadding)
+        Button {
+            showGlobalSearch = true
+        } label: {
+            HStack(spacing: Spacing.xs) {
+                Image(systemName: "magnifyingglass")
+                    .foregroundStyle(Theme.textSecondary)
+                Text(L10n.searchPlaceholderHome)
+                    .font(Theme.Fonts.body(Typography.callout))
+                    .foregroundStyle(Theme.textSecondary)
+                Spacer()
+            }
+            .padding(.horizontal, Spacing.sm)
+            .padding(.vertical, 14)
+            .glassCard(cornerRadius: Radius.md, elevation: .resting)
+        }
+        .buttonStyle(.plain)
+        .padding(.horizontal, ScreenLayout.horizontalPadding)
     }
 
-    private var categoryChips: some View {
-        ScrollView(.horizontal, showsIndicators: false) {
-            HStack(spacing: Spacing.xs) {
-                ForEach(homeCategories, id: \.key) { cat in
-                    PremiumChip(
-                        title: cat.title,
-                        icon: cat.icon,
-                        isSelected: viewModel.selectedCategory == cat.key
-                    ) {
-                        viewModel.selectedCategory = cat.key
-                    }
+    @ViewBuilder
+    private var dynamicHeroSection: some View {
+        if let order = viewModel.activeOrder {
+            VStack(alignment: .leading, spacing: Spacing.sm) {
+                PremiumSectionHeader(title: "Current Order")
+                ActiveOrderCard(order: order) {
+                    coordinator.push(.orderHistory)
                 }
+                .padding(.horizontal, ScreenLayout.horizontalPadding)
             }
-            .padding(.horizontal, ScreenLayout.horizontalPadding)
+        } else if viewModel.userHasPets, let post = viewModel.featuredPost {
+            VStack(alignment: .leading, spacing: Spacing.sm) {
+                PremiumSectionHeader(title: "Featured in Community")
+                FeaturedPostCard(post: post) {
+                    coordinator.push(.communityPostDetail(postId: post.id))
+                }
+                .padding(.horizontal, ScreenLayout.horizontalPadding)
+            }
+        } else {
+            recommendedSection
         }
     }
 
@@ -173,13 +188,33 @@ struct HomeView: View {
                 ScrollView(.horizontal, showsIndicators: false) {
                     HStack(spacing: Spacing.sm) {
                         ForEach(viewModel.recommendedPets) { item in
-                            FeaturedPetCard(pet: item.pet, matchScore: item.matchScore) {
+                            FeaturedPetCard(
+                                pet: item.pet,
+                                matchScore: item.matchScore,
+                                onMatchTap: {
+                                    selectedMatchPet = item
+                                }
+                            ) {
                                 coordinator.push(.petDetail(petId: item.pet.id))
                             }
                         }
                     }
                     .padding(.horizontal, ScreenLayout.horizontalPadding)
                 }
+            }
+        }
+        .sheet(item: $selectedMatchPet) { item in
+            if let profile = viewModel.personalityProfile {
+                MatchScoreDetailView(
+                    petName: item.pet.name,
+                    matchResult: PetPersonalityMatcher.detailedMatchScore(pet: item.pet, profile: profile)
+                )
+                .environmentObject(coordinator)
+            } else {
+                Text("Complete your personality profile to see match details.")
+                    .font(Theme.Fonts.body(Typography.callout))
+                    .foregroundStyle(Theme.textSecondary)
+                    .padding()
             }
         }
     }
@@ -191,14 +226,8 @@ struct HomeView: View {
                 PremiumServiceTile(title: L10n.veterinary, icon: "cross.case.fill", tint: Theme.brandDeep) {
                     coordinator.push(.vets)
                 }
-                PremiumServiceTile(title: L10n.grooming, icon: "scissors", tint: Theme.richCerulean) {
-                    coordinator.push(.groomingVets)
-                }
                 PremiumServiceTile(title: L10n.petShop, icon: "bag.fill", tint: Theme.navy) {
                     coordinator.push(.shop)
-                }
-                PremiumServiceTile(title: L10n.boarding, icon: "house.fill", tint: Theme.powderBlush) {
-                    coordinator.push(.vets)
                 }
             }
             .padding(.horizontal, ScreenLayout.horizontalPadding)
@@ -211,9 +240,9 @@ struct HomeView: View {
                 coordinator.push(.vets)
             }
             VStack(spacing: Spacing.xs) {
-                ForEach(viewModel.nearbyVets) { clinic in
-                    ClinicRowCard(clinic: clinic) {
-                        coordinator.push(.vetDetail(clinicId: clinic.id))
+                ForEach(viewModel.nearbyVets) { item in
+                    ClinicRowCard(clinic: item.clinic, distance: item.formattedDistance) {
+                        coordinator.push(.vetDetail(clinicId: item.clinic.id))
                     }
                 }
             }

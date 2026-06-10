@@ -103,13 +103,21 @@ final class CartViewModel: ObservableObject {
                     )
                 }
                 
-                _ = try await shopService.createOrder(
+                let orderId = try await shopService.createOrder(
                     userId: profile.userId,
                     shopId: shopId,
                     totalAmount: totalAmount,
                     shippingAddress: nil,
                     paymentMethod: "Online",
                     items: orderItems
+                )
+                
+                // Start Live Activity for order tracking
+                let orderNum = orderId.uuidString.prefix(8).uppercased()
+                LiveActivityManager.shared.startOrderTracking(
+                    orderNumber: String(orderNum),
+                    shopName: "PetPals Shop",
+                    totalAmount: CurrencyFormatting.egp(totalAmount)
                 )
                 
                 self.checkoutSuccess = true
