@@ -89,12 +89,12 @@ struct OrderRowCard: View {
                     if order.status == .processing || order.status == .shipped {
                         HStack(spacing: 4) {
                             Circle()
-                                .fill(Color.green)
+                                .fill(Theme.statusHealthy)
                                 .frame(width: 6, height: 6)
                                 .modifier(PulsingDot())
                             Text("Live Tracking")
                                 .font(.system(size: 10, weight: .semibold))
-                                .foregroundColor(.green)
+                                .foregroundColor(Theme.statusHealthy)
                         }
                     }
                 }

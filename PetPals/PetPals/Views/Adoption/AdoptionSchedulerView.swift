@@ -49,7 +49,7 @@ struct AdoptionSchedulerView: View {
                                     .padding(.horizontal, 16)
                                     .padding(.vertical, 10)
                                     .background(isSelected ? Theme.primary : Theme.cardBackground)
-                                    .foregroundColor(.black)
+                                    .foregroundColor(Theme.textPrimary)
                                     .cornerRadius(14)
                                     .shadow(color: .black.opacity(0.06), radius: 4, x: 0, y: 2)
                             }
@@ -59,7 +59,7 @@ struct AdoptionSchedulerView: View {
 
                 if let error = submitError {
                     Text(error)
-                        .foregroundColor(.red)
+                        .foregroundColor(Theme.statusCritical)
                         .font(Theme.Fonts.primaryFont(size: 14))
                 }
 

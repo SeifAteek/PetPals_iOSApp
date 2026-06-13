@@ -51,7 +51,7 @@ struct ChatRoomView: View {
             if let error = viewModel.errorMessage {
                 Text(error)
                     .font(.caption)
-                    .foregroundColor(.red)
+                    .foregroundColor(Theme.statusCritical)
                     .padding(.top, 4)
             }
             

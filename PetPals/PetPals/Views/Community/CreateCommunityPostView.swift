@@ -37,7 +37,7 @@ struct CreateCommunityPostView: View {
 
                 if let err = viewModel.errorMessage {
                     Text(err)
-                        .foregroundStyle(.red)
+                        .foregroundStyle(Theme.statusCritical)
                         .font(Theme.Fonts.body(Typography.caption))
                         .padding(.horizontal, ScreenLayout.horizontalPadding)
                 }

@@ -4,7 +4,8 @@ struct CoordinatorView: View {
     @EnvironmentObject var coordinator: AppCoordinator
     @EnvironmentObject var dependencies: DependencyContainer
     @StateObject private var cartViewModel = CartViewModel()
-    
+    @ObservedObject private var notifications = LocalNotificationManager.shared
+
     var body: some View {
         NavigationStack(path: $coordinator.path) {
             Group {
@@ -48,6 +49,10 @@ struct CoordinatorView: View {
                     MedicalRecordsListView(viewModel: PetMedicalViewModel(petId: petId))
                 case .smartCollar(let petId):
                     SmartCollarView(viewModel: PetMedicalViewModel(petId: petId))
+                case .collarDashboard(let petId):
+                    CollarDashboardView(petId: petId)
+                case .notifications:
+                    NotificationCenterView()
                 case .vets:
                     VeterinarianListView()
                 case .vetDetail(let clinicId):
@@ -105,5 +110,13 @@ struct CoordinatorView: View {
         }
         .dismissKeyboardOnSwipe()
         .environmentObject(cartViewModel)
+        .onChange(of: notifications.pendingRoute) { route in
+            guard let route else { return }
+            // Only deep-link once the user is inside the main app shell.
+            if coordinator.currentRoot == .mainTabs {
+                notifications.handle(route: route, coordinator: coordinator)
+            }
+            notifications.pendingRoute = nil
+        }
     }
 }

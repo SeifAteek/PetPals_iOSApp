@@ -14,9 +14,9 @@ struct PetPalsApp: App {
     @AppStorage("app_preferred_language") private var appPreferredLanguage = "system"
 
     init() {
+        PetPalsFonts.register()
         ImageCacheManager.configure()
         ScrollKeyboardConfig.applyGlobalInteractiveDismiss()
-        ReminderManager.shared.requestPermission()
     }
     
     private var appLocale: Locale {
@@ -40,6 +40,10 @@ struct PetPalsApp: App {
             .environmentObject(coordinator)
             .environmentObject(dependencies)
             .environment(\.locale, appLocale)
+            .task {
+                // Registers categories + requests notification permission on first launch.
+                LocalNotificationManager.shared.configureOnLaunch()
+            }
             .onOpenURL { url in
                 handleIncomingURL(url)
             }

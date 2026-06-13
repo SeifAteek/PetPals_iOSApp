@@ -46,8 +46,12 @@ struct AdoptionView: View {
     @ViewBuilder
     private var petGrid: some View {
         if viewModel.isLoading {
-            PremiumLoadingView(message: L10n.findingCompanions)
-                .padding(.horizontal, ScreenLayout.horizontalPadding)
+            LazyVGrid(columns: [GridItem(.flexible()), GridItem(.flexible())], spacing: Spacing.sm) {
+                ForEach(0..<6, id: \.self) { _ in
+                    PetGridCardSkeleton()
+                }
+            }
+            .padding(.horizontal, ScreenLayout.horizontalPadding)
         } else if viewModel.filteredPets.isEmpty {
             PremiumEmptyState(
                 icon: "pawprint.circle",

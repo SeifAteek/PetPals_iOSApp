@@ -16,40 +16,41 @@ struct OnboardingView: View {
 
     private var pages: [OnboardingPage] {
         [
+            // gradient[0] = soft halo tint · gradient[1] = icon tint
             OnboardingPage(
                 eyebrow: L10n.onboardingWelcomeEyebrow,
                 title: L10n.onboardingWelcomeTitle,
                 description: L10n.onboardingWelcomeDesc,
                 imageName: "pawprint.fill",
-                gradient: [Theme.powderBlush, Theme.navy]
+                gradient: [Theme.forestSoft, Theme.forest]
             ),
             OnboardingPage(
                 eyebrow: L10n.onboardingDiscoverEyebrow,
                 title: L10n.onboardingDiscoverTitle,
                 description: L10n.onboardingDiscoverDesc,
                 imageName: "heart.fill",
-                gradient: [Theme.honeydew, Theme.powderBlush]
+                gradient: [Theme.coralSoft, Theme.coral]
             ),
             OnboardingPage(
                 eyebrow: L10n.onboardingCareEyebrow,
                 title: L10n.onboardingCareTitle,
                 description: L10n.onboardingCareDesc,
-                imageName: "cross.case.fill",
-                gradient: [Theme.almondCream, Theme.richCerulean]
+                imageName: "stethoscope",
+                gradient: [Theme.statusInfoSoft, Theme.statusInfo]
             ),
             OnboardingPage(
                 eyebrow: L10n.onboardingNearbyEyebrow,
                 title: L10n.onboardingNearbyTitle,
                 description: L10n.onboardingNearbyDesc,
                 imageName: "mappin.and.ellipse",
-                gradient: [Theme.powderBlush, Theme.richCerulean]
+                gradient: [Theme.statusWarnSoft, Theme.statusWarn]
             ),
             OnboardingPage(
                 eyebrow: L10n.onboardingWellnessEyebrow,
                 title: L10n.onboardingWellnessTitle,
                 description: L10n.onboardingWellnessDesc,
                 imageName: "chart.line.uptrend.xyaxis",
-                gradient: [Theme.navy, Theme.powderBlush]
+                gradient: [Theme.sandSoft, Theme.forestDeep]
             )
         ]
     }
@@ -148,86 +149,22 @@ private struct OnboardingLayoutMetrics {
     }
 }
 
-// MARK: - Dewdrop glow (fluid wobble behind onboarding icon)
+// MARK: - Calm halo (flat concentric circles behind the onboarding icon)
 
-private struct OnboardingDewdropGlow: View {
+private struct OnboardingHalo: View {
     let gradient: [Color]
     let diameter: CGFloat
 
+    private var halo: Color { gradient.first ?? Theme.forestSoft }
+
     var body: some View {
-        TimelineView(.animation(minimumInterval: 1 / 30)) { timeline in
-            let t = timeline.date.timeIntervalSinceReferenceDate
-            let wobbleX = sin(t * 1.15)
-            let wobbleY = cos(t * 0.92)
-            let wobbleZ = sin(t * 1.38 + .pi / 3)
-            let breathe = 0.5 + 0.5 * sin(t * 0.78)
-
-            ZStack {
-                Ellipse()
-                    .fill(
-                        LinearGradient(
-                            colors: gradient.map { $0.opacity(0.55 + 0.2 * breathe) },
-                            startPoint: .topLeading,
-                            endPoint: .bottomTrailing
-                        )
-                    )
-                    .frame(
-                        width: diameter * (1.02 + 0.14 * wobbleX),
-                        height: diameter * (1.08 + 0.18 * wobbleY)
-                    )
-                    .rotationEffect(.degrees(14 * wobbleZ))
-                    .blur(radius: diameter * 0.14)
-                    .offset(x: diameter * 0.06 * wobbleY, y: diameter * 0.08 * wobbleX)
-
-                Ellipse()
-                    .fill(
-                        RadialGradient(
-                            colors: [
-                                (gradient.first ?? Theme.powderBlush).opacity(0.75),
-                                (gradient.last ?? Theme.navy).opacity(0.35),
-                                Color.clear
-                            ],
-                            center: UnitPoint(
-                                x: 0.38 + 0.12 * wobbleX,
-                                y: 0.32 + 0.1 * wobbleY
-                            ),
-                            startRadius: 0,
-                            endRadius: diameter * 0.62
-                        )
-                    )
-                    .frame(
-                        width: diameter * (0.88 + 0.1 * wobbleY),
-                        height: diameter * (1.04 + 0.12 * wobbleX)
-                    )
-                    .rotationEffect(.degrees(-10 * wobbleX + 6 * wobbleZ))
-                    .blur(radius: 3)
-                    .offset(x: diameter * 0.04 * wobbleZ, y: diameter * 0.05 * wobbleY)
-
-                Circle()
-                    .fill(
-                        LinearGradient(
-                            colors: [
-                                Color.white.opacity(0.35 + 0.15 * breathe),
-                                (gradient.first ?? Theme.honeydew).opacity(0.2)
-                            ],
-                            startPoint: .topLeading,
-                            endPoint: .bottomTrailing
-                        )
-                    )
-                    .frame(width: diameter * 0.28, height: diameter * 0.22)
-                    .blur(radius: 6)
-                    .offset(
-                        x: -diameter * 0.14 + diameter * 0.05 * wobbleX,
-                        y: -diameter * 0.16 + diameter * 0.04 * wobbleY
-                    )
-                    .opacity(0.7 + 0.25 * breathe)
-            }
-            .frame(width: diameter * 1.45, height: diameter * 1.45)
-            .shadow(
-                color: Theme.primary.opacity(0.28 + 0.12 * breathe),
-                radius: 28 + 8 * breathe,
-                y: 14
-            )
+        ZStack {
+            Circle()
+                .fill(halo.opacity(0.45))
+                .frame(width: diameter * 1.3, height: diameter * 1.3)
+            Circle()
+                .fill(halo)
+                .frame(width: diameter, height: diameter)
         }
     }
 }
@@ -284,25 +221,22 @@ struct OnboardingPageView: View {
     private func heroIcon(metrics: OnboardingLayoutMetrics) -> some View {
         TimelineView(.animation(minimumInterval: 1 / 30)) { timeline in
             let t = timeline.date.timeIntervalSinceReferenceDate
-            let driftY = sin(t * 1.05) * 6
-            let driftX = cos(t * 0.88) * 4
-            let cardTilt = sin(t * 0.95) * 2.5
+            let driftY = sin(t * 0.9) * 5
 
             ZStack {
-                OnboardingDewdropGlow(gradient: page.gradient, diameter: metrics.outerGlow * 1.15)
+                OnboardingHalo(gradient: page.gradient, diameter: metrics.outerGlow * 1.05)
 
                 GlassSurface(
                     cornerRadius: Radius.xl,
                     padding: metrics.iconBox * 0.2,
-                    elevation: .floating
+                    elevation: .raised
                 ) {
                     Image(systemName: page.imageName)
                         .font(.system(size: metrics.symbolSize, weight: .medium))
-                        .foregroundStyle(Theme.primary)
+                        .foregroundStyle(page.gradient.last ?? Theme.forest)
                         .frame(width: metrics.iconBox, height: metrics.iconBox)
                 }
-                .offset(x: driftX, y: driftY)
-                .rotationEffect(.degrees(cardTilt))
+                .offset(y: driftY)
             }
         }
         .frame(height: metrics.outerGlow * 1.55)

@@ -64,10 +64,10 @@ struct CollarPairingView: View {
                     VStack(spacing: 16) {
                         Image(systemName: "antenna.radiowaves.left.and.right")
                             .font(.system(size: 50))
-                            .foregroundColor(.gray)
+                            .foregroundColor(Theme.textSecondary)
                         Text("No collars found near you.\nMake sure it is powered on.")
                             .multilineTextAlignment(.center)
-                            .foregroundColor(.gray)
+                            .foregroundColor(Theme.textSecondary)
                     }
                     .padding()
                 } else {

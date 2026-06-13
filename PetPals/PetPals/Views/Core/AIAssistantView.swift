@@ -30,7 +30,7 @@ struct AIAssistantView: View {
                             .foregroundColor(.white)
                     )
                     ZStack {
-                        Circle().fill(Color.orange).frame(width: 24, height: 24)
+                        Circle().fill(Theme.statusWarn).frame(width: 24, height: 24)
                         Image(systemName: "bolt.fill")
                             .font(.system(size: 12, weight: .bold))
                             .foregroundColor(.white)
@@ -53,8 +53,8 @@ struct AIAssistantView: View {
                 VStack(alignment: .leading, spacing: 12) {
                     HStack {
                         Image(systemName: testCompleted ? "checkmark.seal.fill" : "questionmark.circle.fill")
-                            .foregroundColor(testCompleted ? .green : Theme.primary)
-                        Text(testCompleted ? "Personality Profile Complete ✓" : "Take the Personality Test")
+                            .foregroundColor(testCompleted ? Theme.statusHealthy : Theme.primary)
+                        Text(testCompleted ? "Personality profile complete" : "Take the personality test")
                             .font(Theme.Fonts.primaryFont(size: 16, weight: .bold))
                             .foregroundColor(Theme.textPrimary)
                         Spacer()
@@ -65,12 +65,12 @@ struct AIAssistantView: View {
                         .font(Theme.Fonts.primaryFont(size: 13))
                         .foregroundColor(Theme.textSecondary)
                     Button(action: { showPersonalityTest = true }) {
-                        Text(testCompleted ? "Retake Test" : "Start Test →")
+                        Text(testCompleted ? "Retake test" : "Start test")
                             .font(Theme.Fonts.primaryFont(size: 14, weight: .bold))
                             .foregroundColor(.white)
                             .padding(.horizontal, 20)
                             .padding(.vertical, 10)
-                            .background(testCompleted ? Color.green : Theme.primary)
+                            .background(testCompleted ? Theme.statusHealthy : Theme.primary)
                             .cornerRadius(12)
                     }
                 }
@@ -93,7 +93,7 @@ struct AIAssistantView: View {
                         icon: "cross.case.fill",
                         title: "Ask about my pet's symptoms",
                         subtitle: "Describe symptoms and get triage advice",
-                        color: .red,
+                        color: Theme.statusCritical,
                         personalityAnswers: personalityAnswers,
                         onTap: { showPetSelection = true }
                     )
@@ -157,7 +157,7 @@ struct PetSelectionSheet: View {
                     VStack(spacing: 16) {
                         Image(systemName: "pawprint.circle").font(.system(size: 60)).foregroundColor(.gray.opacity(0.4))
                         Text("No pets found").font(Theme.Fonts.primaryFont(size: 18, weight: .bold))
-                        Text("Add a pet in your profile to use the symptom checker.").font(Theme.Fonts.primaryFont(size: 14)).foregroundColor(.gray).multilineTextAlignment(.center).padding(.horizontal)
+                        Text("Add a pet in your profile to use the symptom checker.").font(Theme.Fonts.primaryFont(size: 14)).foregroundColor(Theme.textSecondary).multilineTextAlignment(.center).padding(.horizontal)
                         
                         Button("Refresh") { viewModel.loadMyPets() }
                             .font(Theme.Fonts.primaryFont(size: 14, weight: .bold))
@@ -171,10 +171,10 @@ struct PetSelectionSheet: View {
                                 StandardPetPhoto(pet: pet, style: .smallCircle)
                                 VStack(alignment: .leading) {
                                     Text(pet.name).font(Theme.Fonts.primaryFont(size: 16, weight: .bold))
-                                    Text(pet.species ?? "Pet").font(Theme.Fonts.primaryFont(size: 13)).foregroundColor(.gray)
+                                    Text(pet.species ?? "Pet").font(Theme.Fonts.primaryFont(size: 13)).foregroundColor(Theme.textSecondary)
                                 }
                                 Spacer()
-                                Image(systemName: "chevron.right").font(.caption).foregroundColor(.gray)
+                                Image(systemName: "chevron.right").font(.caption).foregroundColor(Theme.textSecondary)
                             }
                         }
                     }
@@ -253,7 +253,7 @@ struct SmartAIActionRow: View {
         3. Give a top 3 breed recommendations with a clear explanation for each.
         4. Format your answer in a friendly, conversational way with emojis.
 
-        Start with "Based on your personality profile, here are my top recommendations for you! 🐾"
+        Start with "Based on your personality profile, here are my top recommendations for you."
         """
     }
 

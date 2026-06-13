@@ -637,6 +637,7 @@
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = "PetPals-copy";
 				INFOPLIST_KEY_GEMINI_API_KEY = "AIzaSyBk_LHjISdww-jIjhj27Kwbxr33vdZgU8g";
 				INFOPLIST_KEY_NFCReaderUsageDescription = "PetPals needs NFC access to program your pet's smart collar.";
 				INFOPLIST_KEY_NSBluetoothAlwaysUsageDescription = "Bluetooth is required to detect PetPals smart collars in the background for the crowdsourced tracking network.";
@@ -677,6 +678,7 @@
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = "PetPals-copy";
 				INFOPLIST_KEY_NFCReaderUsageDescription = "PetPals needs NFC access to program your pet's smart collar.";
 				INFOPLIST_KEY_NSBluetoothAlwaysUsageDescription = "Bluetooth is required to detect PetPals smart collars in the background for the crowdsourced tracking network.";
 				INFOPLIST_KEY_NSBluetoothPeripheralUsageDescription = "Bluetooth is required to detect PetPals smart collars nearby.";

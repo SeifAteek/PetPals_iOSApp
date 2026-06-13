@@ -4,7 +4,6 @@ struct HomeView: View {
     @EnvironmentObject var coordinator: AppCoordinator
     @EnvironmentObject private var dependencies: DependencyContainer
     @StateObject private var viewModel = HomeViewModel()
-    @State private var selectedMatchPet: RecommendedPet? = nil
     @State private var showGlobalSearch = false
 
     private var greeting: String {
@@ -20,12 +19,12 @@ struct HomeView: View {
     var body: some View {
         ScrollView(showsIndicators: false) {
             VStack(alignment: .leading, spacing: Spacing.lg) {
-                header
-                heroCard
-                searchField
-                dynamicHeroSection
-                servicesGrid
-                nearbyVets
+                header           // greeting + search + notifications
+                heroCarousel     // 1 · auto-rotating hero (promo · donation · vet tips)
+                myPetsSection    // 2 · horizontal row of pet cards
+                servicesGrid     // 3 · icon grid of services
+                nearbySection    // 4 · nearby clinics
+                communitySection // 5 · community cards
             }
             .padding(.top, Spacing.sm)
         }
@@ -48,199 +47,142 @@ struct HomeView: View {
 
     private var header: some View {
         HStack(alignment: .center) {
-            VStack(alignment: .leading, spacing: 4) {
+            VStack(alignment: .leading, spacing: 3) {
                 Text(greeting)
-                    .font(Theme.Fonts.label(Typography.caption, weight: .medium))
+                    .font(Theme.Fonts.body(Typography.caption, weight: .bold))
                     .foregroundStyle(Theme.textSecondary)
                 Text(coordinator.lastFetchedProfile?.userName ?? L10n.petLover)
-                    .font(Theme.Fonts.display(Typography.title2))
+                    .font(Theme.Fonts.display(26))
+                    .tracking(-0.5)
                     .foregroundStyle(Theme.textPrimary)
             }
             Spacer()
-            Button { coordinator.push(.settings) } label: {
-                settingsAvatar
-            }
-            .buttonStyle(MagneticPressStyle())
-        }
-        .padding(.horizontal, ScreenLayout.horizontalPadding)
-    }
-
-    @ViewBuilder
-    private var settingsAvatar: some View {
-        Group {
-            if let avatarUrl = coordinator.lastFetchedProfile?.avatarUrl,
-               let url = ImageURL.from(avatarUrl) {
-                CachedAsyncImage(url: url) { image in
-                    image.resizable().scaledToFill()
-                } placeholder: {
-                    avatarPlaceholder
-                }
-            } else {
-                avatarPlaceholder
-            }
-        }
-        .frame(width: 48, height: 48)
-        .clipShape(Circle())
-        .overlay(Circle().stroke(Theme.glassStroke, lineWidth: 1.5))
-    }
-
-    private var avatarPlaceholder: some View {
-        ZStack {
-            Circle().fill(Theme.primary.opacity(0.15))
-            Image(systemName: "person.fill")
-                .foregroundStyle(Theme.primary)
-        }
-    }
-
-    // MARK: - Hero
-
-    private var heroCard: some View {
-        VStack(alignment: .leading, spacing: Spacing.sm) {
-            Text(L10n.homeHeroTitle)
-                .font(Theme.Fonts.display(Typography.title1))
-                .foregroundStyle(Theme.textOnBrand)
-            Text(L10n.homeHeroDesc)
-                .font(Theme.Fonts.body(Typography.callout))
-                .foregroundStyle(Theme.textOnBrand.opacity(0.9))
             HStack(spacing: Spacing.xs) {
-                PrimaryButton(title: L10n.findAPet) {
-                    coordinator.push(.adoption)
+                PPIconButton(icon: "magnifyingglass") {
+                    showGlobalSearch = true
                 }
-                SecondaryButton(title: L10n.petCare) {
-                    coordinator.push(.vets)
+                .accessibilityLabel(L10n.searchPlaceholderHome)
+
+                NotificationBellButton {
+                    coordinator.push(.notifications)
                 }
+                .accessibilityLabel("Notifications")
             }
-        }
-        .padding(Spacing.md)
-        .frame(maxWidth: .infinity, alignment: .leading)
-        .background {
-            RoundedRectangle(cornerRadius: Radius.xl, style: .continuous)
-                .fill(Theme.brandGradient)
-                .overlay(
-                    RoundedRectangle(cornerRadius: Radius.xl, style: .continuous)
-                        .stroke(Color.white.opacity(0.25), lineWidth: 1)
-                )
-                .shadow(color: Theme.primary.opacity(0.35), radius: 24, y: 12)
         }
         .padding(.horizontal, ScreenLayout.horizontalPadding)
     }
 
-    private var searchField: some View {
-        Button {
-            showGlobalSearch = true
-        } label: {
-            HStack(spacing: Spacing.xs) {
-                Image(systemName: "magnifyingglass")
-                    .foregroundStyle(Theme.textSecondary)
-                Text(L10n.searchPlaceholderHome)
-                    .font(Theme.Fonts.body(Typography.callout))
-                    .foregroundStyle(Theme.textSecondary)
-                Spacer()
-            }
-            .padding(.horizontal, Spacing.sm)
-            .padding(.vertical, 14)
-            .glassCard(cornerRadius: Radius.md, elevation: .resting)
-        }
-        .buttonStyle(.plain)
-        .padding(.horizontal, ScreenLayout.horizontalPadding)
+    // MARK: - 1 · Hero carousel
+
+    private var heroCarousel: some View {
+        HomeHeroCarousel(
+            donationTitle: viewModel.activeCampaigns.first?.title,
+            onFindPet: { coordinator.push(.adoption) },
+            onPetCare: { coordinator.push(.vets) },
+            onDonate: openDonation,
+            onVetTips: { coordinator.push(.vets) }
+        )
     }
 
-    @ViewBuilder
-    private var dynamicHeroSection: some View {
-        if let order = viewModel.activeOrder {
-            VStack(alignment: .leading, spacing: Spacing.sm) {
-                PremiumSectionHeader(title: "Current Order")
-                ActiveOrderCard(order: order) {
-                    coordinator.push(.orderHistory)
-                }
-                .padding(.horizontal, ScreenLayout.horizontalPadding)
-            }
-        } else if viewModel.userHasPets, let post = viewModel.featuredPost {
-            VStack(alignment: .leading, spacing: Spacing.sm) {
-                PremiumSectionHeader(title: "Featured in Community")
-                FeaturedPostCard(post: post) {
-                    coordinator.push(.communityPostDetail(postId: post.id))
-                }
-                .padding(.horizontal, ScreenLayout.horizontalPadding)
-            }
+    private func openDonation() {
+        if let campaign = viewModel.activeCampaigns.first {
+            coordinator.push(.donation(campaign: campaign))
         } else {
-            recommendedSection
+            coordinator.push(.charity)
         }
     }
 
-    private var recommendedSection: some View {
+    /// Pet whose collar the "Collar →" shortcut opens — the paired one, else the first pet.
+    private var collarPetId: UUID? {
+        CollarSession.shared.pairedPetId ?? viewModel.myPets.first?.petId
+    }
+
+    private func openCollar() {
+        guard let pet = viewModel.myPets.first(where: { $0.petId == collarPetId }) ?? viewModel.myPets.first else { return }
+        CollarSession.shared.pair(petId: pet.petId, petName: pet.name)
+        coordinator.push(.collarDashboard(petId: pet.petId))
+    }
+
+    // MARK: - 2 · My pets
+
+    private var myPetsSection: some View {
         VStack(alignment: .leading, spacing: Spacing.sm) {
-            PremiumSectionHeader(title: L10n.recommendedAdoption, actionTitle: L10n.seeAll) {
-                coordinator.push(.adoption)
+            PremiumSectionHeader(title: L10n.myPets, actionTitle: collarPetId != nil ? "Collar →" : nil) {
+                openCollar()
             }
-            if viewModel.isLoading {
-                ProgressView()
-                    .tint(Theme.primary)
-                    .frame(maxWidth: .infinity)
-                    .padding(.vertical, Spacing.md)
-            } else if viewModel.recommendedPets.isEmpty {
-                PremiumEmptyState(
-                    icon: "heart.fill",
-                    title: L10n.noRecommendedListings,
-                    message: L10n.noRecommendedListingsDesc
-                )
+            if viewModel.myPets.isEmpty {
+                Button {
+                    coordinator.push(.addPetFlow)
+                } label: {
+                    HStack(spacing: Spacing.sm) {
+                        PPIconTile(icon: "plus", tint: Theme.forest, background: Theme.forestSoft, size: 44)
+                        VStack(alignment: .leading, spacing: 2) {
+                            Text("Add your first pal")
+                                .font(Theme.Fonts.headline(Typography.callout, weight: .bold))
+                                .foregroundStyle(Theme.textPrimary)
+                            Text("Track health, reminders and their collar")
+                                .font(Theme.Fonts.body(Typography.caption, weight: .semibold))
+                                .foregroundStyle(Theme.textSecondary)
+                        }
+                        Spacer()
+                        Image(systemName: "chevron.right")
+                            .font(.system(size: 13, weight: .semibold))
+                            .foregroundStyle(Theme.textFaint)
+                    }
+                    .padding(14)
+                    .frame(maxWidth: .infinity, alignment: .leading)
+                    .glassCard(cornerRadius: Radius.lg, elevation: .resting)
+                }
+                .buttonStyle(MagneticPressStyle())
+                .padding(.horizontal, ScreenLayout.horizontalPadding)
             } else {
                 ScrollView(.horizontal, showsIndicators: false) {
                     HStack(spacing: Spacing.sm) {
-                        ForEach(viewModel.recommendedPets) { item in
-                            FeaturedPetCard(
-                                pet: item.pet,
-                                matchScore: item.matchScore,
-                                onMatchTap: {
-                                    selectedMatchPet = item
-                                }
-                            ) {
-                                coordinator.push(.petDetail(petId: item.pet.id))
+                        ForEach(viewModel.myPets) { pet in
+                            PetCard(pet: pet) {
+                                coordinator.push(.petProfile(petId: pet.petId))
                             }
+                            .frame(width: 230)
                         }
                     }
                     .padding(.horizontal, ScreenLayout.horizontalPadding)
                 }
             }
         }
-        .sheet(item: $selectedMatchPet) { item in
-            if let profile = viewModel.personalityProfile {
-                MatchScoreDetailView(
-                    petName: item.pet.name,
-                    matchResult: PetPersonalityMatcher.detailedMatchScore(pet: item.pet, profile: profile)
-                )
-                .environmentObject(coordinator)
-            } else {
-                Text("Complete your personality profile to see match details.")
-                    .font(Theme.Fonts.body(Typography.callout))
-                    .foregroundStyle(Theme.textSecondary)
-                    .padding()
-            }
-        }
     }
+
+    // MARK: - 3 · Services
 
     private var servicesGrid: some View {
         VStack(alignment: .leading, spacing: Spacing.sm) {
             PremiumSectionHeader(title: L10n.services)
             LazyVGrid(columns: [GridItem(.flexible()), GridItem(.flexible())], spacing: Spacing.sm) {
-                PremiumServiceTile(title: L10n.veterinary, icon: "cross.case.fill", tint: Theme.brandDeep) {
+                PremiumServiceTile(title: L10n.findAPet, subtitle: "Find a match", icon: "heart.fill", tint: Theme.forest, tileBackground: Theme.forestSoft) {
+                    coordinator.push(.adoption)
+                }
+                PremiumServiceTile(title: L10n.veterinary, subtitle: "Book a visit", icon: "stethoscope", tint: Theme.statusInfo, tileBackground: Theme.statusInfoSoft) {
                     coordinator.push(.vets)
                 }
-                PremiumServiceTile(title: L10n.petShop, icon: "bag.fill", tint: Theme.navy) {
+                PremiumServiceTile(title: L10n.petShop, subtitle: "For your pals", icon: "bag.fill", tint: Theme.forest, tileBackground: Theme.forestSoft) {
                     coordinator.push(.shop)
+                }
+                PremiumServiceTile(title: "Symptom check", subtitle: "Ask PetPals AI", icon: "sparkles", tint: Theme.coralDeep, tileBackground: Theme.coralSoft) {
+                    coordinator.push(.aiAssistant)
                 }
             }
             .padding(.horizontal, ScreenLayout.horizontalPadding)
         }
     }
 
-    private var nearbyVets: some View {
+    // MARK: - 4 · Nearby
+
+    private var nearbySection: some View {
         VStack(alignment: .leading, spacing: Spacing.sm) {
             PremiumSectionHeader(title: L10n.nearbyVets, actionTitle: L10n.viewAll) {
                 coordinator.push(.vets)
             }
             VStack(spacing: Spacing.xs) {
-                ForEach(viewModel.nearbyVets) { item in
+                ForEach(viewModel.nearbyVets.prefix(4)) { item in
                     ClinicRowCard(clinic: item.clinic, distance: item.formattedDistance) {
                         coordinator.push(.vetDetail(clinicId: item.clinic.id))
                     }
@@ -248,6 +190,34 @@ struct HomeView: View {
             }
             .padding(.horizontal, ScreenLayout.horizontalPadding)
         }
+    }
+
+    // MARK: - 5 · Community
+
+    @ViewBuilder
+    private var communitySection: some View {
+        VStack(alignment: .leading, spacing: Spacing.sm) {
+            PremiumSectionHeader(title: L10n.communityTitle, actionTitle: L10n.communityNewPost) {
+                coordinator.push(.createCommunityPost(subredditId: nil))
+            }
+            if viewModel.communityPosts.isEmpty {
+                PremiumEmptyState(
+                    icon: "text.bubble.fill",
+                    title: L10n.communityNoPosts,
+                    message: L10n.communityNoPostsDesc
+                )
+            } else {
+                VStack(spacing: Spacing.sm) {
+                    ForEach(viewModel.communityPosts.prefix(3)) { post in
+                        FeaturedPostCard(post: post) {
+                            coordinator.push(.communityPostDetail(postId: post.id))
+                        }
+                    }
+                }
+                .padding(.horizontal, ScreenLayout.horizontalPadding)
+            }
+        }
+        .padding(.bottom, Spacing.md)
     }
 }
 

@@ -83,7 +83,7 @@ struct ShopDetailView: View {
                 } else if viewModel.filteredProducts.isEmpty {
                     VStack(spacing: 12) {
                         Image(systemName: "bag.badge.questionmark").font(.system(size: 50)).foregroundColor(.gray.opacity(0.4))
-                        Text("No products in this category").font(Theme.Fonts.primaryFont(size: 16)).foregroundColor(.gray)
+                        Text("No products in this category").font(Theme.Fonts.primaryFont(size: 16)).foregroundColor(Theme.textSecondary)
                     }
                     .frame(maxWidth: .infinity).padding(.top, 40)
                 } else {
@@ -115,7 +115,7 @@ struct ShopDetailView: View {
                                 .font(.system(size: 9, weight: .bold))
                                 .foregroundColor(.white)
                                 .padding(4)
-                                .background(Color.red)
+                                .background(Theme.statusCritical)
                                 .clipShape(Circle())
                                 .offset(x: 8, y: -8)
                         }
@@ -180,7 +180,7 @@ struct ShopProductCard: View {
                         Text(cat).font(.caption).foregroundColor(Theme.textSecondary)
                     }
                     if let stock = product.stockLevel, stock <= 5 {
-                        Text("Only \(stock) left!").font(.caption).foregroundColor(.orange).bold()
+                        Text("Only \(stock) left!").font(.caption).foregroundColor(Theme.statusWarn).bold()
                     }
                 }
             }

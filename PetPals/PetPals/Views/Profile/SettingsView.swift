@@ -21,7 +21,7 @@ struct SettingsView: View {
                                 if viewModel.isUploadingImage {
                                     ProgressView()
                                         .frame(width: 100, height: 100)
-                                        .background(Color.gray.opacity(0.1))
+                                        .background(Theme.textFaint.opacity(0.1))
                                         .clipShape(Circle())
                                 } else if let avatarUrl = user.avatarUrl, let url = ImageURL.from(avatarUrl) {
                                     CachedAsyncImage(url: url) { image in
@@ -31,7 +31,7 @@ struct SettingsView: View {
                                             .frame(width: 100, height: 100)
                                             .clipped()
                                     } placeholder: {
-                                        Color.gray.opacity(0.1)
+                                        Theme.textFaint.opacity(0.1)
                                             .frame(width: 100, height: 100)
                                     }
                                     .id(avatarUrl)
@@ -141,7 +141,7 @@ struct SettingsView: View {
                         Toggle(isOn: $isDarkMode) {
                             HStack(spacing: 12) {
                                 Image(systemName: isDarkMode ? "moon.fill" : "sun.max.fill")
-                                    .foregroundColor(isDarkMode ? .indigo : .orange)
+                                    .foregroundColor(isDarkMode ? Theme.statusInfo : Theme.statusWarn)
                                 Text(L10n.darkMode)
                                     .font(Theme.Fonts.primaryFont(size: 16))
                                     .foregroundColor(Theme.textPrimary)
@@ -169,7 +169,7 @@ struct SettingsView: View {
                     .padding(.top, 4)
                 if let error = viewModel.errorMessage {
                     Text(error)
-                        .foregroundColor(.red)
+                        .foregroundColor(Theme.statusCritical)
                         .font(Theme.Fonts.primaryFont(size: 14))
                 }
                 
@@ -181,10 +181,10 @@ struct SettingsView: View {
                 }) {
                     Text(L10n.logOut)
                         .font(Theme.Fonts.primaryFont(size: 16, weight: .bold))
-                        .foregroundColor(.red)
+                        .foregroundColor(Theme.statusCritical)
                         .frame(maxWidth: .infinity)
                         .padding(.vertical, 16)
-                        .background(Color.red.opacity(0.1))
+                        .background(Theme.statusCritical.opacity(0.1))
                         .cornerRadius(25)
                 }
             }

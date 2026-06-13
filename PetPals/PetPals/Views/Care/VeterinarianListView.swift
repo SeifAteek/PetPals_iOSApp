@@ -13,7 +13,7 @@ struct VeterinarianListView: View {
                 // MARK: - Search & Filters
                 HStack(spacing: 12) {
                     HStack {
-                        Image(systemName: "magnifyingglass").foregroundColor(.gray)
+                        Image(systemName: "magnifyingglass").foregroundColor(Theme.textSecondary)
                         TextField("Search clinics...", text: $viewModel.searchText)
                             .onChange(of: viewModel.searchText) { _ in viewModel.filterAndSortClinics() }
                     }
@@ -25,7 +25,7 @@ struct VeterinarianListView: View {
                         Image(systemName: "slider.horizontal.3")
                             .padding(12)
                             .background(Theme.primary)
-                            .foregroundColor(.black)
+                            .foregroundColor(Theme.textPrimary)
                             .cornerRadius(12)
                     }
                 }

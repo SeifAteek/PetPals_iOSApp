@@ -126,31 +126,41 @@ struct AIChatView: View {
 
             HStack(spacing: 12) {
                 TextField("Message PetPals AI...", text: $inputText)
-                    .padding(12)
-                    .background(Theme.cardBackground)
-                    .cornerRadius(20)
+                    .font(Theme.Fonts.body(Typography.callout))
+                    .padding(.horizontal, 16)
+                    .frame(height: 46)
+                    .background(Capsule(style: .continuous).fill(Theme.surface))
                     .overlay(
-                        RoundedRectangle(cornerRadius: 20)
-                            .stroke(Color.gray.opacity(0.2), lineWidth: 1)
+                        Capsule(style: .continuous)
+                            .stroke(Theme.borderDefault, lineWidth: 1.5)
                     )
-                
+
                 Button(action: sendMessage) {
                     ZStack {
                         Circle()
-                            .fill(Theme.primary)
+                            .fill(Theme.coral)
                             .frame(width: 44, height: 44)
                         Image(systemName: "arrow.up")
                             .font(.system(size: 18, weight: .bold))
                             .foregroundColor(.white)
                     }
                 }
+                .buttonStyle(MagneticPressStyle())
                 .disabled(inputText.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty)
                 .opacity(inputText.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty ? 0.5 : 1)
             }
             .padding(.horizontal, Spacing.md)
             .padding(.vertical, Spacing.xs)
         }
-        .background(.ultraThinMaterial)
+        .background {
+            ZStack {
+                Rectangle().fill(.ultraThinMaterial)
+                Rectangle().fill(Theme.surfaceGlass)
+            }
+            .overlay(alignment: .top) {
+                Rectangle().fill(Theme.borderSubtle).frame(height: 1)
+            }
+        }
     }
     
     private func saveChatHistory() {
@@ -374,72 +384,78 @@ struct MessageBubbleView: View {
                 if message.isUser {
                     Spacer()
                     Text(message.text)
-                        .padding()
-                        .background(Theme.primary)
+                        .font(Theme.Fonts.body(14, weight: .medium))
+                        .lineSpacing(4)
+                        .padding(.horizontal, 15)
+                        .padding(.vertical, 12)
+                        .background(Theme.forest)
                         .foregroundColor(.white)
-                        .cornerRadius(16)
+                        .clipShape(RoundedCorner(radius: Radius.lg, corners: [.topLeft, .topRight, .bottomLeft]))
+                        .clipShape(RoundedCorner(radius: 6, corners: [.bottomRight]))
                         .padding(.leading, 40)
                 } else {
                     HStack(alignment: .bottom) {
                         ZStack {
                             Circle()
-                                .fill(LinearGradient(
-                                    gradient: Gradient(colors: [Theme.primary, Theme.primary.opacity(0.7)]),
-                                    startPoint: .topLeading,
-                                    endPoint: .bottomTrailing
-                                ))
+                                .fill(Theme.coral)
                                 .frame(width: 32, height: 32)
                             Image(systemName: "sparkles")
                                 .font(.system(size: 14, weight: .bold))
                                 .foregroundColor(.white)
                         }
-                        
+
                         Text(message.text)
-                            .padding()
-                            .background(Theme.cardBackground)
-                            .foregroundColor(Theme.textPrimary)
-                            .cornerRadius(16)
-                            .shadow(color: .black.opacity(0.05), radius: 3, x: 0, y: 1)
+                            .font(Theme.Fonts.body(14, weight: .medium))
+                            .lineSpacing(4)
+                            .padding(.horizontal, 15)
+                            .padding(.vertical, 12)
+                            .background {
+                                RoundedCorner(radius: Radius.lg, corners: [.topLeft, .topRight, .bottomRight])
+                                    .fill(Theme.surface)
+                                    .overlay(
+                                        RoundedCorner(radius: Radius.lg, corners: [.topLeft, .topRight, .bottomRight])
+                                            .stroke(Theme.borderSubtle, lineWidth: 1)
+                                    )
+                            }
+                            .foregroundColor(Theme.textBody)
                             .padding(.trailing, 40)
                     }
                     Spacer()
                 }
             }
-            
+
             if let clinicId = message.detectedClinicId, !message.isUser {
                 if let clinic = nearbyClinics.first(where: { $0.id == clinicId }) {
                     Button(action: { coordinator.push(.vetDetail(clinicId: clinicId)) }) {
                         HStack {
                             Image(systemName: "cross.case.fill")
                             Text("View \(clinic.name)")
-                                .font(Theme.Fonts.primaryFont(size: 14, weight: .bold))
+                                .font(Theme.Fonts.headline(14, weight: .bold))
                         }
                         .foregroundColor(.white)
                         .padding(.horizontal, 20)
-                        .padding(.vertical, 10)
-                        .background(Color.red)
-                        .cornerRadius(12)
-                        .shadow(radius: 4)
+                        .padding(.vertical, 11)
+                        .background(Capsule(style: .continuous).fill(Theme.statusCritical))
                     }
+                    .buttonStyle(MagneticPressStyle())
                     .padding(.leading, 40)
                 }
             }
-            
+
             if let petId = message.detectedPetId, !message.isUser {
                 if let pet = availablePets.first(where: { $0.id == petId }) {
                     Button(action: { coordinator.push(.petDetail(petId: petId)) }) {
                         HStack {
                             Image(systemName: "heart.fill")
                             Text("Meet \(pet.name)")
-                                .font(Theme.Fonts.primaryFont(size: 14, weight: .bold))
+                                .font(Theme.Fonts.headline(14, weight: .bold))
                         }
                         .foregroundColor(.white)
                         .padding(.horizontal, 20)
-                        .padding(.vertical, 10)
-                        .background(Theme.primary)
-                        .cornerRadius(12)
-                        .shadow(radius: 4)
+                        .padding(.vertical, 11)
+                        .background(Capsule(style: .continuous).fill(Theme.forest))
                     }
+                    .buttonStyle(MagneticPressStyle())
                     .padding(.leading, 40)
                 }
             }

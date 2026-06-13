@@ -11,10 +11,21 @@ struct AuthMainView: View {
                 brandHeader
                 modeSwitcher
                 if let errorMessage = viewModel.errorMessage {
-                    Text(errorMessage)
-                        .font(Theme.Fonts.body(Typography.caption))
-                        .foregroundStyle(.red.opacity(0.9))
-                        .padding(.horizontal, ScreenLayout.horizontalPadding)
+                    HStack(spacing: Spacing.xs) {
+                        Image(systemName: "exclamationmark.triangle.fill")
+                            .font(.system(size: 14, weight: .semibold))
+                        Text(errorMessage)
+                            .font(Theme.Fonts.body(Typography.caption, weight: .semibold))
+                            .fixedSize(horizontal: false, vertical: true)
+                    }
+                    .foregroundStyle(Theme.statusCritical)
+                    .padding(Spacing.sm)
+                    .frame(maxWidth: .infinity, alignment: .leading)
+                    .background {
+                        RoundedRectangle(cornerRadius: Radius.md, style: .continuous)
+                            .fill(Theme.statusCriticalSoft)
+                    }
+                    .padding(.horizontal, ScreenLayout.horizontalPadding)
                 }
                 formFields
                 PrimaryButton(
@@ -63,7 +74,7 @@ struct AuthMainView: View {
             }
         }
         .padding(4)
-        .glassCard(cornerRadius: Radius.md, elevation: .resting)
+        .background(Capsule(style: .continuous).fill(Theme.surfaceWarm))
         .padding(.horizontal, ScreenLayout.horizontalPadding)
     }
 
@@ -101,14 +112,15 @@ struct AuthMainView: View {
             action()
         }) {
             Text(title)
-                .font(Theme.Fonts.headline(Typography.callout, weight: .bold))
+                .font(Theme.Fonts.headline(14, weight: .bold))
                 .frame(maxWidth: .infinity)
-                .padding(.vertical, 12)
-                .foregroundStyle(isSelected ? Theme.textOnBrand : Theme.textSecondary)
+                .padding(.vertical, 10)
+                .foregroundStyle(isSelected ? Theme.forestDeep : Theme.textSecondary)
                 .background {
                     if isSelected {
-                        RoundedRectangle(cornerRadius: Radius.sm, style: .continuous)
-                            .fill(Theme.brandGradient)
+                        Capsule(style: .continuous)
+                            .fill(Theme.surface)
+                            .shadow(color: Elevation.resting.shadowColor, radius: 3, y: 1)
                     }
                 }
         }

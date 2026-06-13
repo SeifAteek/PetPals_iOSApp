@@ -58,7 +58,7 @@ struct FullMapView: View {
                         .frame(maxWidth: .infinity)
                         .padding()
                         .background(Theme.primary)
-                        .foregroundColor(.black)
+                        .foregroundColor(Theme.textPrimary)
                         .cornerRadius(12)
                         .padding(.horizontal, 24)
                         .shadow(radius: 10)

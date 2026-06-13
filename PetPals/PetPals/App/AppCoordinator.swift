@@ -41,6 +41,7 @@ enum AppRoute: Hashable {
     case editPet(pet: Pet)
     case medicalRecords(petId: UUID)
     case smartCollar(petId: UUID)
+    case collarDashboard(petId: UUID)
     // Care
     case vets
     case vetDetail(clinicId: UUID)
@@ -52,6 +53,7 @@ enum AppRoute: Hashable {
     case donation(campaign: Campaign)
     // Settings & Profile (You hub destinations)
     case myPets
+    case notifications
     case messages
     case charity
     case settings

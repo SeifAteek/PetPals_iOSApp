@@ -16,8 +16,8 @@ enum SocialPlatform: String {
     var tint: Color {
         switch self {
         case .apple: return Theme.textPrimary
-        case .google: return Theme.powderBlush
-        case .facebook: return Theme.navy
+        case .google: return Theme.coral
+        case .facebook: return Theme.statusInfo
         }
     }
 }
@@ -36,12 +36,17 @@ struct SocialLoginButton: View {
                     .font(.system(size: 20, weight: .medium))
                     .foregroundStyle(platform.tint)
                 Text("Continue with \(platform.rawValue)")
-                    .font(Theme.Fonts.headline(Typography.callout, weight: .semibold))
+                    .font(Theme.Fonts.headline(Typography.callout, weight: .bold))
                     .foregroundStyle(Theme.textPrimary)
             }
             .frame(maxWidth: .infinity)
-            .padding(.vertical, 14)
-            .glassCard(cornerRadius: Radius.pill, elevation: .resting)
+            .frame(height: 50)
+            .background {
+                Capsule(style: .continuous).fill(Theme.surface)
+            }
+            .overlay {
+                Capsule(style: .continuous).stroke(Theme.borderDefault, lineWidth: 1.5)
+            }
         }
         .buttonStyle(MagneticPressStyle())
     }

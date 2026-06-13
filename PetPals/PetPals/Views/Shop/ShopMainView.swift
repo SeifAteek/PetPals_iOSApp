@@ -35,13 +35,13 @@ struct ShopMainView: View {
                 }
 
                 if viewModel.isLoading {
-                    ProgressView().frame(maxWidth: .infinity).padding(.top, 60)
+                    ProgressView().tint(Theme.primary).frame(maxWidth: .infinity).padding(.top, 60)
                 } else if viewModel.filteredShops.isEmpty {
-                    VStack(spacing: 12) {
-                        Image(systemName: "storefront").font(.system(size: 50)).foregroundColor(.gray.opacity(0.4))
-                        Text("No shops found").font(Theme.Fonts.primaryFont(size: 17)).foregroundColor(.gray)
-                    }
-                    .frame(maxWidth: .infinity).padding(.top, 60)
+                    PremiumEmptyState(
+                        icon: "storefront",
+                        title: "No shops found",
+                        message: "Try a different search or category."
+                    )
                 } else {
                     LazyVStack(spacing: 16) {
                         ForEach(viewModel.filteredShops) { shop in
@@ -62,28 +62,20 @@ struct ShopMainView: View {
 
     private var shopToolbar: some View {
         HStack(spacing: Spacing.xs) {
-            Button(action: { coordinator.push(.orderHistory) }) {
-                Image(systemName: "clock.arrow.circlepath")
-                    .font(.system(size: 20, weight: .medium))
-                    .foregroundStyle(Theme.primary)
-                    .frame(width: 40, height: 40)
-                    .glassCard(cornerRadius: Radius.sm, elevation: .resting)
+            PPIconButton(icon: "clock.arrow.circlepath") {
+                coordinator.push(.orderHistory)
             }
-            Button(action: { coordinator.push(.cart) }) {
-                ZStack(alignment: .topTrailing) {
-                    Image(systemName: "bag.fill")
-                        .font(.system(size: 18, weight: .semibold))
-                        .foregroundStyle(Theme.primary)
-                        .frame(width: 40, height: 40)
-                        .glassCard(cornerRadius: Radius.sm, elevation: .resting)
-                    if cartViewModel.totalItems > 0 {
-                        Text("\(cartViewModel.totalItems)")
-                            .font(.system(size: 10, weight: .bold))
-                            .foregroundStyle(.white)
-                            .padding(5)
-                            .background(Circle().fill(Theme.primary))
-                            .offset(x: 6, y: -6)
-                    }
+            ZStack(alignment: .topTrailing) {
+                PPIconButton(icon: "bag.fill", solid: true) {
+                    coordinator.push(.cart)
+                }
+                if cartViewModel.totalItems > 0 {
+                    Text("\(cartViewModel.totalItems)")
+                        .font(Theme.Fonts.label(10, weight: .heavy))
+                        .foregroundStyle(Theme.onAccent)
+                        .padding(5)
+                        .background(Circle().fill(Theme.coral))
+                        .offset(x: 5, y: -5)
                 }
             }
         }
@@ -125,39 +117,39 @@ struct ShopRowCard: View {
                 VStack(alignment: .leading, spacing: 5) {
                     HStack(spacing: 6) {
                         Text(shop.name)
-                            .font(Theme.Fonts.primaryFont(size: 16, weight: .bold))
+                            .font(Theme.Fonts.headline(15, weight: .bold))
                             .foregroundColor(Theme.textPrimary)
                         if shop.isVerified == true {
-                            Image(systemName: "checkmark.seal.fill")
-                                .foregroundColor(.blue)
-                                .font(.caption)
+                            PPBadge(text: "Verified", tone: .info, icon: "checkmark.seal.fill")
                         }
                     }
                     if let desc = shop.description {
                         Text(desc)
-                            .font(Theme.Fonts.primaryFont(size: 13))
+                            .font(Theme.Fonts.body(Typography.caption, weight: .medium))
                             .foregroundColor(Theme.textSecondary)
                             .lineLimit(2)
                     }
                     HStack(spacing: 10) {
                         if let category = shop.category {
                             Label(category, systemImage: "tag.fill")
-                                .font(.caption)
-                                .foregroundColor(Theme.primary)
+                                .font(Theme.Fonts.label(Typography.micro, weight: .bold))
+                                .foregroundColor(Theme.forest)
                         }
                         if let rating = shop.rating {
                             Label(String(format: "%.1f", rating), systemImage: "star.fill")
-                                .font(.caption)
-                                .foregroundColor(.orange)
+                                .font(Theme.Fonts.label(Typography.micro, weight: .bold))
+                                .foregroundColor(Theme.statusWarn)
                         }
                     }
                 }
 
                 Spacer()
-                Image(systemName: "chevron.right").foregroundColor(.gray).font(.caption)
+                Image(systemName: "chevron.right")
+                    .font(.system(size: 13, weight: .semibold))
+                    .foregroundColor(Theme.textFaint)
             }
             .padding(Spacing.sm)
-            .glassCard(cornerRadius: Radius.lg, elevation: .raised)
+            .glassCard(cornerRadius: Radius.lg, elevation: .resting)
         }
         .buttonStyle(MagneticPressStyle())
     }

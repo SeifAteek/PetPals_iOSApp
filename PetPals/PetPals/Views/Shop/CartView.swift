@@ -8,13 +8,11 @@ struct CartView: View {
         VStack {
             if cartViewModel.cartItems.isEmpty {
                 Spacer()
-                Image(systemName: "cart.badge.minus")
-                    .font(.system(size: 80))
-                    .foregroundColor(Theme.textSecondary.opacity(0.5))
-                Text(L10n.cartEmpty)
-                    .font(Theme.Fonts.primaryFont(size: 20, weight: .bold))
-                    .foregroundColor(Theme.textPrimary)
-                    .padding(.top, 16)
+                PremiumEmptyState(
+                    icon: "cart",
+                    title: L10n.cartEmpty,
+                    message: "Treats, food and gear for your pals will show up here."
+                )
                 Spacer()
             } else {
                 ScrollView {
@@ -29,28 +27,38 @@ struct CartView: View {
                 VStack(spacing: 16) {
                     HStack {
                         Text(L10n.total)
-                            .font(Theme.Fonts.primaryFont(size: 20, weight: .bold))
+                            .font(Theme.Fonts.headline(Typography.title3, weight: .bold))
                             .foregroundColor(Theme.textPrimary)
                         Spacer()
                         Text(CurrencyFormatting.egp(cartViewModel.totalAmount))
-                            .font(Theme.Fonts.primaryFont(size: 24, weight: .bold))
-                            .foregroundColor(Theme.accent)
+                            .font(Theme.Fonts.display(Typography.title2))
+                            .tracking(-0.4)
+                            .foregroundColor(Theme.textPrimary)
+                            .contentTransition(.numericText())
+                            .animation(.snappy, value: cartViewModel.totalAmount)
                     }
-                    
+
                     if let error = cartViewModel.checkoutError {
                         Text(error)
-                            .foregroundColor(.red)
-                            .font(Theme.Fonts.primaryFont(size: 14))
+                            .foregroundColor(Theme.statusCritical)
+                            .font(Theme.Fonts.body(Typography.caption, weight: .semibold))
                     }
-                    
+
                     PrimaryButton(title: L10n.checkout, isLoading: cartViewModel.isCheckingOut) {
                         cartViewModel.checkout()
                     }
                 }
                 .padding(24)
-                .background(Theme.cardBackground)
-                .cornerRadius(24, corners: [.topLeft, .topRight])
-                .shadow(color: .black.opacity(0.05), radius: 10, x: 0, y: -5)
+                .background {
+                    RoundedCorner(radius: Radius.xl, corners: [.topLeft, .topRight])
+                        .fill(Theme.surface)
+                        .overlay(
+                            RoundedCorner(radius: Radius.xl, corners: [.topLeft, .topRight])
+                                .stroke(Theme.borderSubtle, lineWidth: 1)
+                        )
+                        .shadow(color: Theme.shadowInk.opacity(0.08), radius: 14, y: -4)
+                        .ignoresSafeArea(edges: .bottom)
+                }
             }
         }
         .petPalsScreenBackground()
@@ -77,8 +85,8 @@ struct CartItemRow: View {
         HStack(spacing: 16) {
             // Product image
             ZStack {
-                RoundedRectangle(cornerRadius: 12)
-                    .fill(Theme.primary.opacity(0.1))
+                RoundedRectangle(cornerRadius: Radius.md)
+                    .fill(Theme.sandSoft)
                     .frame(width: 80, height: 80)
                 if let imageUrl = product.imageUrl, let url = URL(string: imageUrl) {
                     CachedAsyncImage(url: url) { phase in
@@ -87,31 +95,33 @@ struct CartItemRow: View {
                         } else {
                             Image(systemName: "bag.fill")
                                 .font(.title)
-                                .foregroundColor(Theme.primary.opacity(0.5))
+                                .foregroundColor(PetPalsPalette.sand600)
                         }
                     }
                     .frame(width: 80, height: 80)
-                    .clipShape(RoundedRectangle(cornerRadius: 12))
+                    .clipShape(RoundedRectangle(cornerRadius: Radius.md))
                 } else {
                     Image(systemName: "bag.fill")
                         .font(.title)
-                        .foregroundColor(Theme.primary.opacity(0.5))
+                        .foregroundColor(PetPalsPalette.sand600)
                 }
             }
-            
+
             VStack(alignment: .leading, spacing: 4) {
                 Text(product.name)
-                    .font(Theme.Fonts.primaryFont(size: 16, weight: .bold))
+                    .font(Theme.Fonts.headline(15, weight: .bold))
                     .foregroundColor(Theme.textPrimary)
                     .lineLimit(2)
-                
+
                 Text(CurrencyFormatting.egp(product.price))
-                    .font(Theme.Fonts.primaryFont(size: 14))
+                    .font(Theme.Fonts.body(Typography.caption, weight: .semibold))
                     .foregroundColor(Theme.textSecondary)
 
                 Text(CurrencyFormatting.egp(subtotal))
-                    .font(Theme.Fonts.primaryFont(size: 15, weight: .bold))
-                    .foregroundColor(Theme.accent)
+                    .font(Theme.Fonts.headline(Typography.callout, weight: .bold))
+                    .foregroundColor(Theme.forest)
+                    .contentTransition(.numericText())
+                    .animation(.snappy, value: quantity)
             }
             
             Spacer()
@@ -128,9 +138,11 @@ struct CartItemRow: View {
                 }
                 
                 Text("\(quantity)")
-                    .font(Theme.Fonts.primaryFont(size: 16, weight: .bold))
+                    .font(Theme.Fonts.mono(16))
                     .foregroundColor(Theme.textPrimary)
                     .frame(width: 24)
+                    .contentTransition(.numericText())
+                    .animation(.snappy, value: quantity)
                 
                 Button(action: {
                     if quantity < maxQty {
@@ -147,9 +159,7 @@ struct CartItemRow: View {
             }
         }
         .padding(12)
-        .background(Theme.cardBackground)
-        .cornerRadius(16)
-        .shadow(color: .black.opacity(0.03), radius: 5, x: 0, y: 2)
+        .glassCard(cornerRadius: Radius.lg, elevation: .resting)
     }
 }
 

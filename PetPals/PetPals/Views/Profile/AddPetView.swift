@@ -59,7 +59,7 @@ struct AddPetView: View {
                     .padding()
                     .background(Theme.cardBackground)
                     .cornerRadius(12)
-                    .overlay(RoundedRectangle(cornerRadius: 12).stroke(Color.gray.opacity(0.3), lineWidth: 1))
+                    .overlay(RoundedRectangle(cornerRadius: 12).stroke(Theme.textFaint.opacity(0.3), lineWidth: 1))
                     
                     fieldLabel("Breed")
                     CustomTextField(placeholder: "e.g. Golden Retriever", text: $viewModel.newPetBreed)
@@ -88,11 +88,11 @@ struct AddPetView: View {
                     .padding(8)
                     .background(Theme.cardBackground)
                     .cornerRadius(12)
-                    .overlay(RoundedRectangle(cornerRadius: 12).stroke(Color.gray.opacity(0.3), lineWidth: 1))
+                    .overlay(RoundedRectangle(cornerRadius: 12).stroke(Theme.textFaint.opacity(0.3), lineWidth: 1))
                 
                 if let error = viewModel.errorMessage {
                     Text(error)
-                        .foregroundColor(.red)
+                        .foregroundColor(Theme.statusCritical)
                         .font(Theme.Fonts.primaryFont(size: 14))
                 }
                 

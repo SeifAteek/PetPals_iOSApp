@@ -34,13 +34,13 @@ struct GlobalMapView: View {
                     MapAnnotation(coordinate: location.coordinate) {
                         VStack(spacing: 4) {
                             StandardPetPhoto(pet: resolvedPet, style: .smallCircle)
-                                .overlay(Circle().stroke(Color.blue, lineWidth: 3))
+                                .overlay(Circle().stroke(Theme.statusInfo, lineWidth: 3))
                                 .shadow(radius: 5)
                             
                             Text("Seen \(timeAgo(from: location.timestamp))")
                                 .font(.caption)
                                 .fontWeight(.bold)
-                                .foregroundColor(.black)
+                                .foregroundColor(Theme.textPrimary)
                                 .padding(6)
                                 .background(Color.white.opacity(0.9))
                                 .cornerRadius(8)
@@ -65,13 +65,13 @@ struct GlobalMapView: View {
                     VStack(spacing: 12) {
                         Image(systemName: "mappin.slash")
                             .font(.system(size: 40))
-                            .foregroundColor(.gray)
+                            .foregroundColor(Theme.textSecondary)
                         Text("No community sighting recorded yet")
                             .font(.headline)
-                            .foregroundColor(.gray)
+                            .foregroundColor(Theme.textSecondary)
                         Text("The collar will appear here once a PetPals user detects it nearby.")
                             .font(.caption)
-                            .foregroundColor(.gray)
+                            .foregroundColor(Theme.textSecondary)
                             .multilineTextAlignment(.center)
                             .padding(.horizontal, 40)
                     }

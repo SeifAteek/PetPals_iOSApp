@@ -44,7 +44,7 @@ struct BoardingListView: View {
                                         .padding(.horizontal, 16)
                                         .padding(.vertical, 8)
                                         .background(Theme.primary)
-                                        .foregroundColor(.black)
+                                        .foregroundColor(Theme.textPrimary)
                                         .cornerRadius(10)
                                 }
                             }

@@ -103,7 +103,7 @@ struct TipCard: View {
             Spacer()
         }
         .padding(Spacing.sm)
-        .glassCard(cornerRadius: Radius.md, elevation: .resting)
+        .glassCard(cornerRadius: Radius.lg, elevation: .resting)
     }
 }
 

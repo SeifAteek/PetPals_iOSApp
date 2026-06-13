@@ -1,9 +1,9 @@
 import SwiftUI
 
-// MARK: - Premium Tab Bar
+// MARK: - Bottom Tab Bar (glass cream bar · forest active · coral AI fab)
 
 enum PremiumTab: Int, CaseIterable {
-    case home, discover, community, care, you
+    case home, discover, community, care, you, collar
 
     var title: String {
         switch self {
@@ -12,62 +12,45 @@ enum PremiumTab: Int, CaseIterable {
         case .community: return L10n.tabCommunity
         case .care: return L10n.tabCare
         case .you: return L10n.tabYou
+        case .collar: return "Collar"
         }
     }
 
     var icon: String {
         switch self {
         case .home: return "house.fill"
-        case .discover: return "sparkles"
+        case .discover: return "heart.fill"
         case .community: return "text.bubble.fill"
-        case .care: return "heart.text.square.fill"
+        case .care: return "stethoscope"
         case .you: return "person.crop.circle.fill"
+        case .collar: return "antenna.radiowaves.left.and.right"
         }
     }
 }
 
 struct PremiumTabBar: View {
     @Binding var selected: PremiumTab
-    var onAITap: () -> Void
+    /// Tabs to render — lets the host show/hide the conditional Collar tab.
+    var tabs: [PremiumTab] = [.home, .discover, .community, .care, .you]
 
     var body: some View {
-        HStack(spacing: Spacing.xs) {
-            ForEach(PremiumTab.allCases, id: \.rawValue) { tab in
+        HStack(spacing: 0) {
+            ForEach(tabs, id: \.rawValue) { tab in
                 tabButton(tab)
             }
         }
-        .padding(.horizontal, Spacing.sm)
-        .padding(.vertical, Spacing.xs)
+        .padding(.horizontal, Spacing.xs)
+        .padding(.top, 8)
+        .frame(maxWidth: .infinity)
         .background {
-            Capsule(style: .continuous)
-                .fill(.ultraThinMaterial)
-                .background(
-                    Capsule(style: .continuous)
-                        .fill(Theme.cardBackground)
-                )
-                .overlay(
-                    Capsule(style: .continuous)
-                        .stroke(Theme.glassStroke, lineWidth: 1)
-                )
-                .shadow(color: Elevation.floating.shadowColor, radius: Elevation.floating.radius, y: Elevation.floating.y)
-        }
-        .overlay(alignment: .topTrailing) {
-            Button(action: {
-                Haptic.light()
-                onAITap()
-            }) {
-                Image(systemName: "wand.and.stars")
-                    .font(.system(size: 18, weight: .semibold))
-                    .foregroundStyle(.white)
-                    .frame(width: 44, height: 44)
-                    .background {
-                        Circle()
-                            .fill(Theme.brandGradient)
-                            .shadow(color: Theme.primary.opacity(0.45), radius: 12, y: 6)
-                    }
+            ZStack {
+                Rectangle().fill(.ultraThinMaterial)
+                Rectangle().fill(Theme.surfaceGlass)
             }
-            .buttonStyle(MagneticPressStyle())
-            .offset(x: 8, y: -52)
+            .overlay(alignment: .top) {
+                Rectangle().fill(Theme.borderSubtle).frame(height: 1)
+            }
+            .ignoresSafeArea(edges: .bottom)
         }
     }
 
@@ -78,25 +61,55 @@ struct PremiumTabBar: View {
             Haptic.selection()
             withAnimation(Motion.tab) { selected = tab }
         } label: {
-            VStack(spacing: 4) {
+            VStack(spacing: 3) {
                 Image(systemName: tab.icon)
-                    .font(.system(size: 18, weight: isSelected ? .semibold : .regular))
+                    .font(.system(size: 21, weight: .semibold))
                     .symbolEffect(.bounce, value: isSelected)
                 Text(tab.title)
-                    .font(Theme.Fonts.label(Typography.micro, weight: isSelected ? .semibold : .medium))
+                    .font(Theme.Fonts.label(10, weight: .heavy))
             }
-            .foregroundStyle(isSelected ? Theme.primary : Theme.textSecondary)
-            .frame(maxWidth: .infinity)
-            .padding(.vertical, Spacing.xs)
-            .background {
-                if isSelected {
-                    Capsule(style: .continuous)
-                        .fill(Theme.primary.opacity(0.14))
-                        .transition(.scale.combined(with: .opacity))
-                }
-            }
+            .foregroundStyle(isSelected ? Theme.primary : PetPalsPalette.ink300)
+            .frame(maxWidth: .infinity, minHeight: 44)
+            .padding(.vertical, 4)
+            .contentShape(Rectangle())
         }
         .buttonStyle(.plain)
+        .accessibilityLabel(tab.title)
+        .accessibilityAddTraits(isSelected ? [.isButton, .isSelected] : .isButton)
+    }
+}
+
+// MARK: - AI Floating Action Button (right side, above the tab bar)
+
+struct AIFloatingButton: View {
+    var action: () -> Void
+
+    @State private var appeared = false
+    @Environment(\.accessibilityReduceMotion) private var reduceMotion
+
+    var body: some View {
+        Button {
+            Haptic.medium()
+            action()
+        } label: {
+            Image(systemName: "sparkles")
+                .font(.system(size: 24, weight: .semibold))
+                .foregroundStyle(.white)
+                .frame(width: 58, height: 58)
+                .background {
+                    Circle()
+                        .fill(Theme.coral)
+                        .shadow(color: Theme.coral.opacity(0.5), radius: 14, y: 7)
+                }
+        }
+        .buttonStyle(MagneticPressStyle())
+        .scaleEffect(appeared || reduceMotion ? 1 : 0.5)
+        .opacity(appeared || reduceMotion ? 1 : 0)
+        .onAppear {
+            guard !reduceMotion else { return }
+            withAnimation(Motion.spring.delay(0.2)) { appeared = true }
+        }
+        .accessibilityLabel("Ask PetPals AI")
     }
 }
 
@@ -109,21 +122,22 @@ struct PremiumScreenHeader: View {
     var trailing: AnyView? = nil
 
     var body: some View {
-        HStack(alignment: .top) {
-            VStack(alignment: .leading, spacing: Spacing.xxs) {
+        HStack(alignment: .center) {
+            VStack(alignment: .leading, spacing: 3) {
                 if let eyebrow {
                     Text(eyebrow.uppercased())
                         .font(Theme.Fonts.label(Typography.micro, weight: .bold))
-                        .foregroundStyle(Theme.textSecondary)
-                        .tracking(1.2)
+                        .foregroundStyle(Theme.textFaint)
+                        .tracking(1.0)
                 }
                 Text(title)
-                    .font(Theme.Fonts.display(Typography.title1))
+                    .font(Theme.Fonts.display(26))
+                    .tracking(-0.5)
                     .foregroundStyle(Theme.textPrimary)
                     .fixedSize(horizontal: false, vertical: true)
                 if let subtitle {
                     Text(subtitle)
-                        .font(Theme.Fonts.body(Typography.callout))
+                        .font(Theme.Fonts.body(Typography.caption, weight: .bold))
                         .foregroundStyle(Theme.textSecondary)
                 }
             }
@@ -139,16 +153,22 @@ struct PremiumSearchField: View {
     @Binding var text: String
 
     var body: some View {
-        HStack(spacing: Spacing.xs) {
+        HStack(spacing: 10) {
             Image(systemName: "magnifyingglass")
-                .foregroundStyle(Theme.textSecondary)
+                .font(.system(size: 16, weight: .medium))
+                .foregroundStyle(Theme.textFaint)
             TextField(placeholder, text: $text)
                 .font(Theme.Fonts.body(Typography.callout))
                 .foregroundStyle(Theme.textPrimary)
         }
-        .padding(.horizontal, Spacing.sm)
-        .padding(.vertical, 14)
-        .glassCard(cornerRadius: Radius.md, elevation: .resting)
+        .padding(.horizontal, 16)
+        .frame(height: 46)
+        .background {
+            Capsule(style: .continuous).fill(Theme.surface)
+        }
+        .overlay {
+            Capsule(style: .continuous).stroke(Theme.borderDefault, lineWidth: 1.5)
+        }
     }
 }
 
@@ -158,16 +178,17 @@ struct PremiumSectionHeader: View {
     var action: (() -> Void)? = nil
 
     var body: some View {
-        HStack {
+        HStack(alignment: .firstTextBaseline) {
             Text(title)
-                .font(Theme.Fonts.headline(Typography.title3, weight: .bold))
+                .font(Theme.Fonts.display(Typography.title3 + 1))
+                .tracking(-0.4)
                 .foregroundStyle(Theme.textPrimary)
             Spacer()
             if let actionTitle, let action {
                 Button(action: action) {
                     Text(actionTitle)
-                        .font(Theme.Fonts.label(Typography.caption, weight: .semibold))
-                        .foregroundStyle(Theme.primary)
+                        .font(Theme.Fonts.label(Typography.caption, weight: .heavy))
+                        .foregroundStyle(PetPalsPalette.forest500)
                 }
             }
         }
@@ -175,7 +196,7 @@ struct PremiumSectionHeader: View {
     }
 }
 
-// MARK: - Category Chip
+// MARK: - Category Chip (Tag — sand chip, forest when selected)
 
 struct PremiumChip: View {
     let title: String
@@ -196,25 +217,19 @@ struct PremiumChip: View {
                 Text(title)
                     .font(Theme.Fonts.label(Typography.caption, weight: .semibold))
             }
-            .foregroundStyle(isSelected ? Theme.textOnBrand : Theme.textPrimary)
-            .padding(.horizontal, Spacing.sm)
-            .padding(.vertical, 10)
+            .foregroundStyle(isSelected ? Color.white : Theme.textBody)
+            .padding(.horizontal, 14)
+            .padding(.vertical, 9)
             .background {
                 Capsule(style: .continuous)
-                    .fill(isSelected ? AnyShapeStyle(Theme.brandGradient) : AnyShapeStyle(Theme.cardBackground))
-                    .overlay {
-                        if !isSelected {
-                            Capsule(style: .continuous)
-                                .stroke(Theme.glassStroke, lineWidth: 1)
-                        }
-                    }
+                    .fill(isSelected ? Theme.forest : Theme.surfaceWarm)
             }
         }
         .buttonStyle(MagneticPressStyle())
     }
 }
 
-// MARK: - Empty State
+// MARK: - Empty State (encouraging, never a dead-end)
 
 struct PremiumEmptyState: View {
     let icon: String
@@ -227,15 +242,16 @@ struct PremiumEmptyState: View {
         VStack(spacing: Spacing.md) {
             ZStack {
                 Circle()
-                    .fill(Theme.primary.opacity(0.12))
+                    .fill(Theme.forestSoft)
                     .frame(width: 88, height: 88)
                 Image(systemName: icon)
-                    .font(.system(size: 36, weight: .medium))
-                    .foregroundStyle(Theme.primary)
+                    .font(.system(size: 34, weight: .medium))
+                    .foregroundStyle(Theme.forest)
             }
             VStack(spacing: Spacing.xs) {
                 Text(title)
-                    .font(Theme.Fonts.headline(Typography.title3, weight: .bold))
+                    .font(Theme.Fonts.display(Typography.title3))
+                    .tracking(-0.3)
                     .foregroundStyle(Theme.textPrimary)
                 Text(message)
                     .font(Theme.Fonts.body(Typography.callout))
@@ -253,12 +269,14 @@ struct PremiumEmptyState: View {
     }
 }
 
-// MARK: - Service Tile
+// MARK: - Quick Action Tile (white card · tinted icon tile · two lines)
 
 struct PremiumServiceTile: View {
     let title: String
+    var subtitle: String? = nil
     let icon: String
     let tint: Color
+    var tileBackground: Color? = nil
     let action: () -> Void
 
     var body: some View {
@@ -266,29 +284,35 @@ struct PremiumServiceTile: View {
             Haptic.light()
             action()
         }) {
-            VStack(alignment: .leading, spacing: Spacing.sm) {
-                ZStack {
-                    RoundedRectangle(cornerRadius: Radius.sm, style: .continuous)
-                        .fill(tint.opacity(0.18))
-                        .frame(width: 48, height: 48)
-                    Image(systemName: icon)
-                        .font(.system(size: 20, weight: .semibold))
-                        .foregroundStyle(tint)
+            HStack(spacing: 12) {
+                PPIconTile(
+                    icon: icon,
+                    tint: tint,
+                    background: tileBackground ?? tint.opacity(0.12)
+                )
+                VStack(alignment: .leading, spacing: 1) {
+                    Text(title)
+                        .font(Theme.Fonts.headline(14, weight: .bold))
+                        .foregroundStyle(Theme.textPrimary)
+                        .multilineTextAlignment(.leading)
+                    if let subtitle {
+                        Text(subtitle)
+                            .font(Theme.Fonts.body(Typography.micro, weight: .semibold))
+                            .foregroundStyle(Theme.textSecondary)
+                            .lineLimit(1)
+                    }
                 }
-                Text(title)
-                    .font(Theme.Fonts.headline(Typography.callout, weight: .bold))
-                    .foregroundStyle(Theme.textPrimary)
-                    .multilineTextAlignment(.leading)
+                Spacer(minLength: 0)
             }
+            .padding(14)
             .frame(maxWidth: .infinity, alignment: .leading)
-            .padding(Spacing.sm)
-            .glassCard(cornerRadius: Radius.md, elevation: .resting)
+            .glassCard(cornerRadius: Radius.lg, elevation: .resting)
         }
         .buttonStyle(MagneticPressStyle())
     }
 }
 
-// MARK: - Hub Row
+// MARK: - Hub Row (list row card)
 
 struct PremiumHubRow: View {
     let icon: String
@@ -302,40 +326,29 @@ struct PremiumHubRow: View {
             Haptic.light()
             action()
         }) {
-            HStack(spacing: Spacing.sm) {
-                ZStack {
-                    RoundedRectangle(cornerRadius: Radius.sm, style: .continuous)
-                        .fill(Theme.primary.opacity(0.14))
-                        .frame(width: 48, height: 48)
-                    Image(systemName: icon)
-                        .font(.system(size: 20, weight: .semibold))
-                        .foregroundStyle(Theme.primary)
-                }
+            HStack(spacing: 12) {
+                PPIconTile(icon: icon, tint: Theme.forest, background: Theme.forestSoft, size: 42)
                 VStack(alignment: .leading, spacing: 2) {
                     Text(title)
-                        .font(Theme.Fonts.headline(Typography.body, weight: .semibold))
+                        .font(Theme.Fonts.headline(14, weight: .bold))
                         .foregroundStyle(Theme.textPrimary)
                     if let subtitle {
                         Text(subtitle)
-                            .font(Theme.Fonts.body(Typography.caption))
+                            .font(Theme.Fonts.body(Typography.caption, weight: .semibold))
                             .foregroundStyle(Theme.textSecondary)
                     }
                 }
                 Spacer()
                 if let badge {
-                    Text(badge)
-                        .font(Theme.Fonts.label(Typography.micro, weight: .bold))
-                        .foregroundStyle(Theme.textOnBrand)
-                        .padding(.horizontal, 8)
-                        .padding(.vertical, 4)
-                        .background(Capsule().fill(Theme.primary))
+                    PPBadge(text: badge, tone: .coral, solid: true)
                 }
                 Image(systemName: "chevron.right")
                     .font(.system(size: 13, weight: .semibold))
-                    .foregroundStyle(Theme.textSecondary.opacity(0.6))
+                    .foregroundStyle(Theme.textFaint)
             }
-            .padding(Spacing.sm)
-            .glassCard(cornerRadius: Radius.md, elevation: .resting)
+            .padding(.horizontal, 14)
+            .padding(.vertical, 12)
+            .glassCard(cornerRadius: Radius.lg, elevation: .resting)
         }
         .buttonStyle(MagneticPressStyle())
     }

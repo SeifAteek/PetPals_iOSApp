@@ -48,7 +48,7 @@ struct PetProfileView: View {
                                 Spacer()
                                 Text(pet.status?.rawValue ?? "Active")
                                     .font(Theme.Fonts.primaryFont(size: 14, weight: .bold))
-                                    .foregroundColor(.green)
+                                    .foregroundColor(Theme.statusHealthy)
                             }
                         }
                         .padding(20)
@@ -82,16 +82,22 @@ struct PetProfileView: View {
                             
                             LazyVGrid(columns: [GridItem(.flexible()), GridItem(.flexible())], spacing: 16) {
                                 Button(action: { coordinator.push(.medicalRecords(petId: pet.petId)) }) {
-                                    ActionCard(icon: "heart.text.square", title: "Health Records", color: .blue)
+                                    ActionCard(icon: "heart.text.square", title: "Health records", color: Theme.statusInfo)
                                 }
                                 Button(action: { coordinator.push(.activity) }) {
-                                    ActionCard(icon: "calendar", title: "Appointments", color: .orange)
+                                    ActionCard(icon: "calendar", title: "Appointments", color: Theme.statusWarn)
                                 }
                                 Button(action: { coordinator.push(.reminders(petId: pet.petId, petName: pet.name)) }) {
                                     ActionCard(icon: "bell", title: "Reminders", color: .purple)
                                 }
+                                Button(action: {
+                                    CollarSession.shared.pair(petId: pet.petId, petName: pet.name)
+                                    coordinator.push(.collarDashboard(petId: pet.petId))
+                                }) {
+                                    ActionCard(icon: "antenna.radiowaves.left.and.right", title: "Collar", color: Theme.forest)
+                                }
                                 Button(action: { coordinator.push(.editPet(pet: pet)) }) {
-                                    ActionCard(icon: "gearshape", title: "Edit Details", color: .gray)
+                                    ActionCard(icon: "gearshape", title: "Edit details", color: Theme.textSecondary)
                                 }
                             }
                             .padding(.horizontal, 24)
@@ -249,7 +255,7 @@ struct TestCollarTelemetryView: View {
                 if bluetoothManager.connectionState == .connected {
                     HStack(spacing: 4) {
                         Image(systemName: "battery.100")
-                            .foregroundColor(.green)
+                            .foregroundColor(Theme.statusHealthy)
                         Text("\(bluetoothManager.batteryLevel)%")
                             .font(Theme.Fonts.primaryFont(size: 12, weight: .bold))
                             .foregroundColor(Theme.textPrimary)
@@ -259,18 +265,18 @@ struct TestCollarTelemetryView: View {
                 
                 HStack(spacing: 6) {
                     Circle()
-                        .fill(bluetoothManager.connectionState == .connected ? Color.green : Color.orange)
+                        .fill(bluetoothManager.connectionState == .connected ? Theme.statusHealthy : Theme.statusWarn)
                         .frame(width: 8, height: 8)
                         .opacity(bluetoothManager.connectionState == .searching ? 0.6 : 1.0)
                     Text(bluetoothManager.connectionState.description)
                         .font(Theme.Fonts.primaryFont(size: 12, weight: .semibold))
-                        .foregroundColor(bluetoothManager.connectionState == .connected ? .green : .orange)
+                        .foregroundColor(bluetoothManager.connectionState == .connected ? Theme.statusHealthy : Theme.statusWarn)
                 }
                 .padding(.horizontal, 10)
                 .padding(.vertical, 4)
                 .background(
                     RoundedRectangle(cornerRadius: 12)
-                        .stroke(bluetoothManager.connectionState == .connected ? Color.green.opacity(0.3) : Color.orange.opacity(0.3), lineWidth: 1)
+                        .stroke(bluetoothManager.connectionState == .connected ? Theme.statusHealthy.opacity(0.3) : Theme.statusWarn.opacity(0.3), lineWidth: 1)
                 )
             }
             
@@ -280,7 +286,7 @@ struct TestCollarTelemetryView: View {
                     VStack(alignment: .leading, spacing: 6) {
                         HStack {
                             Image(systemName: "heart.text.square.fill")
-                                .foregroundColor(.red)
+                                .foregroundColor(Theme.statusCritical)
                             Text("Heart Rate")
                                 .font(Theme.Fonts.primaryFont(size: 12, weight: .medium))
                                 .foregroundColor(Theme.textSecondary)
@@ -347,7 +353,7 @@ struct TestCollarTelemetryView: View {
                 VStack(alignment: .leading, spacing: 6) {
                     HStack {
                         Image(systemName: "globe.americas.fill")
-                            .foregroundColor(.blue)
+                            .foregroundColor(Theme.statusInfo)
                         Text("Global Network")
                             .font(Theme.Fonts.primaryFont(size: 12, weight: .medium))
                             .foregroundColor(Theme.textSecondary)
@@ -359,7 +365,7 @@ struct TestCollarTelemetryView: View {
                             .foregroundColor(Theme.textPrimary)
                         Text("See last known crowdsourced location")
                             .font(.system(size: 12, weight: .semibold))
-                            .foregroundColor(.blue)
+                            .foregroundColor(Theme.statusInfo)
                     }
                 }
                 .frame(maxWidth: .infinity, alignment: .leading)
@@ -386,7 +392,7 @@ struct TestCollarTelemetryView: View {
                 .foregroundColor(.white)
                 .padding()
                 .frame(maxWidth: .infinity)
-                .background(Color.blue)
+                .background(Theme.statusInfo)
                 .cornerRadius(12)
                 .shadow(color: .blue.opacity(0.3), radius: 5, x: 0, y: 3)
             }
@@ -401,7 +407,7 @@ struct TestCollarTelemetryView: View {
         .cornerRadius(20)
         .overlay(
             RoundedRectangle(cornerRadius: 20)
-                .stroke(Color.gray.opacity(0.1), lineWidth: 1)
+                .stroke(Theme.textFaint.opacity(0.1), lineWidth: 1)
         )
         .padding(.horizontal, 24)
         .padding(.top, 24)

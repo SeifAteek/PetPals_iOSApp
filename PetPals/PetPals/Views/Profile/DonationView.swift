@@ -17,7 +17,7 @@ struct DonationView: View {
                     Image(systemName: "checkmark.circle.fill")
                         .resizable()
                         .frame(width: 80, height: 80)
-                        .foregroundColor(.green)
+                        .foregroundColor(Theme.statusHealthy)
                     Text("Thank You!")
                         .font(Theme.Fonts.primaryFont(size: 24, weight: .bold))
                     Text("Your donation to \(campaign.title) was successful.")
@@ -60,7 +60,7 @@ struct DonationView: View {
                                             .cornerRadius(12)
                                             .overlay(
                                                 RoundedRectangle(cornerRadius: 12)
-                                                    .stroke(selectedAmount == preset ? Theme.primary : Color.gray.opacity(0.2), lineWidth: 1)
+                                                    .stroke(selectedAmount == preset ? Theme.primary : Theme.textFaint.opacity(0.2), lineWidth: 1)
                                             )
                                     }
                                 }
@@ -80,7 +80,7 @@ struct DonationView: View {
                             .cornerRadius(12)
                             .overlay(
                                 RoundedRectangle(cornerRadius: 12)
-                                    .stroke(Color.gray.opacity(0.2), lineWidth: 1)
+                                    .stroke(Theme.textFaint.opacity(0.2), lineWidth: 1)
                             )
                         }
                         
@@ -92,6 +92,7 @@ struct DonationView: View {
                 }
             }
         }
+        .frame(maxWidth: .infinity, maxHeight: .infinity)
         .dismissKeyboardOnSwipe()
         .clawsyScreenBackground()
         .navigationTitle("Donate")

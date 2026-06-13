@@ -55,7 +55,7 @@ struct AdoptionFormView: View {
                 if let validationError {
                     Text(validationError)
                         .font(Theme.Fonts.primaryFont(size: 14))
-                        .foregroundColor(.red)
+                        .foregroundColor(Theme.statusCritical)
                 }
 
                 PrimaryButton(title: "Continue") {
@@ -97,7 +97,7 @@ struct AdoptionFormView: View {
                 .foregroundColor(Theme.textSecondary)
             Text("*")
                 .font(Theme.Fonts.primaryFont(size: 13, weight: .semibold))
-                .foregroundColor(.red)
+                .foregroundColor(Theme.statusCritical)
         }
     }
 }

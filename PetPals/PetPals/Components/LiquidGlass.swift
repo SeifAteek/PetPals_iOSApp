@@ -1,58 +1,36 @@
 import SwiftUI
 
-// MARK: - Ambient Screen Background (photo-style mesh)
+// MARK: - Screen Background (flat warm canvas — "the chrome stays quiet")
 
 struct PetPalsAmbientBackground: View {
     @Environment(\.colorScheme) private var colorScheme
 
     var body: some View {
-        ZStack {
-            if colorScheme == .dark {
-                // Dark mode: Navy → Powder Blush gradient only
-                Theme.darkBackgroundGradient
-            } else {
-                Theme.background
+        ZStack(alignment: .top) {
+            Theme.background
 
-                Theme.meshGradient
-                    .opacity(0.72)
-                    .blur(radius: 32)
-                    .scaleEffect(1.35)
-
-                LinearGradient(
-                    colors: [
-                        Theme.powderBlush.opacity(0.35),
-                        Theme.honeydew.opacity(0.25),
-                        Theme.navy.opacity(0.18)
-                    ],
-                    startPoint: .topLeading,
-                    endPoint: .bottomTrailing
+            // Subtle sand wash at the very top of the canvas (the one sanctioned flourish).
+            if colorScheme == .light {
+                RadialGradient(
+                    colors: [Theme.sandSoft.opacity(0.9), Theme.sandSoft.opacity(0)],
+                    center: .top,
+                    startRadius: 0,
+                    endRadius: 420
                 )
-
-                ForEach(PetPalsPalette.meshOrbs(colorScheme: colorScheme)) { orb in
-                    Circle()
-                        .fill(orb.color.opacity(orb.opacity(for: colorScheme)))
-                        .frame(width: orb.size, height: orb.size)
-                        .blur(radius: orb.blur)
-                        .offset(orb.offset)
-                }
-
-                LinearGradient(
-                    colors: [Color.clear, Theme.navy.opacity(0.06)],
-                    startPoint: .top,
-                    endPoint: .bottom
-                )
+                .frame(height: 420)
+                .frame(maxWidth: .infinity)
             }
         }
         .ignoresSafeArea()
     }
 }
 
-// MARK: - Glass Surface
+// MARK: - Card Surface
 
 struct GlassSurface<Content: View>: View {
-    var cornerRadius: CGFloat = Radius.lg
+    var cornerRadius: CGFloat = Radius.xl
     var padding: CGFloat = Spacing.sm
-    var elevation: Elevation = .raised
+    var elevation: Elevation = .resting
     @ViewBuilder var content: () -> Content
 
     var body: some View {
@@ -60,18 +38,10 @@ struct GlassSurface<Content: View>: View {
             .padding(padding)
             .background {
                 RoundedRectangle(cornerRadius: cornerRadius, style: .continuous)
-                    .fill(.ultraThinMaterial)
-                    .background(
-                        RoundedRectangle(cornerRadius: cornerRadius, style: .continuous)
-                            .fill(Theme.cardBackground)
-                    )
-                    .background(
-                        RoundedRectangle(cornerRadius: cornerRadius, style: .continuous)
-                            .fill(Theme.heroGradient.opacity(0.12))
-                    )
+                    .fill(Theme.surface)
                     .overlay(
                         RoundedRectangle(cornerRadius: cornerRadius, style: .continuous)
-                            .stroke(Theme.glassStroke, lineWidth: 1)
+                            .stroke(Theme.borderSubtle, lineWidth: 1)
                     )
                     .shadow(
                         color: elevation.shadowColor,
@@ -83,28 +53,20 @@ struct GlassSurface<Content: View>: View {
     }
 }
 
-// MARK: - Glass Card Modifier
+// MARK: - Card Modifier (white surface · sand hairline · warm shadow)
 
 struct GlassCardModifier: ViewModifier {
-    var cornerRadius: CGFloat = Radius.lg
-    var elevation: Elevation = .raised
+    var cornerRadius: CGFloat = Radius.xl
+    var elevation: Elevation = .resting
 
     func body(content: Content) -> some View {
         content
             .background {
                 RoundedRectangle(cornerRadius: cornerRadius, style: .continuous)
-                    .fill(.ultraThinMaterial)
-                    .background(
-                        RoundedRectangle(cornerRadius: cornerRadius, style: .continuous)
-                            .fill(Theme.cardBackground)
-                    )
-                    .background(
-                        RoundedRectangle(cornerRadius: cornerRadius, style: .continuous)
-                            .fill(Theme.brandGradient.opacity(0.08))
-                    )
+                    .fill(Theme.surface)
                     .overlay(
                         RoundedRectangle(cornerRadius: cornerRadius, style: .continuous)
-                            .stroke(Theme.glassStroke, lineWidth: 1)
+                            .stroke(Theme.borderSubtle, lineWidth: 1)
                     )
                     .shadow(
                         color: elevation.shadowColor,
@@ -117,8 +79,16 @@ struct GlassCardModifier: ViewModifier {
 }
 
 extension View {
-    func glassCard(cornerRadius: CGFloat = Radius.lg, elevation: Elevation = .raised) -> some View {
+    func glassCard(cornerRadius: CGFloat = Radius.xl, elevation: Elevation = .resting) -> some View {
         modifier(GlassCardModifier(cornerRadius: cornerRadius, elevation: elevation))
+    }
+
+    /// Warm sand panel — for secondary surfaces that shouldn't read as cards.
+    func warmPanel(cornerRadius: CGFloat = Radius.lg) -> some View {
+        background {
+            RoundedRectangle(cornerRadius: cornerRadius, style: .continuous)
+                .fill(Theme.surfaceWarm)
+        }
     }
 
     func petPalsScreenBackground() -> some View {
@@ -135,30 +105,32 @@ extension View {
 
 struct ShimmerModifier: ViewModifier {
     @State private var phase: CGFloat = -1
+    @Environment(\.accessibilityReduceMotion) private var reduceMotion
 
     func body(content: Content) -> some View {
         content
             .overlay {
-                GeometryReader { geo in
-                    LinearGradient(
-                        colors: [
-                            Color.clear,
-                            Theme.powderBlush.opacity(0.4),
-                            Theme.honeydew.opacity(0.35),
-                            Color.clear
-                        ],
-                        startPoint: .leading,
-                        endPoint: .trailing
-                    )
-                    .frame(width: geo.size.width * 0.6)
-                    .offset(x: geo.size.width * phase)
-                    .onAppear {
-                        withAnimation(.linear(duration: 1.4).repeatForever(autoreverses: false)) {
-                            phase = 1.4
+                if !reduceMotion {
+                    GeometryReader { geo in
+                        LinearGradient(
+                            colors: [
+                                Color.clear,
+                                Color.white.opacity(0.45),
+                                Color.clear
+                            ],
+                            startPoint: .leading,
+                            endPoint: .trailing
+                        )
+                        .frame(width: geo.size.width * 0.6)
+                        .offset(x: geo.size.width * phase)
+                        .onAppear {
+                            withAnimation(.linear(duration: 1.4).repeatForever(autoreverses: false)) {
+                                phase = 1.4
+                            }
                         }
                     }
+                    .mask(content)
                 }
-                .mask(content)
             }
     }
 }
@@ -177,16 +149,16 @@ struct PremiumLoadingView: View {
         }
         .frame(maxWidth: .infinity)
         .padding(Spacing.lg)
-        .glassCard()
+        .glassCard(cornerRadius: Radius.lg)
     }
 }
 
-// MARK: - Magnetic Press
+// MARK: - Magnetic Press (press = scale, never a color-only change)
 
 struct MagneticPressStyle: ButtonStyle {
     func makeBody(configuration: Configuration) -> some View {
         configuration.label
-            .scaleEffect(configuration.isPressed ? 0.96 : 1)
-            .animation(Motion.spring, value: configuration.isPressed)
+            .scaleEffect(configuration.isPressed ? 0.97 : 1)
+            .animation(Motion.quick, value: configuration.isPressed)
     }
 }

@@ -9,11 +9,14 @@ struct MedicalRecordsListView: View {
                 if viewModel.isLoading {
                     ProgressView()
                         .frame(maxWidth: .infinity)
-                        .padding()
+                        .padding(.top, 80)
                 } else if viewModel.records.isEmpty {
-                    Text("No medical records found.")
-                        .foregroundColor(Theme.textSecondary)
-                        .padding()
+                    PremiumEmptyState(
+                        icon: "heart.text.square",
+                        title: "No records yet",
+                        message: "Vet visits, vaccines and notes will appear here once they're added."
+                    )
+                    .frame(maxWidth: .infinity)
                 } else {
                     ForEach(viewModel.records) { record in
                         VStack(alignment: .leading, spacing: 8) {

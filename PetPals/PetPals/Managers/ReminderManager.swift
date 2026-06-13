@@ -1,19 +1,19 @@
 import Foundation
 import UserNotifications
 
-final class ReminderManager: NSObject, UNUserNotificationCenterDelegate {
+final class ReminderManager: NSObject {
     static let shared = ReminderManager()
-    
+
     private let storageKey = "pet_reminders"
     private let center = UNUserNotificationCenter.current()
-    
+
     private override init() {
         super.init()
-        center.delegate = self
+        // Notification-center delegate + permission are owned by `LocalNotificationManager`.
     }
-    
+
     // MARK: - Permission
-    
+
     func requestPermission() {
         center.requestAuthorization(options: [.alert, .badge, .sound]) { granted, error in
             if let error {
@@ -21,13 +21,7 @@ final class ReminderManager: NSObject, UNUserNotificationCenterDelegate {
             }
         }
     }
-    
-    // MARK: - UNUserNotificationCenterDelegate
-    
-    func userNotificationCenter(_ center: UNUserNotificationCenter, willPresent notification: UNNotification, withCompletionHandler completionHandler: @escaping (UNNotificationPresentationOptions) -> Void) {
-        completionHandler([.banner, .sound, .badge])
-    }
-    
+
     // MARK: - CRUD
     
     func saveReminder(_ reminder: PetReminder) {
@@ -92,7 +86,11 @@ final class ReminderManager: NSObject, UNUserNotificationCenterDelegate {
         content.title = reminder.title
         content.body = reminder.body
         content.sound = .default
-        
+        // Group pet reminders under the "reminders" category in Notification Center and deep-link on tap.
+        content.categoryIdentifier = AppNotificationCategory.reminders.threadIdentifier
+        content.threadIdentifier = AppNotificationCategory.reminders.threadIdentifier
+        content.userInfo = NotificationRoute.reminders.userInfo
+
         let trigger: UNNotificationTrigger
         
         if reminder.isRepeating {

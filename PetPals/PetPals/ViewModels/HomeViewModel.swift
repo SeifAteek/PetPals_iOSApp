@@ -19,6 +19,10 @@ final class HomeViewModel: ObservableObject {
     @Published var activeOrder: ShopOrder?
     @Published var featuredPost: CommunityPost?
     @Published var userHasPets: Bool = false
+
+    // Home sections
+    @Published var myPets: [Pet] = []
+    @Published var communityPosts: [CommunityPost] = []
     
     @Published var isLoading = false
     @Published var errorMessage: String?
@@ -85,29 +89,32 @@ final class HomeViewModel: ObservableObject {
                     personalityProfile = try? await personalityService.fetchProfile(userId: profile.userId)
                     
                     let userPets = (try? await petService.fetchUserPets(userId: profile.userId)) ?? []
+                    myPets = userPets
                     userHasPets = !userPets.isEmpty
-                    
+                    CollarSession.shared.adoptIfNeeded(from: userPets)
+
                     if let orders = try? await shopService.fetchUserOrders(userId: profile.userId) {
                         activeOrder = orders.first(where: { $0.status == .processing || $0.status == .shipped })
                     }
-                    
-                    if activeOrder == nil && userHasPets {
-                        if let posts = try? await communityService.fetchPosts(subredditId: nil, userId: profile.userId) {
-                            let fiveDaysAgo = Date().addingTimeInterval(-5 * 86400)
-                            let recentPosts = posts.filter { ($0.createdAt ?? Date()) > fiveDaysAgo }
-                            
-                            if let topRecent = recentPosts.max(by: { $0.score < $1.score }) {
-                                featuredPost = topRecent
-                            } else if let topAny = posts.max(by: { $0.score < $1.score }) {
-                                featuredPost = topAny
-                            } else {
-                                featuredPost = nil
-                            }
+
+                    if let posts = try? await communityService.fetchPosts(subredditId: nil, userId: profile.userId) {
+                        communityPosts = Array(posts.sorted { $0.score > $1.score }.prefix(5))
+
+                        let fiveDaysAgo = Date().addingTimeInterval(-5 * 86400)
+                        let recentPosts = posts.filter { ($0.createdAt ?? Date()) > fiveDaysAgo }
+                        if let topRecent = recentPosts.max(by: { $0.score < $1.score }) {
+                            featuredPost = topRecent
+                        } else if let topAny = posts.max(by: { $0.score < $1.score }) {
+                            featuredPost = topAny
+                        } else {
+                            featuredPost = nil
                         }
                     }
                 } else {
                     personalityProfile = nil
                     userHasPets = false
+                    myPets = []
+                    communityPosts = []
                     activeOrder = nil
                     featuredPost = nil
                 }

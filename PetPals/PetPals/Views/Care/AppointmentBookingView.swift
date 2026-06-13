@@ -80,7 +80,7 @@ struct AppointmentBookingView: View {
                     if let submitError {
                         Text(submitError)
                             .font(.caption)
-                            .foregroundColor(.red)
+                            .foregroundColor(Theme.statusCritical)
                     }
                 } else {
                     Text("Missing booking context.")
@@ -188,7 +188,7 @@ struct AppointmentBookingView: View {
     
     private func backgroundColor(disabled: Bool, selected: Bool) -> Color {
         if selected { return Theme.primary.opacity(0.25) }
-        if disabled { return Color.gray.opacity(0.15) }
+        if disabled { return Theme.textFaint.opacity(0.15) }
         return Theme.cardBackground
     }
     
@@ -248,7 +248,7 @@ struct AppointmentBookingView: View {
                             .font(Theme.Fonts.primaryFont(size: 14, weight: .medium))
                             .frame(maxWidth: .infinity)
                             .padding(.vertical, 10)
-                            .background(RoundedRectangle(cornerRadius: 8).fill(sel ? Theme.primary.opacity(0.3) : (busy ? Color.gray.opacity(0.2) : Theme.cardBackground)))
+                            .background(RoundedRectangle(cornerRadius: 8).fill(sel ? Theme.primary.opacity(0.3) : (busy ? Theme.textFaint.opacity(0.2) : Theme.cardBackground)))
                             .foregroundColor(busy ? Theme.textSecondary.opacity(0.5) : Theme.textPrimary)
                     }
                     .buttonStyle(.plain)

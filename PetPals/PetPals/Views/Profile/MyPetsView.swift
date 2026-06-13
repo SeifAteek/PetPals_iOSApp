@@ -17,7 +17,7 @@ struct MyPetsView: View {
                 } else if let err = viewModel.errorMessage, !err.isEmpty {
                     Text(err)
                         .font(Theme.Fonts.primaryFont(size: 14))
-                        .foregroundColor(.red)
+                        .foregroundColor(Theme.statusCritical)
                         .padding(.horizontal, 24)
                 } else if viewModel.myPets.isEmpty {
                     EmptyMyPetsView()
@@ -96,14 +96,14 @@ struct EmptyMyPetsView: View {
                 Button(action: { coordinator.push(.addPetFlow) }) {
                     Text("Already have a pet")
                         .font(Theme.Fonts.primaryFont(size: 16, weight: .bold))
-                        .foregroundColor(.black)
+                        .foregroundColor(Theme.textPrimary)
                         .frame(maxWidth: .infinity)
                         .padding(.vertical, 16)
                         .background(Theme.cardBackground)
                         .cornerRadius(25)
                         .overlay(
                             RoundedRectangle(cornerRadius: 25)
-                                .stroke(Color.gray.opacity(0.3), lineWidth: 1)
+                                .stroke(Theme.textFaint.opacity(0.3), lineWidth: 1)
                         )
                 }
             }
@@ -136,7 +136,7 @@ struct MyPetRowCard: View {
                 Spacer()
                 
                 Image(systemName: "chevron.right")
-                    .foregroundColor(.gray)
+                    .foregroundColor(Theme.textSecondary)
             }
             .padding(Spacing.sm)
             .glassCard(cornerRadius: Radius.md, elevation: .resting)

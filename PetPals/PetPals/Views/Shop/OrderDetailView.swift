@@ -31,7 +31,7 @@ struct OrderDetailView: View {
                 if let loadError {
                     Text(loadError)
                         .font(Theme.Fonts.primaryFont(size: 14))
-                        .foregroundStyle(.red)
+                        .foregroundStyle(Theme.statusCritical)
                 }
 
                 if receipt != nil {

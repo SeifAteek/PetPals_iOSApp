@@ -85,26 +85,29 @@ struct ProfileHubView: View {
             }
             .frame(width: 64, height: 64)
             .clipShape(Circle())
-            .overlay(Circle().stroke(Theme.glassStroke, lineWidth: 2))
+            .overlay(Circle().stroke(Theme.borderStrong, lineWidth: 2))
 
             VStack(alignment: .leading, spacing: 4) {
-                Text(L10n.memberSince)
-                    .font(Theme.Fonts.label(Typography.micro, weight: .semibold))
-                    .foregroundStyle(Theme.textSecondary)
+                Text(L10n.memberSince.uppercased())
+                    .font(Theme.Fonts.label(Typography.micro, weight: .bold))
+                    .foregroundStyle(Theme.textFaint)
+                    .tracking(1.0)
                 Text(L10n.managePetFamily)
-                    .font(Theme.Fonts.body(Typography.callout))
+                    .font(Theme.Fonts.headline(Typography.callout, weight: .bold))
                     .foregroundStyle(Theme.textPrimary)
             }
             Spacer()
         }
+        .padding(Spacing.sm)
+        .glassCard(cornerRadius: Radius.xl, elevation: .resting)
         .padding(.horizontal, ScreenLayout.horizontalPadding)
     }
 
     private var avatarPlaceholder: some View {
         ZStack {
-            Circle().fill(Theme.primary.opacity(0.15))
+            Circle().fill(Theme.forestSoft)
             Image(systemName: "person.fill")
-                .foregroundStyle(Theme.primary)
+                .foregroundStyle(Theme.forest)
         }
     }
 

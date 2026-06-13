@@ -29,18 +29,18 @@ struct PetProductDetailView: View {
                     if isLoadingImages {
                         ZStack {
                             Rectangle()
-                                .fill(Theme.primary.opacity(0.07))
+                                .fill(Theme.sandSoft)
                                 .frame(height: 300)
-                            ProgressView()
+                            ProgressView().tint(Theme.primary)
                         }
                     } else if allImageUrls.isEmpty {
                         ZStack {
                             Rectangle()
-                                .fill(Theme.primary.opacity(0.07))
+                                .fill(Theme.sandSoft)
                                 .frame(height: 300)
                             Image(systemName: "bag.fill")
                                 .font(.system(size: 80))
-                                .foregroundColor(Theme.primary.opacity(0.25))
+                                .foregroundColor(PetPalsPalette.sand600)
                         }
                     } else {
                         // Swipeable TabView carousel
@@ -51,14 +51,14 @@ struct PetProductDetailView: View {
                                     case .success(let img):
                                         img.resizable().scaledToFit()
                                     case .failure:
-                                        Image(systemName: "photo").foregroundColor(.gray)
+                                        Image(systemName: "photo").foregroundColor(Theme.textSecondary)
                                     default:
                                         ProgressView()
                                     }
                                 }
                                 .frame(maxWidth: .infinity)
                                 .frame(height: 300)
-                                .background(Theme.primary.opacity(0.05))
+                                .background(Theme.sandSoft)
                                 .tag(i)
                             }
                         }
@@ -89,7 +89,7 @@ struct PetProductDetailView: View {
                                     if let img = phase.image {
                                         img.resizable().scaledToFill()
                                     } else {
-                                        Color.gray.opacity(0.15)
+                                        Theme.textFaint.opacity(0.15)
                                     }
                                 }
                                 .frame(width: 60, height: 60)
@@ -112,34 +112,31 @@ struct PetProductDetailView: View {
 
                     // Name + price
                     HStack(alignment: .top) {
-                        VStack(alignment: .leading, spacing: 6) {
+                        VStack(alignment: .leading, spacing: 8) {
                             Text(product.name)
-                                .font(Theme.Fonts.primaryFont(size: 22, weight: .bold))
+                                .font(Theme.Fonts.display(Typography.title2))
+                                .tracking(-0.4)
                                 .foregroundColor(Theme.textPrimary)
                             if let cat = product.category {
-                                Label(cat, systemImage: "tag.fill")
-                                    .font(Theme.Fonts.primaryFont(size: 13))
-                                    .foregroundColor(Theme.textSecondary)
+                                PPTag(text: cat, icon: "tag.fill")
                             }
                         }
                         Spacer()
                         Text(CurrencyFormatting.egp(product.price))
-                            .font(Theme.Fonts.primaryFont(size: 26, weight: .bold))
-                            .foregroundColor(Theme.accent)
+                            .font(Theme.Fonts.display(Typography.title2))
+                            .tracking(-0.4)
+                            .foregroundColor(Theme.textPrimary)
                     }
 
                     // Stock badge
                     if let stock = product.stockLevel {
-                        HStack(spacing: 6) {
-                            Circle()
-                                .fill(stock > 5 ? Color.green : Color.orange)
-                                .frame(width: 8, height: 8)
-                            Text(stock > 5
-                                 ? "In Stock (\(stock) available)"
-                                 : "Only \(stock) left — order soon!")
-                                .font(Theme.Fonts.primaryFont(size: 13, weight: .semibold))
-                                .foregroundColor(stock > 5 ? .green : .orange)
-                        }
+                        PPBadge(
+                            text: stock > 5
+                                ? "In stock (\(stock) available)"
+                                : "Only \(stock) left — order soon",
+                            tone: stock > 5 ? .healthy : .warn,
+                            dot: true
+                        )
                     }
 
                     Divider()
@@ -147,12 +144,13 @@ struct PetProductDetailView: View {
                     // Description
                     VStack(alignment: .leading, spacing: 8) {
                         Text("Description")
-                            .font(Theme.Fonts.primaryFont(size: 17, weight: .bold))
+                            .font(Theme.Fonts.display(Typography.title3))
+                            .tracking(-0.3)
                             .foregroundColor(Theme.textPrimary)
                         Text(product.description ??
                              "High-quality product for your pet. Ensure your companion gets the best care and supplies available.")
-                            .font(Theme.Fonts.primaryFont(size: 15))
-                            .foregroundColor(Theme.textSecondary)
+                            .font(Theme.Fonts.body(Typography.callout))
+                            .foregroundColor(Theme.textBody)
                             .lineSpacing(5)
                     }
 
@@ -161,7 +159,8 @@ struct PetProductDetailView: View {
                     // Quantity
                     VStack(alignment: .leading, spacing: 12) {
                         Text("Quantity")
-                            .font(Theme.Fonts.primaryFont(size: 17, weight: .bold))
+                            .font(Theme.Fonts.display(Typography.title3))
+                            .tracking(-0.3)
                             .foregroundColor(Theme.textPrimary)
 
                         HStack(spacing: 20) {
@@ -173,9 +172,11 @@ struct PetProductDetailView: View {
                             .disabled(quantity <= 1)
 
                             Text("\(quantity)")
-                                .font(Theme.Fonts.primaryFont(size: 20, weight: .bold))
+                                .font(Theme.Fonts.mono(20))
                                 .foregroundColor(Theme.textPrimary)
                                 .frame(minWidth: 30, alignment: .center)
+                                .contentTransition(.numericText())
+                                .animation(.snappy, value: quantity)
 
                             Button(action: { if quantity < maxQty { quantity += 1 } }) {
                                 Image(systemName: "plus.circle.fill")
@@ -187,33 +188,38 @@ struct PetProductDetailView: View {
                             Spacer()
 
                             Text("\(L10n.total): \(CurrencyFormatting.egp(product.price * Decimal(quantity)))")
-                                .font(Theme.Fonts.primaryFont(size: 16, weight: .bold))
-                                .foregroundColor(Theme.accent)
+                                .font(Theme.Fonts.headline(Typography.body, weight: .bold))
+                                .foregroundColor(Theme.textPrimary)
+                                .contentTransition(.numericText())
+                                .animation(.snappy, value: quantity)
                         }
                     }
 
                     // Add to cart
                     Button(action: addToCart) {
-                        HStack {
+                        HStack(spacing: Spacing.xs) {
                             Image(systemName: addedToCart ? "checkmark.circle.fill" : "cart.badge.plus")
-                            Text(addedToCart ? "Added to Cart!" : "Add to Cart")
-                                .font(Theme.Fonts.primaryFont(size: 17, weight: .bold))
+                                .font(.system(size: 18, weight: .semibold))
+                            Text(addedToCart ? "Added to cart" : "Add to cart")
+                                .font(Theme.Fonts.headline(Typography.body, weight: .bold))
                         }
                         .foregroundColor(.white)
                         .frame(maxWidth: .infinity)
-                        .padding(.vertical, 18)
-                        .background(addedToCart ? Color.green : Theme.primary)
-                        .cornerRadius(18)
-                        .shadow(color: Theme.primary.opacity(0.3), radius: 8, x: 0, y: 4)
-                        .animation(.spring(response: 0.3), value: addedToCart)
+                        .frame(height: 54)
+                        .background {
+                            Capsule(style: .continuous)
+                                .fill(addedToCart ? Theme.statusHealthy : Theme.forest)
+                        }
+                        .animation(Motion.spring, value: addedToCart)
                     }
+                    .buttonStyle(MagneticPressStyle())
                     .padding(.top, 4)
 
                     // View cart link
                     Button(action: { coordinator.push(.cart) }) {
-                        Text("View Cart (\(cartViewModel.totalItems) items)")
-                            .font(Theme.Fonts.primaryFont(size: 14, weight: .semibold))
-                            .foregroundColor(Theme.primary)
+                        Text("View cart (\(cartViewModel.totalItems) items)")
+                            .font(Theme.Fonts.label(Typography.caption, weight: .heavy))
+                            .foregroundColor(PetPalsPalette.forest500)
                             .frame(maxWidth: .infinity)
                     }
                     .padding(.bottom, 40)

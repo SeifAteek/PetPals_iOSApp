@@ -101,7 +101,7 @@ struct CommunityPostDetailView: View {
         if let err = viewModel.errorMessage {
             Text(err)
                 .font(Theme.Fonts.body(Typography.caption))
-                .foregroundStyle(.red)
+                .foregroundStyle(Theme.statusCritical)
         }
     }
 

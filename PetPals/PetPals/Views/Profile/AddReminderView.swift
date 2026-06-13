@@ -108,7 +108,7 @@ struct AddReminderView: View {
                         .foregroundColor(.white)
                         .frame(maxWidth: .infinity)
                         .padding(.vertical, 16)
-                        .background(title.trimmingCharacters(in: .whitespaces).isEmpty ? Color.gray : Theme.primary)
+                        .background(title.trimmingCharacters(in: .whitespaces).isEmpty ? Theme.textFaint : Theme.primary)
                         .cornerRadius(14)
                 }
                 .disabled(title.trimmingCharacters(in: .whitespaces).isEmpty)

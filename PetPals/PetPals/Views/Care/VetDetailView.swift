@@ -371,15 +371,15 @@ struct VetDetailView: View {
         let isOpen = isClinicOpenNow(workingHours: workingHours)
         HStack(spacing: 4) {
             Circle()
-                .fill(isOpen ? Color.green : Color.red)
+                .fill(isOpen ? Theme.statusHealthy : Theme.statusCritical)
                 .frame(width: 8, height: 8)
             Text(isOpen ? "Open Now" : "Closed")
                 .font(Theme.Fonts.primaryFont(size: 12, weight: .bold))
-                .foregroundColor(isOpen ? .green : .red)
+                .foregroundColor(isOpen ? Theme.statusHealthy : Theme.statusCritical)
         }
         .padding(.horizontal, 10)
         .padding(.vertical, 5)
-        .background((isOpen ? Color.green : Color.red).opacity(0.1))
+        .background((isOpen ? Theme.statusHealthy : Theme.statusCritical).opacity(0.1))
         .cornerRadius(8)
     }
 }

@@ -15,93 +15,96 @@ struct PetDetailView: View {
                     .padding(.top, 80)
             } else if let pet = pet {
                 VStack(alignment: .leading, spacing: 0) {
-                    
+
                     // MARK: - Hero (standardized 4:3 crop — fixed height)
                     ZStack(alignment: .bottom) {
                         StandardPetPhoto(pet: pet, style: .detailHero)
-                        
-                        // Name overlay card
-                        VStack(alignment: .leading, spacing: 8) {
-                            Text(pet.name)
-                                .font(Theme.Fonts.primaryFont(size: 28, weight: .bold))
-                                .foregroundColor(.black)
-                            
-                            HStack(spacing: 8) {
+
+                        // Name card overlapping the photo
+                        VStack(alignment: .leading, spacing: 10) {
+                            HStack(alignment: .firstTextBaseline) {
+                                Text(pet.name)
+                                    .font(Theme.Fonts.display(Typography.title2))
+                                    .tracking(-0.4)
+                                    .foregroundStyle(Theme.textPrimary)
+                                Spacer()
+                                if let status = pet.status {
+                                    PPBadge(
+                                        text: status.rawValue,
+                                        tone: status == .available ? .healthy : .warn,
+                                        dot: true
+                                    )
+                                }
+                            }
+
+                            HStack(spacing: 7) {
                                 if let species = pet.species {
-                                    PetCategoryTag(text: species, backgroundColor: Theme.primary.opacity(0.3))
+                                    PPTag(text: species, icon: "pawprint.fill")
                                 }
                                 if let breed = pet.breed {
-                                    PetCategoryTag(text: breed, backgroundColor: Color.blue.opacity(0.15))
+                                    PPTag(text: breed)
                                 }
                                 if let age = pet.age {
-                                    PetCategoryTag(text: "\(age) yr\(age == 1 ? "" : "s")", backgroundColor: Color.purple.opacity(0.15))
+                                    PPTag(text: "\(age) yr\(age == 1 ? "" : "s")")
                                 }
                             }
                         }
                         .frame(maxWidth: .infinity, alignment: .leading)
-                        .padding(20)
-                        .background(
-                            RoundedRectangle(cornerRadius: 24)
-                                .fill(Theme.cardBackground)
-                        )
-                        .padding(.horizontal)
+                        .padding(Spacing.sm)
+                        .glassCard(cornerRadius: Radius.xl, elevation: .raised)
+                        .padding(.horizontal, ScreenLayout.horizontalPadding)
                         .offset(y: 40)
                     }
-                    
+
                     // MARK: - Details
                     VStack(alignment: .leading, spacing: 20) {
-                        
-                        // Status badge
-                        if let status = pet.status {
-                            HStack {
-                                Circle()
-                                    .fill(status == .available ? Color.green : Color.orange)
-                                    .frame(width: 10, height: 10)
-                                Text(status.rawValue)
-                                    .font(Theme.Fonts.primaryFont(size: 14, weight: .semibold))
-                                    .foregroundColor(status == .available ? .green : .orange)
-                            }
-                        }
-                        
+
                         // About
                         VStack(alignment: .leading, spacing: 8) {
                             Text("About \(pet.name)")
-                                .font(Theme.Fonts.primaryFont(size: 18, weight: .bold))
+                                .font(Theme.Fonts.display(Typography.title3))
+                                .tracking(-0.3)
+                                .foregroundStyle(Theme.textPrimary)
                             if let history = pet.medicalHistory {
                                 Text(history)
-                                    .font(Theme.Fonts.primaryFont(size: 15))
-                                    .foregroundColor(Theme.textSecondary)
-                                    .lineSpacing(4)
+                                    .font(Theme.Fonts.body(Typography.callout))
+                                    .foregroundStyle(Theme.textBody)
+                                    .lineSpacing(5)
                             } else {
                                 Text("No medical history available.")
-                                    .font(Theme.Fonts.primaryFont(size: 15))
-                                    .foregroundColor(Theme.textSecondary)
+                                    .font(Theme.Fonts.body(Typography.callout))
+                                    .foregroundStyle(Theme.textSecondary)
                             }
                         }
-                        
-                        // Adopt button
-                        HStack(spacing: 16) {
+
+                        // Actions
+                        HStack(spacing: 12) {
                             Button(action: {
                                 if let shelterId = pet.shelterId {
                                     coordinator.push(.chatRoom(clinicId: nil, shelterId: shelterId, displayName: "Shelter"))
                                 }
                             }) {
                                 Image(systemName: "message.fill")
-                                    .padding()
-                                    .background(Theme.cardBackground)
-                                    .foregroundColor(Theme.primary)
-                                    .cornerRadius(12)
-                                    .shadow(color: .black.opacity(0.05), radius: 5, x: 0, y: 2)
+                                    .font(.system(size: 18, weight: .semibold))
+                                    .foregroundStyle(Theme.forest)
+                                    .frame(width: 50, height: 50)
+                                    .background {
+                                        Circle().fill(Theme.surface)
+                                    }
+                                    .overlay {
+                                        Circle().stroke(Theme.borderStrong, lineWidth: 1.5)
+                                    }
                             }
-                            
-                            PrimaryButton(title: "Adopt Me 🐾") {
+                            .buttonStyle(MagneticPressStyle())
+
+                            PrimaryButton(title: "Adopt \(pet.name)", style: .accent, icon: "heart.fill") {
                                 coordinator.push(.adoptionRules(petId: petId))
                             }
                         }
                         .padding(.top, 8)
                     }
-                    .padding(.top, 60)
-                    .padding(.horizontal, 24)
+                    .padding(.top, 64)
+                    .padding(.horizontal, ScreenLayout.horizontalPadding)
                     .padding(.bottom, 40)
                 }
             }

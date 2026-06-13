@@ -5,7 +5,7 @@ struct PetCategoryTag: View {
     let backgroundColor: Color
     let textColor: Color
 
-    init(text: String, backgroundColor: Color = Theme.primary.opacity(0.14), textColor: Color = Theme.brandDeep) {
+    init(text: String, backgroundColor: Color = Theme.surfaceWarm, textColor: Color = Theme.textBody) {
         self.text = text
         self.backgroundColor = backgroundColor
         self.textColor = textColor

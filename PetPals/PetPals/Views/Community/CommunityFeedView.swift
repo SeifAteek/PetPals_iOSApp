@@ -12,15 +12,8 @@ struct CommunityFeedView: View {
                     title: L10n.communityTitle,
                     subtitle: L10n.communitySubtitle,
                     trailing: AnyView(
-                        Button {
-                            Haptic.light()
+                        PPIconButton(icon: "square.and.pencil", solid: true) {
                             coordinator.push(.createCommunityPost(subredditId: viewModel.selectedSubredditId))
-                        } label: {
-                            Image(systemName: "square.and.pencil")
-                                .font(.system(size: 18, weight: .semibold))
-                                .foregroundStyle(Theme.primary)
-                                .frame(width: 44, height: 44)
-                                .glassCard(cornerRadius: Radius.md, elevation: .resting)
                         }
                     )
                 )
@@ -52,8 +45,8 @@ struct CommunityFeedView: View {
 
                 if let err = viewModel.errorMessage {
                     Text(err)
-                        .font(Theme.Fonts.body(Typography.caption))
-                        .foregroundStyle(.red)
+                        .font(Theme.Fonts.body(Typography.caption, weight: .semibold))
+                        .foregroundStyle(Theme.statusCritical)
                         .padding(.horizontal, ScreenLayout.horizontalPadding)
                 }
             }

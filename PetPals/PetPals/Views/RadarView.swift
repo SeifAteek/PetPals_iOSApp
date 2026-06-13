@@ -4,7 +4,8 @@ import AudioToolbox
 struct RadarView: View {
     @ObservedObject var bluetoothManager: BluetoothManager
     let assignedUUID: String?
-    
+    @Environment(\.dismiss) private var dismiss
+
     init(bluetoothManager: BluetoothManager, assignedUUID: String? = nil) {
         self.bluetoothManager = bluetoothManager
         self.assignedUUID = assignedUUID
@@ -92,7 +93,7 @@ struct RadarView: View {
                     if bluetoothManager.connectionState == .disconnected {
                         Text("Please enable Bluetooth or wait for connection...")
                             .font(.subheadline)
-                            .foregroundColor(.red)
+                            .foregroundColor(Theme.statusCritical)
                     }
                 }
                 
@@ -112,7 +113,7 @@ struct RadarView: View {
                             .foregroundColor(.white)
                     }
                     .padding()
-                    .background(Color.red.opacity(0.9))
+                    .background(Theme.statusCritical.opacity(0.9))
                     .cornerRadius(16)
                     .shadow(color: .red.opacity(0.5), radius: 10, x: 0, y: 5)
                     .padding(.top, 50)
@@ -122,6 +123,19 @@ struct RadarView: View {
                 }
                 .zIndex(1)
             }
+        }
+        .overlay(alignment: .topTrailing) {
+            Button { dismiss() } label: {
+                Image(systemName: "xmark")
+                    .font(.system(size: 16, weight: .bold))
+                    .foregroundColor(.white)
+                    .frame(width: 40, height: 40)
+                    .background(.ultraThinMaterial, in: Circle())
+                    .environment(\.colorScheme, .dark)
+            }
+            .padding(.top, 16)
+            .padding(.trailing, 20)
+            .accessibilityLabel("Close radar")
         }
         .animation(.spring(), value: bluetoothManager.isVeryClose)
         .onAppear {

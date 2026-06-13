@@ -11,10 +11,11 @@ struct CustomTextField: View {
     @FocusState private var isFocused: Bool
 
     var body: some View {
-        HStack(spacing: Spacing.xs) {
+        HStack(spacing: 10) {
             if let iconName {
                 Image(systemName: iconName)
-                    .foregroundStyle(Theme.textSecondary)
+                    .font(.system(size: 16, weight: .medium))
+                    .foregroundStyle(Theme.textFaint)
                     .frame(width: 20)
             }
 
@@ -35,16 +36,24 @@ struct CustomTextField: View {
             if isSecure {
                 Button { isPasswordVisible.toggle() } label: {
                     Image(systemName: isPasswordVisible ? "eye.slash.fill" : "eye.fill")
-                        .foregroundStyle(Theme.textSecondary)
+                        .foregroundStyle(Theme.textFaint)
                 }
             }
         }
-        .padding(.horizontal, Spacing.sm)
-        .padding(.vertical, 14)
-        .glassCard(cornerRadius: Radius.md, elevation: .resting)
+        .padding(.horizontal, 14)
+        .frame(height: 48)
+        .background {
+            RoundedRectangle(cornerRadius: Radius.md, style: .continuous)
+                .fill(Theme.surface)
+        }
         .overlay {
             RoundedRectangle(cornerRadius: Radius.md, style: .continuous)
-                .stroke(isFocused ? Theme.primary.opacity(0.5) : Color.clear, lineWidth: 1.5)
+                .stroke(isFocused ? Theme.borderStrong : Theme.borderDefault, lineWidth: 1.5)
+        }
+        .background {
+            // Soft focus glow (--shadow: 0 0 0 4px forest-50)
+            RoundedRectangle(cornerRadius: Radius.md, style: .continuous)
+                .stroke(Theme.forestSoft, lineWidth: isFocused ? 8 : 0)
         }
         .animation(Motion.quick, value: isFocused)
     }

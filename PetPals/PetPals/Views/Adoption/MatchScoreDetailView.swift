@@ -83,11 +83,11 @@ struct MatchScoreDetailView: View {
             // Icon
             ZStack {
                 RoundedRectangle(cornerRadius: Radius.sm, style: .continuous)
-                    .fill(factor.points >= 0 ? Color.green.opacity(0.12) : Color.red.opacity(0.12))
+                    .fill(factor.points >= 0 ? Theme.statusHealthy.opacity(0.12) : Theme.statusCritical.opacity(0.12))
                     .frame(width: 40, height: 40)
                 Image(systemName: factor.icon)
                     .font(.system(size: 16, weight: .semibold))
-                    .foregroundStyle(factor.points >= 0 ? Color.green : Color.red)
+                    .foregroundStyle(factor.points >= 0 ? Theme.statusHealthy : Theme.statusCritical)
             }
             
             // Details
@@ -99,12 +99,12 @@ struct MatchScoreDetailView: View {
                     Spacer()
                     Text(factor.points >= 0 ? "+\(factor.points)" : "\(factor.points)")
                         .font(Theme.Fonts.label(Typography.callout, weight: .bold))
-                        .foregroundStyle(factor.points >= 0 ? Color.green : Color.red)
+                        .foregroundStyle(factor.points >= 0 ? Theme.statusHealthy : Theme.statusCritical)
                         .padding(.horizontal, 8)
                         .padding(.vertical, 3)
                         .background {
                             Capsule()
-                                .fill(factor.points >= 0 ? Color.green.opacity(0.12) : Color.red.opacity(0.12))
+                                .fill(factor.points >= 0 ? Theme.statusHealthy.opacity(0.12) : Theme.statusCritical.opacity(0.12))
                         }
                 }
                 Text(factor.explanation)
